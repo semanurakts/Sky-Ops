@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uçuş Yönetimi</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Arama kutusu ikon yerleşimi */
+        .search-box { position: relative; width: 300px; }
+        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #adb5bd; }
+        .search-box input { padding-left: 40px; border-radius: 20px; }
+
+        /* KPI Kart Özel Stilleri */
+        .kpi-card { transition: transform 0.2s ease; }
+        .kpi-card:hover { transform: translateY(-5px); }
+
+        /* EN SADE KURUMSAL PAGINATION STİLİ */
+        #paginationControls {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #paginationControls .page-item .page-link {
+            background: transparent !important;
+            border: none !important;
+            color: #64748b !important; 
+            font-size: 14px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            box-shadow: none !important;
+        }
+
+        #paginationControls .page-item.active .page-link {
+            color: #0f172a !important; 
+            background-color: #f1f5f9 !important;
+            font-weight: 700;
+        }
+
+        #paginationControls .page-item .page-link:hover:not(.active) {
+            background-color: #f8fafc !important;
+            color: #334155 !important;
+        }
+
+        /* --- ÖZEL SAAT VE LİSTE TASARIMI --- */
+        .time-column {
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .time-column::-webkit-scrollbar { display: none; }
+        
+        .time-box {
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #f1f5f9;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.15s;
+            min-height: 40px;
+        }
+        .time-box:hover { background-color: #f8fafc; color: #2563eb; border-color: #2563eb; }
+        .time-box.selected { background-color: #2563eb; color: white; border-color: #2563eb; }
+        .time-box.disabled { opacity: 0.15; cursor: not-allowed; pointer-events: none; background: #f8fafc; }
+
+        /* --- KABİN EKİBİ SEÇİM STİLLERİ --- */
+        .crew-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            margin-bottom: 5px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            background: #f8fafc;
+            font-size: 14px;
+            color: #475569;
+        }
+        .crew-item:hover { background: #f1f5f9; }
+        .crew-item.active { 
+            background: #e0f2fe; 
+            border-color: #0ea5e9; 
+            color: #0369a1;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="brand-logo"><i class="fas fa-plane-departure"></i> SkyOps</div>
+            <div class="brand-subtitle">Operasyon Yönetimi</div>
+        </div>
+        <div class="sidebar-divider"></div>
+        <ul class="nav-links">
+            <li><a href="index.html"><i class="fas fa-th-large"></i><span>Genel Bakış</span></a></li>
+            <li><a href="#" class="active"><i class="fas fa-plane"></i><span>Uçuş Yönetimi</span></a></li>
+            <li><a href="personel.html"><i class="fas fa-users-cog"></i><span>Personel Planlama</span></a></li>
+            <li><a href="#"><i class="fas fa-chart-pie"></i><span>Raporlar</span></a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <a href="#" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="page-info">
+                <h1 class="page-title">Uçuş Yönetimi</h1>
+                <p class="page-desc">Tüm uçuşların listelenmesi, eklenmesi ve iptal işlemleri.</p>
+            </div>
+            <div class="topbar-actions">
+                <div class="notification-box"><i class="fas fa-bell"></i><span class="badge-dot"></span></div>
+                <div class="live-clock-box">
+                    <i class="fas fa-clock text-primary"></i>
+                    <span id="liveClock">--:--:--</span>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar">A</div>
+                    <div class="user-info">
+                        <span class="name">Admin</span>
+                        <span class="role">Sistem Yöneticisi</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="kpi-card border-blue" style="background: white; padding: 20px; border-radius: 16px; border-left: 5px solid #2563eb; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                    <div>
+                        <span class="text-muted small fw-bold text-uppercase">Toplam Uçuş</span>
+                        <h2 class="mb-0 fw-bold text-primary" id="totalFlightsCount">0</h2>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle text-primary"><i class="fas fa-plane-departure fa-lg"></i></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="kpi-card border-green" style="background: white; padding: 20px; border-radius: 16px; border-left: 5px solid #10b981; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                    <div>
+                        <span class="text-muted small fw-bold text-uppercase">Zamanında</span>
+                        <h2 class="mb-0 fw-bold text-success" id="onTimeFlightsCount">0</h2>
+                    </div>
+                    <div class="bg-success bg-opacity-10 p-3 rounded-circle text-success"><i class="fas fa-check-circle fa-lg"></i></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="kpi-card border-red" style="background: white; padding: 20px; border-radius: 16px; border-left: 5px solid #ef4444; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                    <div>
+                        <span class="text-muted small fw-bold text-uppercase">İptal / Gecikme</span>
+                        <h2 class="mb-0 fw-bold text-danger" id="delayedFlightsCount">0</h2>
+                    </div>
+                    <div class="bg-danger bg-opacity-10 p-3 rounded-circle text-danger"><i class="fas fa-exclamation-triangle fa-lg"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-box">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="form-control" id="globalSearchInput" placeholder="Uçuş No veya Rota Ara...">
+                    </div>
+                    <select class="form-select w-auto border rounded-pill text-muted" id="statusFilterSelect">
+                        <option selected>Tüm Durumlar</option>
+                        <option value="Zamanında">Zamanında</option>
+                        <option value="Gecikmeli">Gecikmeli</option>
+                        <option value="Yolcu Alımı">Yolcu Alımı</option>
+                        <option value="İndi">İndi</option>
+                        <option value="İptal">İptal</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#addFlightModal">
+                    <i class="fas fa-paper-plane me-2"></i> Uçuş Ekle
+                </button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle custom-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Uçuş No</th>
+                            <th>Rota</th>
+                            <th>Saat</th>
+                            <th>Kapı</th>
+                            <th>Durum</th>
+                            <th>Pilot</th>
+                            <th class="text-end">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="flightManagementTableBody"></tbody>
+                </table>
+            </div>
+
+            <nav aria-label="Uçuş Sayfalandırma" class="mt-4 border-top pt-3">
+                <ul id="paginationControls" class="justify-content-center"></ul>
+            </nav>
+        </div>
+    </main>
+
+    <div class="modal fade" id="addFlightModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                <div class="modal-header bg-light border-bottom-0" style="border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title fw-bold text-dark"><i class="fas fa-plane-departure me-2 text-primary"></i>Uçuş Planla</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="addFlightForm">
+                        
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-bold mb-2">Uçuş Tanımlama</label>
+                            <div class="row g-2">
+                                <div class="col-7">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="airlineCodeInput" list="airlineOptions" placeholder="Havayolu" maxlength="2" required style="border-radius: 10px;">
+                                        <label for="airlineCodeInput">Havayolu (Örn: TK)</label>
+                                        <datalist id="airlineOptions"></datalist>
+                                    </div>
+                                </div>
+                                <div class="col-5">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control" id="flightNumberInput" placeholder="No" min="1" max="9999" required style="border-radius: 10px;">
+                                        <label for="flightNumberInput">Sefer No</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-bold mb-2">Rota Planlama</label>
+                            <div class="input-group">
+                                <select class="form-select" id="originInput" required style="border-radius: 10px 0 0 10px;">
+                                    <option value="" selected disabled>Kalkış</option>
+                                </select>
+                                <span class="input-group-text bg-white border-start-0 border-end-0">
+                                    <i class="fas fa-exchange-alt text-muted"></i> 
+                                </span>
+                                <select class="form-select" id="destinationInput" required style="border-radius: 0 10px 10px 0;">
+                                    <option value="" selected disabled>Varış</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-7">
+                                <label class="form-label text-muted small fw-bold mb-2">Uçuş Saati</label>
+                                <div class="dropdown" id="customTimePicker">
+                                    <div class="form-control d-flex align-items-center justify-content-between shadow-sm w-100" 
+                                         id="flightTimeDisplay" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                         style="border-radius: 12px; height: 45px; cursor: pointer; border: 1px solid #dee2e6;">
+                                        <span id="selectedTimeText" style="color: #adb5bd; letter-spacing: 2px; font-family: monospace;">--:--</span>
+                                        <i class="far fa-clock text-dark"></i>
+                                    </div>
+
+                                    <div class="dropdown-menu shadow-lg border-0 mt-1 p-2" 
+                                         style="border-radius: 15px; width: 140px; min-width: 140px;">
+                                        <div class="d-flex gap-1" style="height: 180px;">
+                                            <div class="col-6 time-column" id="hourList"></div>
+                                            <div class="col-6 time-column" id="minuteList"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="flightTime" required>
+                            </div>
+                            <div class="col-5">
+                                <label class="form-label text-muted small fw-bold mb-2">Kapı No</label>
+                                <input type="text" class="form-control" id="gate" placeholder="A-01" required style="border-radius: 10px; height: 45px;">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted mb-2">Sorumlu Pilot</label>
+                            <select class="form-select" id="pilotName" required style="border-radius: 10px;"></select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted mb-2">Kabin Ekibi (Min: 2 - Max: 8)</label>
+                            <div class="form-control p-0 overflow-hidden" style="border-radius: 12px; border: 1px solid #dee2e6;">
+                                <div id="cabinCrewList" class="time-column" style="height: 150px; overflow-y: auto; padding: 8px;"></div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <small class="text-muted" style="font-size: 11px;">Seçilen: <span id="selectedCrewCount" class="fw-bold text-primary">0</span></small>
+                                <div id="crewValidationMsg" class="text-danger d-none" style="font-size: 11px; font-weight: 600;">
+                                    ⚠️ En az 2 memur seçilmeli!
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label text-muted small fw-bold mb-2">Durum</label>
+                            <select class="form-select" id="flightStatus" required style="border-radius: 10px;">
+                                <option value="" selected>Durum Seçiniz...</option>
+                                <option value="Zamanında">Zamanında</option>
+                                <option value="Gecikmeli">Gecikmeli</option>
+                                <option value="Yolcu Alımı">Yolcu Alımı</option>
+                                <option value="İndi">İndi</option>
+                                <option value="İptal">İptal</option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 12px; font-weight: 600;">Kaydı Tamamla</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+    <script src="ucus.js"></script>
+</body>
+</html>

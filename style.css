@@ -1,0 +1,416 @@
+/* 1. GENEL AYARLAR */
+body {
+    background-color: #f1f5f9; /* Modern açık gri zemin (Slate-100) */
+    font-family: 'Inter', sans-serif;
+    color: #475569; /* Slate-600 */
+    overflow-x: hidden;
+}
+
+/* 2. SIDEBAR (SOL MENÜ) */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background-color: #1e293b; /* Koyu Lacivert (Slate-800) - Profesyonel Görünüm */
+    position: fixed;
+    top: 0; left: 0;
+    padding: 25px;
+    color: white;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.brand-logo { 
+    font-size: 24px; 
+    font-weight: 800; 
+    letter-spacing: 0.5px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 10px;
+    color: #f8fafc;
+}
+
+.brand-subtitle { 
+    font-size: 11px; 
+    color: #94a3b8; /* Slate-400 */
+    font-weight: 500; 
+    text-transform: uppercase; 
+    margin-top: 5px; 
+    letter-spacing: 1px; 
+}
+
+.sidebar-divider { 
+    height: 1px; 
+    background-color: rgba(255,255,255,0.1); 
+    margin: 20px 0; 
+}
+
+/* Menü Linkleri */
+.nav-links { 
+    list-style: none; 
+    padding: 0; 
+    margin: 0; 
+    flex-grow: 1; 
+}
+
+.nav-links li { 
+    margin-bottom: 5px; 
+}
+
+.nav-links a {
+    display: flex; 
+    align-items: center;
+    padding: 12px 16px;
+    color: #94a3b8; /* Pasif ikon rengi */
+    text-decoration: none;
+    font-size: 14px; 
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-links a i { 
+    width: 25px; 
+    text-align: center; 
+    margin-right: 10px; 
+    font-size: 16px; 
+}
+
+/* Menü Hover ve Aktif Durumları */
+.nav-links a:hover { 
+    background-color: rgba(255,255,255,0.05); 
+    color: white; 
+}
+
+.nav-links a.active {
+    background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); /* Parlak Mavi Gradyan */
+    color: white;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); /* Mavi Gölge */
+}
+
+/* Çıkış Butonu */
+.logout-btn { 
+    color: #ef4444 !important; /* Kırmızı */
+    font-weight: 600; 
+    display: flex; 
+    align-items: center; 
+    text-decoration: none; 
+    transition: 0.3s; 
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.logout-btn:hover { 
+    color: #dc2626 !important; 
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* 3. ANA İÇERİK YAPISI */
+.main-content { 
+    margin-left: 260px; 
+    padding: 30px; 
+}
+
+/* 4. TOPBAR (ÜST BAR) */
+.topbar {
+    background: white;
+    padding: 16px 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    margin-bottom: 30px;
+    border: 1px solid #e2e8f0;
+}
+
+.page-title { 
+    font-size: 20px; 
+    font-weight: 700; 
+    color: #1e293b; 
+    margin: 0; 
+}
+
+.page-desc { 
+    font-size: 13px; 
+    color: #64748b; 
+    margin: 0; 
+}
+
+.topbar-actions { 
+    display: flex; 
+    align-items: center; 
+    gap: 25px; 
+}
+
+/* Bildirim Kutusu */
+.notification-box { 
+    position: relative; 
+    cursor: pointer; 
+    color: #64748b; 
+    transition: 0.3s; 
+    font-size: 18px; 
+}
+
+.notification-box:hover { 
+    color: #1e293b; 
+    transform: scale(1.1); 
+}
+
+.badge-dot {
+    position: absolute; 
+    top: -2px; 
+    right: -2px; 
+    width: 8px; 
+    height: 8px;
+    background: #ef4444; 
+    border-radius: 50%; 
+    border: 1px solid white;
+}
+
+/* Saat Kutusu */
+.live-clock-box {
+    background: #f8fafc; 
+    padding: 8px 16px; 
+    border-radius: 8px;
+    font-family: 'Courier New', monospace; 
+    font-weight: 700; 
+    color: #334155;
+    display: flex; 
+    align-items: center; 
+    gap: 10px;
+    border: 1px solid #e2e8f0;
+}
+
+/* Profil */
+.user-profile { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    cursor: pointer; 
+}
+
+.avatar { 
+    width: 40px; 
+    height: 40px; 
+    background: #3b82f6; 
+    color: white; 
+    border-radius: 10px; /* Hafif karemsi avatar */
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-weight: bold; 
+    font-size: 16px; 
+}
+
+.user-info { 
+    display: flex; 
+    flex-direction: column; 
+}
+
+.user-info .name { 
+    font-size: 14px; 
+    font-weight: 700; 
+    color: #1e293b; 
+}
+
+.user-info .role { 
+    font-size: 11px; 
+    color: #64748b; 
+}
+
+/* 5. KPI KARTLARI */
+.kpi-card {
+    background: white; 
+    padding: 25px; 
+    border-radius: 16px; 
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    height: 100%; 
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-left: 5px solid transparent; /* Renkli çizgi için yer */
+    display: flex; 
+    justify-content: space-between; 
+    align-items: start;
+}
+
+.kpi-card:hover { 
+    transform: translateY(-5px); 
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
+}
+
+.kpi-label { 
+    font-size: 12px; 
+    font-weight: 600; 
+    color: #64748b; 
+    text-transform: uppercase; 
+    letter-spacing: 0.5px; 
+    display: block; 
+    margin-bottom: 5px; 
+}
+
+.kpi-value { 
+    font-size: 30px; 
+    font-weight: 800; 
+    margin: 0; 
+    line-height: 1; 
+    color: #0f172a; 
+}
+
+.kpi-icon {
+    width: 48px; 
+    height: 48px; 
+    border-radius: 12px;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 22px;
+}
+
+/* Renk Temaları (Tailwind Benzeri) */
+.text-blue { color: #3b82f6; } 
+.bg-blue-light { background: #eff6ff; } 
+.border-blue { border-left-color: #3b82f6; }
+
+.text-red { color: #ef4444; } 
+.bg-red-light { background: #fef2f2; } 
+.border-red { border-left-color: #ef4444; }
+
+.text-yellow { color: #f59e0b; } 
+.bg-yellow-light { background: #fffbeb; } 
+.border-yellow { border-left-color: #f59e0b; }
+
+.text-green { color: #10b981; } 
+.bg-green-light { background: #ecfdf5; } 
+.border-green { border-left-color: #10b981; }
+
+/* 6. İÇERİK KUTULARI (Grafik & Tablo) */
+.content-box {
+    background: white; 
+    padding: 25px; 
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.box-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 20px; 
+}
+
+.box-title { 
+    font-weight: 700; 
+    color: #1e293b; 
+    font-size: 16px; 
+    margin: 0; 
+}
+
+/* 7. ÖZEL YOĞUNLUK İBRESİ (GAUGE) */
+.gauge {
+    width: 200px;
+    height: 100px; /* Yarım Daire */
+    position: relative;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.gauge-body {
+    width: 100%; 
+    height: 100%;
+    background: #e2e8f0; /* Gri Zemin */
+    border-top-left-radius: 200px;
+    border-top-right-radius: 200px;
+    position: relative;
+}
+
+.gauge-fill {
+    position: absolute; 
+    top: 100%; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    background: linear-gradient(90deg, #10b981 0%, #f59e0b 50%, #ef4444 100%); /* Yeşil -> Sarı -> Kırmızı */
+    border-top-left-radius: 200px;
+    border-top-right-radius: 200px;
+    transform-origin: center top;
+    transform: rotate(0deg); /* JS ile değişecek */
+    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1); /* Yumuşak animasyon */
+}
+
+.gauge-cover {
+    width: 150px; 
+    height: 75px;
+    background: white;
+    border-top-left-radius: 150px;
+    border-top-right-radius: 150px;
+    position: absolute; 
+    bottom: 0; 
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+.score-text {
+    position: relative;
+    z-index: 20;
+    margin-top: -10px;
+}
+
+.score-value { 
+    font-size: 48px; 
+    font-weight: 800; 
+    color: #ef4444; 
+    line-height: 1; 
+}
+
+.score-total { 
+    font-size: 20px; 
+    color: #94a3b8; 
+    font-weight: 600; 
+}
+
+/* 8. TABLO TASARIMI */
+.custom-table {
+    margin-bottom: 0;
+}
+
+.custom-table thead th {
+    background-color: #f8fafc; 
+    color: #64748b; 
+    font-size: 12px;
+    text-transform: uppercase; 
+    font-weight: 700; 
+    border-bottom: 1px solid #e2e8f0; 
+    padding: 15px;
+    border-top: none;
+}
+
+.custom-table tbody td { 
+    padding: 15px; 
+    font-size: 14px; 
+    vertical-align: middle; 
+    color: #334155; 
+    border-bottom: 1px solid #f1f5f9; 
+}
+
+.pilot-avatar {
+    width: 32px; 
+    height: 32px; 
+    border-radius: 50%; 
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+    font-size: 12px; 
+    color: white; 
+    font-weight: bold;
+}
+

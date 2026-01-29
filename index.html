@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyOps - Uçuş Takip ve Planlama Paneli</title>
+
+    <!-- Bootstrap 5 CSS (İskelet Yapısı) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <!-- FontAwesome (İkonlar) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Google Fonts (Inter Yazı Tipi) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- BİZİM TASARIM DOSYAMIZ (style.css'i buradan çağırıyoruz) -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 1. SOL MENÜ (SIDEBAR) -->
+    <nav class="sidebar">
+        <!-- Logo Alanı -->
+        <div class="sidebar-header">
+            <div class="brand-logo">
+                <i class="fas fa-plane-departure"></i> SkyOps
+            </div>
+            <div class="brand-subtitle">Operasyon Yönetimi</div>
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Menü Linkleri -->
+        <ul class="nav-links">
+            <li>
+                <a href="#" class="active">
+                    <i class="fas fa-th-large"></i>
+                    <span>Genel Bakış</span>
+                </a>
+            </li>
+            <li>
+                <a href="ucus.html">
+                    <i class="fas fa-plane"></i>
+                    <span>Uçuş Yönetimi</span>
+                </a>
+            </li>
+            <li>
+                <a href="personel.html">
+                    <i class="fas fa-users-cog"></i>
+                    <span>Personel Planlama</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Raporlar</span>
+                </a>
+            </li>
+        </ul>
+
+        <!-- Alt Kısım: Çıkış -->
+        <div class="sidebar-footer">
+            <a href="#" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Çıkış Yap
+            </a>
+        </div>
+    </nav>
+
+     <!-- 2. ANA İÇERİK (MAIN CONTENT) -->
+    <main class="main-content">
+        
+        <!-- ÜST BAR (NAVBAR) -->
+        <header class="topbar">
+            <div class="page-info">
+                <h1 class="page-title">Dashboard / Genel Bakış</h1>
+                <p class="page-desc">Havaalanı operasyon durumu ve anlık veriler.</p>
+            </div>
+
+            <div class="topbar-actions">
+                <!-- Bildirim -->
+                <div class="notification-box">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge-dot"></span>
+                </div>
+
+                <!-- Saat Kutusu -->
+                <div class="live-clock-box">
+                    <i class="fas fa-clock text-primary"></i>
+                    <span id="liveClock">14:30:45</span>
+                </div>
+
+                <!-- Profil -->
+                <div class="user-profile">
+                    <div class="avatar">A</div>
+                    <div class="user-info">
+                        <span class="name">Admin</span>
+                        <span class="role">Sistem Yöneticisi</span>
+                    </div>
+                </div>
+            </div>
+         </header>
+
+         <!-- KARTLAR (KPI) -->
+        <div class="row g-4 mb-4">
+            <!-- Kart 1 -->
+            <div class="col-md-3">
+                <div class="kpi-card border-blue">
+                    <div class="kpi-content">
+                        <span class="kpi-label">Toplam Uçuş</span>
+                        <h2 class="kpi-value text-blue">24</h2>
+                    </div>
+                    <div class="kpi-icon bg-blue-light text-blue">
+                        <i class="fas fa-plane"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- Kart 2 -->
+            <div class="col-md-3">
+                <div class="kpi-card border-red">
+                    <div class="kpi-content">
+                        <span class="kpi-label">Gecikmeler</span>
+                        <h2 class="kpi-value text-red">3</h2>
+                    </div>
+                    <div class="kpi-icon bg-red-light text-red">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- Kart 3 -->
+            <div class="col-md-3">
+                <div class="kpi-card border-yellow">
+                    <div class="kpi-content">
+                        <span class="kpi-label">Riskli Personel</span>
+                        <h2 class="kpi-value text-yellow">5</h2>
+                    </div>
+                    <div class="kpi-icon bg-yellow-light text-yellow">
+                        <i class="fas fa-user-clock"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- Kart 4 -->
+            <div class="col-md-3">
+                <div class="kpi-card border-green">
+                    <div class="kpi-content">
+                        <span class="kpi-label">Kapı Doluluk</span>
+                        <h2 class="kpi-value text-green">%65</h2>
+                    </div>
+                    <div class="kpi-icon bg-green-light text-green">
+                        <i class="fas fa-door-open"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ORTA BÖLÜM -->
+        <div class="row g-4 mb-4">
+            <!-- Grafik -->
+            <div class="col-md-8">
+                <div class="content-box h-100">
+                    <div class="box-header">
+                        <h5 class="box-title">Anlık Uçuş Trafiği</h5>
+                        <select class="form-select form-select-sm w-auto border-0 bg-light text-muted">
+                            <option>Son 1 Saat</option>
+                            <option>Son 6 Saat</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="flightChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Yoğunluk Skoru -->
+            <div class="col-md-4">
+                <div class="content-box h-100 d-flex flex-column align-items-center justify-content-center text-center">
+                    <h5 class="box-title mb-4">Tahmini Yoğunluk Skoru</h5>
+                    
+                    <!-- CSS İle Yapılan Kusursuz Yarım Daire -->
+                    <div class="gauge">
+                        <div class="gauge-body">
+                            <div class="gauge-fill"></div>
+                            <div class="gauge-cover"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="score-text">
+                        <span class="val text-danger">7.8</span>
+                        <span class="total">/10</span>
+                    </div>
+
+                    <div class="badge bg-warning bg-opacity-25 text-warning mt-2 px-3 py-2 rounded-pill border border-warning">
+                        <i class="fas fa-exclamation-circle me-1"></i> Yüksek Yoğunluk
+                    </div>
+                    <p class="text-muted small mt-3 px-3">
+                        Kapı kapasitesi önümüzdeki 1 saat içinde %85'i aşacak. Ekip takviyesi önerilir.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABLO -->
+        <div class="content-box">
+            <div class="box-header mb-3 d-flex justify-content-between align-items-center">
+                <h5 class="box-title mb-0">Canlı Uçuş Listesi</h5>
+                <button class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
+                    <i class="fas fa-plus me-2"></i> Yeni Uçuş
+                </button>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-hover align-middle custom-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Uçuş No</th>
+                            <th>Rota</th>
+                            <th>Saat</th>
+                            <th>Kapı</th>
+                            <th>Durum</th>
+                            <th>Pilot</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- <tr>
+                            <td class="fw-bold text-dark">TK-1923</td>
+                            <td>IST <i class="fas fa-long-arrow-alt-right text-muted mx-2"></i> LHR</td>
+                            <td>14:45</td>
+                            <td><span class="badge bg-light text-dark border">A-12</span></td>
+                            <td><span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">Zamanında</span></td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="pilot-avatar bg-primary">A</div>
+                                    <span>Ahmet Y.</span>
+                                </div>
+                            </td>
+                            <td><button class="btn btn-sm btn-light text-muted"><i class="fas fa-ellipsis-v"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-dark">PC-4561</td>
+                            <td>SAW <i class="fas fa-long-arrow-alt-right text-muted mx-2"></i> AMS</td>
+                            <td>15:00</td>
+                            <td><span class="badge bg-light text-dark border">B-04</span></td>
+                            <td><span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill">Gecikmeli</span></td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="pilot-avatar bg-warning text-dark">M</div>
+                                    <span>Mehmet K.</span>
+                                    <i class="fas fa-exclamation-triangle text-warning" title="Yorgunluk Riski"></i>
+                                </div>
+                            </td>
+                            <td><button class="btn btn-sm btn-light text-muted"><i class="fas fa-ellipsis-v"></i></button></td>
+                        </tr> -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+      </main>
+
+      <!-- Scripts -->
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+       <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+       <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personel Planlama</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    
+    <style>   
+        .progress {height: 8px; border-radius: 4px; background-color: #e9ecef; margin-top: 5px;}
+        .risk-text {font-size: 11px; font-weight: 700; display: block; margin-bottom: 2px;}
+
+        .search-box {position: relative;}
+        .search-box input {padding-left: 35px; border-radius: 20px; border: 1px solid #dee2e6; font-size: 14px;}
+        .search-box i {position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #adb5bd;}
+
+        .filter-btn {border-radius: 20px; font-size: 13px; font-weight: 500; padding: 6px 16px; border: 1px solid #e2e8f0; background: white; color: #64748b;}
+        .filter-btn.active {background: #e0f2fe; color: #0284c7; border-color: #0284c7;}
+        .filter-btn:hover {background: #f8fafc;}
+        /* EN SADE KURUMSAL PAGINATION STİLİ */
+        #paginationControls {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #paginationControls .page-item .page-link {
+            background: transparent !important;
+            border: none !important;
+            color: #64748b !important; 
+            font-size: 14px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            box-shadow: none !important;
+        }
+
+        #paginationControls .page-item.active .page-link {
+            color: #0f172a !important; 
+            background-color: #f1f5f9 !important;
+            font-weight: 700;
+        }
+
+        #paginationControls .page-item .page-link:hover:not(.active) {
+            background-color: #f8fafc !important;
+            color: #334155 !important;
+        }
+     </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="brand-logo"><i class="fas fa-plane-departure"></i> SkyOps</div>
+            <div class="brand-subtitle">Operasyon Yönetimi</div>
+        </div>
+        <div class="sidebar-divider"></div>
+        <ul class="nav-links">
+            <li><a href="index.html"><i class="fas fa-th-large"></i><span>Genel Bakış</span></a></li>
+            <li><a href="ucus.html"><i class="fas fa-plane"></i><span>Uçuş Yönetimi</span></a></li>
+            <li><a href="#" class="active"><i class="fas fa-users-cog"></i><span>Personel Planlama</span></a></li>
+            <li><a href="#"><i class="fas fa-chart-pie"></i><span>Raporlar</span></a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <a href="#" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="page-info">
+                <h1 class="page-title">Personel Planlama</h1>
+                <p class="page-desc">Pilot ve kabin ekibi görevlendirme ve risk takibi.</p>
+            </div>
+            <div class="topbar-actions">
+                <div class="notification-box"><i class="fas fa-bell"></i><span class="badge-dot"></span></div>
+                <div class="live-clock-box"><i class="fas fa-clock text-primary"></i><span id="liveClock">--:--:--</span></div>
+                <div class="user-profile">
+                    <div class="avatar">A</div>
+                    <div class="user-info">
+                        <span class="name">Admin</span>
+                        <span class="role">Sistem Yöneticisi</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="kpi-card border-blue">
+                    <div class="kpi-content">
+                        <span class="kpi-label">Toplam Ekip</span>
+                        <h2 class="kpi-value text-primary" id="totalStaffCount">--</h2>
+                    </div>
+                    <div class="kpi-icon bg-blue-light text-blue"><i class="fas fa-users"></i></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="kpi-card border-green">
+                    <div class="kpi-content">
+                        <span class="kpi-label">Operasyona Hazır</span>
+                        <h2 class="kpi-value text-green" id="availableStaffCount">--</h2>
+                    </div>
+                    <div class="kpi-icon bg-green-light text-green"><i class="fas fa-user-check"></i></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="kpi-card border-red">
+                    <div class="kpi-content">
+                        <span class="kpi-label">Yorgunluk Sınırında</span>
+                        <h2 class="kpi-value text-red" id="riskyStaffCount">--</h2>
+                    </div>
+                    <div class="kpi-icon bg-red-light text-red"><i class="fas fa-battery-quarter"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-box">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="form-control" placeholder="İsim veya ID ara...">
+                    </div>
+                    <div class="d-none d-md-flex gap-2">
+                        <button class="filter-btn active">Tümü</button>
+                        <button class="filter-btn">Pilotlar</button>
+                        <button class="filter-btn">Kabin Ekibi</button>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#addPersonnelModal">
+                    <i class="fas fa-user-plus me-2"></i> Personel Ekle
+                </button>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-hover align-middle custom-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Personel</th>
+                            <th>Görevi</th>
+                            <th>Son 24s Uçuş</th>
+                            <th style="width: 25%;">Yorgunluk Analizi</th>
+                            <th>Durum</th>
+                            <th class="text-end">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="personnelTableBody">
+                        </tbody>
+                </table>
+            </div>
+
+                <nav aria-label="Personel Sayfalandırma" class="mt-4 border-top pt-3">
+                    <ul id="paginationControls" class="justify-content-center"></ul>
+                </nav>
+        </div>
+    </main>
+
+    <div class="modal fade" id="addPersonnelModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                <div class="modal-header border-0 bg-light" style="border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-user-plus me-2 text-primary"></i>Yeni Personel Kaydı</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="addPersonnelForm">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Ad Soyad</label>
+                            <input type="text" class="form-control" id="staffName" placeholder="Örn: Selin Yılmaz" required style="border-radius: 10px;">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Görevi</label>
+                            <select class="form-select" id="staffRole" required style="border-radius: 10px;">
+                                <option value="">Seçiniz...</option>
+                                <option value="Pilot">Pilot</option>
+                                <option value="Kabin Memuru">Kabin Memuru</option>
+                            </select>
+                        </div>
+                        <div class="d-grid pt-2">
+                            <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 12px; font-size: 16px; font-weight: 600;">Kaydı Tamamla</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+    <script src="personel.js"></script>
+</body> 
+</html>
