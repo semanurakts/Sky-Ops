@@ -104,6 +104,29 @@
             color: #0369a1;
             font-weight: 600;
         }
+
+        /* Filtre Butonları Özel Stili */
+.filter-btn {
+    color: #64748b !important;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    background: transparent;
+}
+
+.btn-check:checked + .filter-btn {
+    background-color: #475569 !important; /* Koyu gri/lacivert tonu */
+    color: white !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.filter-btn:hover:not(.btn-check:checked + .filter-btn) {
+    background-color: #f1f5f9;
+    color: #1e293b !important;
+}
+
+.bg-info-subtle { background-color: #e0f2fe !important; }
+.text-info-dark { color: #0369a1 !important; }
+.border-info { border-color: #bae6fd !important; }
     </style>
 </head>
 <body>
@@ -180,6 +203,16 @@
         <div class="content-box">
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
                 <div class="d-flex align-items-center gap-3">
+                    <div class="d-inline-flex bg-light p-1 shadow-sm" style="border-radius: 25px; border: 1px solid #e2e8f0;">
+    <input type="radio" class="btn-check" name="dateFilter" id="filterAll" value="all" checked>
+    <label class="btn btn-sm px-3 border-0 rounded-pill filter-btn" for="filterAll">Hepsi</label>
+
+    <input type="radio" class="btn-check" name="dateFilter" id="filterToday" value="today">
+    <label class="btn btn-sm px-3 border-0 rounded-pill filter-btn" for="filterToday">Bugün</label>
+
+    <input type="radio" class="btn-check" name="dateFilter" id="filterTomorrow" value="tomorrow">
+    <label class="btn btn-sm px-3 border-0 rounded-pill filter-btn" for="filterTomorrow">Yarın</label>
+</div>
                     <div class="search-box">
                         <i class="fas fa-search"></i>
                         <input type="text" class="form-control" id="globalSearchInput" placeholder="Uçuş No veya Rota Ara...">
@@ -248,6 +281,17 @@
                                         <label for="flightNumberInput">Sefer No</label>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-bold mb-2">Uçuş Günü</label>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="flightDay" id="dayToday" value="today" checked>
+                                <label class="btn btn-outline-primary shadow-sm" for="dayToday" style="border-radius: 10px 0 0 10px;">Bugün</label>
+
+                                <input type="radio" class="btn-check" name="flightDay" id="dayTomorrow" value="tomorrow">
+                                <label class="btn btn-outline-primary shadow-sm" for="dayTomorrow" style="border-radius: 0 10px 10px 0;">Yarın</label>
                             </div>
                         </div>
 
