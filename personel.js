@@ -29,17 +29,57 @@ function startLiveClock() {
     setInterval(update, 1000);
 }
 
+// --- TARİH YARDIMCILARI ---
+const TODAY_DATE = new Date().toISOString().split('T')[0];
+
+async function handleDailyReset(data) {
+    // Bugünün tarihini ISO formatında al (Örn: 2026-02-21)
+    const todayStr = new Date().toISOString().split('T')[0]; 
+    
+    for (const p of data) {
+        // Eğer personelin lastUpdate alanı yoksa veya bugünden farklı bir tarihse sıfırlama yap
+        if (!p.lastUpdate || p.lastUpdate !== todayStr) {
+            try {
+                await fetch(`${API_URL}/${p.id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        dailyFlightHours: 0, // Yeni mesai günü için saatleri sıfırla
+                        fatiguePoint: 0,     // Yorgunluk puanını sıfırla
+                        status: "Müsait",    // Durumu müsait yap
+                        risk: "Düşük",       // Riski en düşüğe çek
+                        lastUpdate: todayStr // Bugünün tarih damgasını vur ki bir daha sıfırlamasın
+                    })
+                });
+            } catch (error) {
+                console.error(`Personel ${p.id} sıfırlanırken hata oluştu:`, error);
+            }
+        }
+    }
+}
+
 async function fetchPersonnel() {
     try {
+        // 1. Önce mevcut verileri sunucudan çek
         const response = await fetch(API_URL);
         allPersonnel = await response.json();
         
-        // --- SIRALAMA MANTIĞI: En yeni (ID'si en büyük olan) en başa ---
+        // 2. Günlük sıfırlama kontrolünü yap (Dünden kalan yorgunlukları temizle)
+        await handleDailyReset(allPersonnel);
+
+        // 3. KRİTİK ADIM: Sıfırlama sonrası güncel veriyi SUNUCUDAN TEKRAR ÇEK
+        // Eğer bunu yapmazsak tablo eski (yorgun) verileri göstermeye devam eder
+        const updatedRes = await fetch(API_URL);
+        allPersonnel = await updatedRes.json();
+
+        // 4. Sıralama yap (En yeni kayıt en başa)
         allPersonnel.sort((a, b) => parseInt(b.id) - parseInt(a.id));
-        
+
+        // 5. Filtreleri uygula ve tabloyu ekrana bas
         applyFiltersAndRender();
+        
     } catch (error) {
-        console.error("Veri çekme hatası:", error);
+        console.error("Veri çekme veya sıfırlama hatası:", error);
     }
 }
 
@@ -188,6 +228,7 @@ function setupPersonnelFormControls() {
         const payload = {
             name: document.getElementById('staffName').value,
             role: roleSelect.value,
+            lastUpdate: TODAY_DATE, // Bu satırı ekliyoruz
             flightHours: isEditMode ? undefined : 0, 
             dailyFlightHours: isEditMode ? undefined : 0,
             fatiguePoint: isEditMode ? undefined : 0,

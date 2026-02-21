@@ -200,37 +200,46 @@
             </div>
         </div>
 
-        <div class="content-box">
-            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="d-inline-flex bg-light p-1 shadow-sm" style="border-radius: 25px; border: 1px solid #e2e8f0;">
-    <input type="radio" class="btn-check" name="dateFilter" id="filterAll" value="all" checked>
-    <label class="btn btn-sm px-3 border-0 rounded-pill filter-btn" for="filterAll">Hepsi</label>
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div class="d-flex align-items-center gap-2 flex-grow-1">
+        <div class="d-inline-flex bg-light p-1 shadow-sm" style="border-radius: 25px; border: 1px solid #e2e8f0; flex-shrink: 0;">
+            <input type="radio" class="btn-check" name="dateFilter" id="filterAll" value="all" checked>
+            <label class="btn btn-sm px-2 px-md-3 border-0 rounded-pill filter-btn" for="filterAll">Hepsi</label>
 
-    <input type="radio" class="btn-check" name="dateFilter" id="filterToday" value="today">
-    <label class="btn btn-sm px-3 border-0 rounded-pill filter-btn" for="filterToday">Bugün</label>
+            <input type="radio" class="btn-check" name="dateFilter" id="filterToday" value="today">
+            <label class="btn btn-sm px-2 px-md-3 border-0 rounded-pill filter-btn" for="filterToday">Bugün</label>
 
-    <input type="radio" class="btn-check" name="dateFilter" id="filterTomorrow" value="tomorrow">
-    <label class="btn btn-sm px-3 border-0 rounded-pill filter-btn" for="filterTomorrow">Yarın</label>
+            <input type="radio" class="btn-check" name="dateFilter" id="filterTomorrow" value="tomorrow">
+            <label class="btn btn-sm px-2 px-md-3 border-0 rounded-pill filter-btn" for="filterTomorrow">Yarın</label>
+            
+            <input type="radio" class="btn-check" name="dateFilter" id="filterPast" value="past">
+            <label class="btn btn-sm px-2 px-md-3 border-0 rounded-pill filter-btn" for="filterPast">Geçmiş</label>
+        </div>
+
+        <div class="search-box" style="width: 200px;"> <i class="fas fa-search"></i>
+            <input type="text" class="form-control form-control-sm" id="globalSearchInput" placeholder="Ara...">
+        </div>
+
+        <select class="form-select form-select-sm w-auto border rounded-pill text-muted" id="statusFilterSelect">
+            <option selected>Tüm Durumlar</option>
+            <option value="Zamanında">Zamanında</option>
+            <option value="Gecikmeli">Gecikmeli</option>
+            <option value="Yolcu Alımı">Yolcu Alımı</option>
+            <option value="İndi">İndi</option>
+            <option value="İptal">İptal</option>
+        </select>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+        <button id="deleteAllFlightsBtn" class="btn btn-outline-danger btn-sm rounded-pill px-3 shadow-sm d-inline-flex align-items-center justify-content-center" style="height: 38px; white-space: nowrap;">
+    <i class="fas fa-trash-alt me-2"></i> 
+    <span>Tümünü Sil</span>
+</button>
+        <button class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#addFlightModal" style="height: 38px; white-space: nowrap;">
+            <i class="fas fa-paper-plane me-1"></i> Uçuş Ekle
+        </button>
+    </div>
 </div>
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" class="form-control" id="globalSearchInput" placeholder="Uçuş No veya Rota Ara...">
-                    </div>
-                    <select class="form-select w-auto border rounded-pill text-muted" id="statusFilterSelect">
-                        <option selected>Tüm Durumlar</option>
-                        <option value="Zamanında">Zamanında</option>
-                        <option value="Gecikmeli">Gecikmeli</option>
-                        <option value="Yolcu Alımı">Yolcu Alımı</option>
-                        <option value="İndi">İndi</option>
-                        <option value="İptal">İptal</option>
-                    </select>
-                </div>
-
-                <button class="btn btn-primary rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#addFlightModal">
-                    <i class="fas fa-paper-plane me-2"></i> Uçuş Ekle
-                </button>
-            </div>
 
             <div class="table-responsive">
                 <table class="table table-hover align-middle custom-table">
