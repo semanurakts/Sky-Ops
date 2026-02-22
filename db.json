@@ -207,284 +207,260 @@
   ],
   "flights": [
     {
-      "id": "14",
-      "flightNo": "VF-0002",
-      "route": "SAW > ASR",
-      "time": "23:01",
-      "date": "2026-02-19",
+      "id": "1",
+      "flightNo": "TK-0001",
+      "route": "IST > ESB",
+      "time": "03:30",
+      "date": "2026-02-22",
       "gate": "A-00",
-      "pilot": "3",
+      "pilot": "1",
       "cabinCrew": [
-        "7",
-        "9"
-      ],
-      "status": "İndi"
-    },
-    {
-      "id": "17",
-      "flightNo": "AZ-0045",
-      "route": "LIN > KYA",
-      "time": "23:59",
-      "date": "2026-02-19",
-      "gate": "F-01",
-      "pilot": "8",
-      "cabinCrew": [
-        "19",
-        "20"
+        "2",
+        "6"
       ],
       "status": "İptal"
     },
     {
-      "id": "18",
-      "flightNo": "NH-0045",
-      "route": "KIX > ADA",
-      "time": "23:19",
-      "date": "2026-02-19",
-      "gate": "K-50",
-      "pilot": "10",
+      "id": "2",
+      "flightNo": "PC-0006",
+      "route": "AYT > ADA",
+      "time": "18:22",
+      "date": "2026-02-22",
+      "gate": "A-01",
+      "pilot": "1",
       "cabinCrew": [
-        "21",
-        "22"
+        "2",
+        "6"
+      ],
+      "status": "İptal"
+    },
+    {
+      "id": "3",
+      "flightNo": "TK-0020",
+      "route": "IST > LHR",
+      "time": "18:01",
+      "date": "2026-02-22",
+      "gate": "A-55",
+      "pilot": "3",
+      "cabinCrew": [
+        "2",
+        "6"
+      ],
+      "status": "İptal"
+    },
+    {
+      "id": "4",
+      "flightNo": "PC-0005",
+      "route": "SAW > LGW",
+      "time": "18:02",
+      "date": "2026-02-22",
+      "gate": "A-01",
+      "pilot": "8",
+      "cabinCrew": [
+        "2",
+        "6",
+        "7"
       ],
       "status": "İndi"
     },
     {
-      "id": "19",
-      "flightNo": "TK-7866",
-      "route": "TZX > ADA",
-      "time": "21:01",
-      "date": "2026-02-19",
-      "gate": "B-00",
-      "pilot": "5",
+      "id": "5",
+      "flightNo": "KL-0006",
+      "route": "AMS > ASR",
+      "time": "03:41",
+      "date": "2026-02-22",
+      "gate": "D-03",
+      "pilot": "1",
       "cabinCrew": [
+        "2",
+        "6"
+      ],
+      "status": "İndi"
+    },
+    {
+      "id": "6",
+      "flightNo": "VF-0087",
+      "route": "ESB > ASR",
+      "time": "18:02",
+      "date": "2026-02-22",
+      "gate": "A-55",
+      "pilot": "8",
+      "cabinCrew": [
+        "2",
+        "6",
+        "7"
+      ],
+      "status": "Zamanında"
+    },
+    {
+      "id": "7",
+      "flightNo": "KL-0456",
+      "route": "AMS > KYA",
+      "time": "11:02",
+      "date": "2026-02-22",
+      "gate": "B-02",
+      "pilot": "1",
+      "cabinCrew": [
+        "13",
+        "15",
         "20",
         "21"
       ],
-      "status": "İndi"
+      "status": "Gecikmeli"
     },
     {
-      "id": "20",
-      "flightNo": "TK-4444",
-      "route": "IST > DLM",
-      "time": "21:01",
-      "date": "2026-02-19",
-      "gate": "A-01",
-      "pilot": "16",
-      "cabinCrew": [
-        "22",
-        "18"
-      ],
-      "status": "İptal"
-    },
-    {
-      "id": "21",
-      "flightNo": "TK-3333",
-      "route": "IST > DLM",
-      "time": "21:28",
-      "date": "2026-02-19",
-      "gate": "A-01",
-      "pilot": "16",
-      "cabinCrew": [
-        "22",
-        "19"
-      ],
-      "status": "İndi"
-    },
-    {
-      "id": "22",
-      "flightNo": "TK-2020",
-      "route": "IST > AYT",
-      "time": "21:03",
-      "date": "2026-02-20",
-      "gate": "A-00",
-      "pilot": "14",
-      "cabinCrew": [
-        "7",
-        "9"
-      ],
-      "status": "İndi"
-    },
-    {
-      "id": "23",
-      "flightNo": "TK-2021",
-      "route": "IST > JFK",
-      "time": "17:01",
-      "date": "2026-02-20",
-      "gate": "A-01",
-      "pilot": "14",
-      "cabinCrew": [
-        "7",
-        "9"
-      ],
-      "status": "İndi"
-    },
-    {
-      "id": "24",
-      "flightNo": "TK-2023",
-      "route": "IST > AYT",
-      "time": "17:01",
-      "date": "2026-02-20",
-      "gate": "A-00",
-      "pilot": "14",
-      "cabinCrew": [
-        "7",
-        "9"
-      ],
-      "status": "İndi"
-    },
-    {
-      "id": "25",
-      "flightNo": "PC-2026",
-      "route": "IST > AYT",
-      "time": "05:09",
-      "date": "2026-02-20",
-      "gate": "A-01",
-      "pilot": "12",
-      "cabinCrew": [
-        "19",
-        "18"
-      ],
-      "status": "İndi"
-    },
-    {
-      "id": "26",
-      "flightNo": "PC-2025",
-      "route": "IST > AYT",
-      "time": "04:00",
-      "date": "2026-02-20",
-      "gate": "A-55",
-      "pilot": "16",
-      "cabinCrew": [
-        "22",
-        "15"
-      ],
-      "status": "İndi"
-    },
-    {
-      "id": "27",
-      "flightNo": "VF-0005",
-      "route": "SAW > KYA",
-      "time": "21:16",
-      "date": "2026-02-21",
+      "id": "8",
+      "flightNo": "BA-4625",
+      "route": "STN > ADA",
+      "time": "20:02",
+      "date": "2026-02-22",
       "gate": "D-03",
       "pilot": "10",
       "cabinCrew": [
         "2",
-        "6"
+        "11"
       ],
-      "status": "İndi"
+      "status": "Gecikmeli"
     },
     {
-      "id": "28",
-      "flightNo": "BA-0005",
-      "route": "STN > ADA",
-      "time": "20:16",
-      "date": "2026-02-21",
-      "gate": "A-01",
-      "pilot": "14",
-      "cabinCrew": [
-        "11",
-        "9"
-      ],
-      "status": "İndi"
-    },
-    {
-      "id": "29",
-      "flightNo": "AA-4555",
-      "route": "LAS > ADA",
-      "time": "06:02",
+      "id": "9",
+      "flightNo": "PC-5555",
+      "route": "SAW > ADB",
+      "time": "13:45",
       "date": "2026-02-22",
-      "gate": "D-03",
+      "gate": "D-04",
+      "pilot": "3",
+      "cabinCrew": [
+        "21"
+      ],
+      "status": "Zamanında"
+    },
+    {
+      "id": "10",
+      "flightNo": "PC-0555",
+      "route": "BJV > TZX",
+      "time": "15:01",
+      "date": "2026-02-23",
+      "gate": "B-02",
+      "pilot": "1",
+      "cabinCrew": [
+        "13",
+        "15"
+      ],
+      "status": "Zamanında"
+    },
+    {
+      "id": "11",
+      "flightNo": "AA-0001",
+      "route": "MIA > KYA",
+      "time": "11:02",
+      "date": "2026-02-22",
+      "gate": "A-55",
+      "pilot": "5",
+      "cabinCrew": [
+        "18",
+        "19"
+      ],
+      "status": "Yolcu Alımı"
+    },
+    {
+      "id": "12",
+      "flightNo": "KL-6666",
+      "route": "AMS > LGW",
+      "time": "20:02",
+      "date": "2026-02-22",
+      "gate": "Z-01",
+      "pilot": "3",
+      "cabinCrew": [
+        "6",
+        "7"
+      ],
+      "status": "Yolcu Alımı"
+    },
+    {
+      "id": "13",
+      "flightNo": "AZ-0001",
+      "route": "FCO > LHR",
+      "time": "18:02",
+      "date": "2026-02-22",
+      "gate": "Z-09",
+      "pilot": "5",
+      "cabinCrew": [
+        "13",
+        "15"
+      ],
+      "status": "Zamanında"
+    },
+    {
+      "id": "14",
+      "flightNo": "AZ-0003",
+      "route": "LIN > GZT",
+      "time": "13:02",
+      "date": "2026-02-22",
+      "gate": "G-01",
       "pilot": "4",
+      "cabinCrew": [
+        "9",
+        "22"
+      ],
+      "status": "Yolcu Alımı"
+    },
+    {
+      "id": "15",
+      "flightNo": "SQ-0055",
+      "route": "SIN > IST",
+      "time": "18:02",
+      "date": "2026-02-22",
+      "gate": "B-05",
+      "pilot": "1",
       "cabinCrew": [
         "21",
         "20"
       ],
-      "status": "İptal"
+      "status": "Yolcu Alımı"
     },
     {
-      "id": "30",
-      "flightNo": "AA-0077",
-      "route": "MCO > ADA",
-      "time": "16:18",
-      "date": "2026-02-21",
-      "gate": "B-02",
-      "pilot": "8",
+      "id": "16",
+      "flightNo": "AZ-0055",
+      "route": "MXP > ESB",
+      "time": "19:03",
+      "date": "2026-02-22",
+      "gate": "H-01",
+      "pilot": "4",
       "cabinCrew": [
-        "2",
-        "6"
+        "22",
+        "9"
       ],
-      "status": "İndi"
+      "status": "Yolcu Alımı"
     },
     {
-      "id": "31",
-      "flightNo": "NH-0007",
-      "route": "HND > STN",
-      "time": "15:01",
-      "date": "2026-02-21",
-      "gate": "A-55",
-      "pilot": "10",
+      "id": "17",
+      "flightNo": "SQ-0066",
+      "route": "SIN > ADA",
+      "time": "21:03",
+      "date": "2026-02-22",
+      "gate": "L-03",
+      "pilot": "1",
       "cabinCrew": [
-        "2",
-        "6"
+        "21",
+        "20"
       ],
-      "status": "İndi"
+      "status": "Zamanında"
     },
     {
-      "id": "32",
-      "flightNo": "UA-0008",
-      "route": "IAD > LGW",
-      "time": "18:18",
-      "date": "2026-02-21",
-      "gate": "B-02",
-      "pilot": "10",
-      "cabinCrew": [
-        "2",
-        "6"
-      ],
-      "status": "İndi"
-    },
-    {
-      "id": "33",
-      "flightNo": "TK-0009",
-      "route": "IST > AYT",
-      "time": "19:00",
-      "date": "2026-02-21",
-      "gate": "A-55",
-      "pilot": "10",
-      "cabinCrew": [
-        "2",
-        "6"
-      ],
-      "status": "İndi"
-    },
-    {
-      "id": "34",
-      "flightNo": "TK-0009",
-      "route": "IST > AYT",
-      "time": "19:25",
-      "date": "2026-02-21",
-      "gate": "B-02",
-      "pilot": "10",
-      "cabinCrew": [
-        "2",
-        "6"
-      ],
-      "status": "İndi"
-    },
-    {
-      "id": "35",
-      "flightNo": "TK-0009",
-      "route": "IST > AYT",
-      "time": "19:00",
-      "date": "2026-02-21",
+      "id": "18",
+      "flightNo": "PC-6666",
+      "route": "BJV > DLM",
+      "time": "18:02",
+      "date": "2026-02-22",
       "gate": "A-00",
-      "pilot": "10",
+      "pilot": "14",
       "cabinCrew": [
         "2",
-        "6"
+        "19",
+        "18"
       ],
-      "status": "Gecikmeli"
+      "status": "Zamanında"
     }
   ],
   "airlines": [
@@ -622,761 +598,65 @@
     }
   ],
   "airports": [
-    {
-      "id": "1",
-      "code": "IST",
-      "name": "İstanbul Havalimanı",
-      "countryId": "TR"
-    },
-    {
-      "id": "2",
-      "code": "SAW",
-      "name": "Sabiha Gökçen Havalimanı",
-      "countryId": "TR"
-    },
-    {
-      "id": "3",
-      "code": "ESB",
-      "name": "Ankara Esenboğa",
-      "countryId": "TR"
-    },
-    {
-      "id": "4",
-      "code": "ADB",
-      "name": "İzmir Adnan Menderes",
-      "countryId": "TR"
-    },
-    {
-      "id": "5",
-      "code": "AYT",
-      "name": "Antalya Havalimanı",
-      "countryId": "TR"
-    },
-    {
-      "id": "6",
-      "code": "DLM",
-      "name": "Dalaman Havalimanı",
-      "countryId": "TR"
-    },
-    {
-      "id": "7",
-      "code": "BJV",
-      "name": "Milas-Bodrum Havalimanı",
-      "countryId": "TR"
-    },
-    {
-      "id": "8",
-      "code": "TZX",
-      "name": "Trabzon Havalimanı",
-      "countryId": "TR"
-    },
-    {
-      "id": "9",
-      "code": "GZT",
-      "name": "Gaziantep Havalimanı",
-      "countryId": "TR"
-    },
-    {
-      "id": "10",
-      "code": "ADA",
-      "name": "Adana Şakirpaşa",
-      "countryId": "TR"
-    },
-    {
-      "id": "11",
-      "code": "KYA",
-      "name": "Konya Havalimanı",
-      "countryId": "TR"
-    },
-    {
-      "id": "12",
-      "code": "ASR",
-      "name": "Kayseri Erkilet",
-      "countryId": "TR"
-    },
-    {
-      "id": "13",
-      "code": "LHR",
-      "name": "London Heathrow",
-      "countryId": "UK"
-    },
-    {
-      "id": "14",
-      "code": "LGW",
-      "name": "London Gatwick",
-      "countryId": "UK"
-    },
-    {
-      "id": "15",
-      "code": "STN",
-      "name": "London Stansted",
-      "countryId": "UK"
-    },
-    {
-      "id": "16",
-      "code": "LTN",
-      "name": "London Luton",
-      "countryId": "UK"
-    },
-    {
-      "id": "17",
-      "code": "MAN",
-      "name": "Manchester Airport",
-      "countryId": "UK"
-    },
-    {
-      "id": "18",
-      "code": "CDG",
-      "name": "Paris Charles de Gaulle",
-      "countryId": "FR"
-    },
-    {
-      "id": "19",
-      "code": "ORY",
-      "name": "Paris Orly",
-      "countryId": "FR"
-    },
-    {
-      "id": "20",
-      "code": "NCE",
-      "name": "Nice Côte d'Azur",
-      "countryId": "FR"
-    },
-    {
-      "id": "21",
-      "code": "FRA",
-      "name": "Frankfurt Airport",
-      "countryId": "DE"
-    },
-    {
-      "id": "22",
-      "code": "MUC",
-      "name": "Munich Airport",
-      "countryId": "DE"
-    },
-    {
-      "id": "23",
-      "code": "BER",
-      "name": "Berlin Brandenburg",
-      "countryId": "DE"
-    },
-    {
-      "id": "24",
-      "code": "DUS",
-      "name": "Düsseldorf Airport",
-      "countryId": "DE"
-    },
-    {
-      "id": "25",
-      "code": "HAM",
-      "name": "Hamburg Airport",
-      "countryId": "DE"
-    },
-    {
-      "id": "26",
-      "code": "AMS",
-      "name": "Amsterdam Schiphol",
-      "countryId": "NL"
-    },
-    {
-      "id": "27",
-      "code": "MAD",
-      "name": "Madrid Barajas",
-      "countryId": "ES"
-    },
-    {
-      "id": "28",
-      "code": "BCN",
-      "name": "Barcelona El Prat",
-      "countryId": "ES"
-    },
-    {
-      "id": "29",
-      "code": "AGP",
-      "name": "Málaga Airport",
-      "countryId": "ES"
-    },
-    {
-      "id": "30",
-      "code": "VLC",
-      "name": "Valencia Airport",
-      "countryId": "ES"
-    },
-    {
-      "id": "31",
-      "code": "FCO",
-      "name": "Rome Fiumicino",
-      "countryId": "IT"
-    },
-    {
-      "id": "32",
-      "code": "MXP",
-      "name": "Milan Malpensa",
-      "countryId": "IT"
-    },
-    {
-      "id": "33",
-      "code": "LIN",
-      "name": "Milan Linate",
-      "countryId": "IT"
-    },
-    {
-      "id": "34",
-      "code": "BGY",
-      "name": "Orio al Serio",
-      "countryId": "IT"
-    },
-    {
-      "id": "35",
-      "code": "VCE",
-      "name": "Venice Marco Polo",
-      "countryId": "IT"
-    },
-    {
-      "id": "36",
-      "code": "ZRH",
-      "name": "Zurich Airport",
-      "countryId": "CH"
-    },
-    {
-      "id": "37",
-      "code": "GVA",
-      "name": "Geneva Airport",
-      "countryId": "CH"
-    },
-    {
-      "id": "38",
-      "code": "VIE",
-      "name": "Vienna International",
-      "countryId": "AT"
-    },
-    {
-      "id": "39",
-      "code": "ATH",
-      "name": "Athens International",
-      "countryId": "GR"
-    },
-    {
-      "id": "40",
-      "code": "SKG",
-      "name": "Thessaloniki Airport",
-      "countryId": "GR"
-    },
-    {
-      "id": "41",
-      "code": "CPH",
-      "name": "Copenhagen Airport",
-      "countryId": "DK"
-    },
-    {
-      "id": "42",
-      "code": "OSL",
-      "name": "Oslo Airport",
-      "countryId": "NO"
-    },
-    {
-      "id": "43",
-      "code": "ARN",
-      "name": "Stockholm Arlanda",
-      "countryId": "SE"
-    },
-    {
-      "id": "44",
-      "code": "HEL",
-      "name": "Helsinki-Vantaa",
-      "countryId": "FI"
-    },
-    {
-      "id": "45",
-      "code": "DUB",
-      "name": "Dublin Airport",
-      "countryId": "IE"
-    },
-    {
-      "id": "46",
-      "code": "BRU",
-      "name": "Brussels Airport",
-      "countryId": "BE"
-    },
-    {
-      "id": "47",
-      "code": "LIS",
-      "name": "Lisbon Airport",
-      "countryId": "PT"
-    },
-    {
-      "id": "48",
-      "code": "OPO",
-      "name": "Porto Airport",
-      "countryId": "PT"
-    },
-    {
-      "id": "49",
-      "code": "WAW",
-      "name": "Warsaw Chopin",
-      "countryId": "PL"
-    },
-    {
-      "id": "50",
-      "code": "PRG",
-      "name": "Prague Václav Havel",
-      "countryId": "CZ"
-    },
-    {
-      "id": "51",
-      "code": "BUD",
-      "name": "Budapest Ferenc Liszt",
-      "countryId": "HU"
-    },
-    {
-      "id": "52",
-      "code": "OTP",
-      "name": "Bucharest Henri Coandă",
-      "countryId": "RO"
-    },
-    {
-      "id": "53",
-      "code": "BEG",
-      "name": "Belgrade Nikola Tesla",
-      "countryId": "SRB"
-    },
-    {
-      "id": "54",
-      "code": "SVO",
-      "name": "Moscow Sheremetyevo",
-      "countryId": "RU"
-    },
-    {
-      "id": "55",
-      "code": "DME",
-      "name": "Moscow Domodedovo",
-      "countryId": "RU"
-    },
-    {
-      "id": "56",
-      "code": "VKO",
-      "name": "Moscow Vnukovo",
-      "countryId": "RU"
-    },
-    {
-      "id": "57",
-      "code": "LED",
-      "name": "St. Petersburg Pulkovo",
-      "countryId": "RU"
-    },
-    {
-      "id": "58",
-      "code": "JFK",
-      "name": "New York JFK",
-      "countryId": "US"
-    },
-    {
-      "id": "59",
-      "code": "EWR",
-      "name": "Newark Liberty",
-      "countryId": "US"
-    },
-    {
-      "id": "60",
-      "code": "LGA",
-      "name": "LaGuardia Airport",
-      "countryId": "US"
-    },
-    {
-      "id": "61",
-      "code": "LAX",
-      "name": "Los Angeles International",
-      "countryId": "US"
-    },
-    {
-      "id": "62",
-      "code": "SFO",
-      "name": "San Francisco International",
-      "countryId": "US"
-    },
-    {
-      "id": "63",
-      "code": "ORD",
-      "name": "Chicago O'Hare",
-      "countryId": "US"
-    },
-    {
-      "id": "64",
-      "code": "ATL",
-      "name": "Hartsfield-Jackson Atlanta",
-      "countryId": "US"
-    },
-    {
-      "id": "65",
-      "code": "DFW",
-      "name": "Dallas/Fort Worth",
-      "countryId": "US"
-    },
-    {
-      "id": "66",
-      "code": "DEN",
-      "name": "Denver International",
-      "countryId": "US"
-    },
-    {
-      "id": "67",
-      "code": "SEA",
-      "name": "Seattle-Tacoma",
-      "countryId": "US"
-    },
-    {
-      "id": "68",
-      "code": "MIA",
-      "name": "Miami International",
-      "countryId": "US"
-    },
-    {
-      "id": "69",
-      "code": "MCO",
-      "name": "Orlando International",
-      "countryId": "US"
-    },
-    {
-      "id": "70",
-      "code": "LAS",
-      "name": "Las Vegas Harry Reid",
-      "countryId": "US"
-    },
-    {
-      "id": "71",
-      "code": "BOS",
-      "name": "Boston Logan",
-      "countryId": "US"
-    },
-    {
-      "id": "72",
-      "code": "IAD",
-      "name": "Washington Dulles",
-      "countryId": "US"
-    },
-    {
-      "id": "73",
-      "code": "YYZ",
-      "name": "Toronto Pearson",
-      "countryId": "CA"
-    },
-    {
-      "id": "74",
-      "code": "YVR",
-      "name": "Vancouver International",
-      "countryId": "CA"
-    },
-    {
-      "id": "75",
-      "code": "YUL",
-      "name": "Montréal-Trudeau",
-      "countryId": "CA"
-    },
-    {
-      "id": "76",
-      "code": "DXB",
-      "name": "Dubai International",
-      "countryId": "UAE"
-    },
-    {
-      "id": "77",
-      "code": "AUH",
-      "name": "Abu Dhabi International",
-      "countryId": "UAE"
-    },
-    {
-      "id": "78",
-      "code": "DOH",
-      "name": "Doha Hamad",
-      "countryId": "QA"
-    },
-    {
-      "id": "79",
-      "code": "JED",
-      "name": "Jeddah King Abdulaziz",
-      "countryId": "SA"
-    },
-    {
-      "id": "80",
-      "code": "RUH",
-      "name": "Riyadh King Khalid",
-      "countryId": "SA"
-    },
-    {
-      "id": "81",
-      "code": "TLV",
-      "name": "Tel Aviv Ben Gurion",
-      "countryId": "IL"
-    },
-    {
-      "id": "82",
-      "code": "HND",
-      "name": "Tokyo Haneda",
-      "countryId": "JP"
-    },
-    {
-      "id": "83",
-      "code": "NRT",
-      "name": "Tokyo Narita",
-      "countryId": "JP"
-    },
-    {
-      "id": "84",
-      "code": "KIX",
-      "name": "Kansai International",
-      "countryId": "JP"
-    },
-    {
-      "id": "85",
-      "code": "ICN",
-      "name": "Seoul Incheon",
-      "countryId": "KR"
-    },
-    {
-      "id": "86",
-      "code": "GMP",
-      "name": "Seoul Gimpo",
-      "countryId": "KR"
-    },
-    {
-      "id": "87",
-      "code": "PEK",
-      "name": "Beijing Capital",
-      "countryId": "CN"
-    },
-    {
-      "id": "88",
-      "code": "PKX",
-      "name": "Beijing Daxing",
-      "countryId": "CN"
-    },
-    {
-      "id": "89",
-      "code": "PVG",
-      "name": "Shanghai Pudong",
-      "countryId": "CN"
-    },
-    {
-      "id": "90",
-      "code": "SHA",
-      "name": "Shanghai Hongqiao",
-      "countryId": "CN"
-    },
-    {
-      "id": "91",
-      "code": "CAN",
-      "name": "Guangzhou Baiyun",
-      "countryId": "CN"
-    },
-    {
-      "id": "92",
-      "code": "HKG",
-      "name": "Hong Kong International",
-      "countryId": "CN"
-    },
-    {
-      "id": "93",
-      "code": "SIN",
-      "name": "Singapore Changi",
-      "countryId": "SG"
-    },
-    {
-      "id": "94",
-      "code": "BKK",
-      "name": "Bangkok Suvarnabhumi",
-      "countryId": "TH"
-    },
-    {
-      "id": "95",
-      "code": "DMK",
-      "name": "Bangkok Don Mueang",
-      "countryId": "TH"
-    },
-    {
-      "id": "96",
-      "code": "HKT",
-      "name": "Phuket International",
-      "countryId": "TH"
-    },
-    {
-      "id": "97",
-      "code": "KUL",
-      "name": "Kuala Lumpur International",
-      "countryId": "MY"
-    },
-    {
-      "id": "98",
-      "code": "CGK",
-      "name": "Jakarta Soekarno-Hatta",
-      "countryId": "ID"
-    },
-    {
-      "id": "99",
-      "code": "DPS",
-      "name": "Bali Ngurah Rai",
-      "countryId": "ID"
-    },
-    {
-      "id": "100",
-      "code": "MNL",
-      "name": "Manila Ninoy Aquino",
-      "countryId": "PH"
-    },
-    {
-      "id": "101",
-      "code": "SGN",
-      "name": "Ho Chi Minh City",
-      "countryId": "VN"
-    },
-    {
-      "id": "102",
-      "code": "HAN",
-      "name": "Hanoi Noi Bai",
-      "countryId": "VN"
-    },
-    {
-      "id": "103",
-      "code": "DEL",
-      "name": "Delhi Indira Gandhi",
-      "countryId": "IN"
-    },
-    {
-      "id": "104",
-      "code": "BOM",
-      "name": "Mumbai Chhatrapati Shivaji",
-      "countryId": "IN"
-    },
-    {
-      "id": "105",
-      "code": "BLR",
-      "name": "Bengaluru Kempegowda",
-      "countryId": "IN"
-    },
-    {
-      "id": "106",
-      "code": "SYD",
-      "name": "Sydney Kingsford Smith",
-      "countryId": "AU"
-    },
-    {
-      "id": "107",
-      "code": "MEL",
-      "name": "Melbourne Airport",
-      "countryId": "AU"
-    },
-    {
-      "id": "108",
-      "code": "BNE",
-      "name": "Brisbane Airport",
-      "countryId": "AU"
-    },
-    {
-      "id": "109",
-      "code": "AKL",
-      "name": "Auckland Airport",
-      "countryId": "NZ"
-    },
-    {
-      "id": "110",
-      "code": "JNB",
-      "name": "Johannesburg O.R. Tambo",
-      "countryId": "ZA"
-    },
-    {
-      "id": "111",
-      "code": "CPT",
-      "name": "Cape Town International",
-      "countryId": "ZA"
-    },
-    {
-      "id": "112",
-      "code": "CAI",
-      "name": "Cairo International",
-      "countryId": "EG"
-    },
-    {
-      "id": "113",
-      "code": "CMN",
-      "name": "Casablanca Mohammed V",
-      "countryId": "MA"
-    },
-    {
-      "id": "114",
-      "code": "GRU",
-      "name": "São Paulo Guarulhos",
-      "countryId": "BR"
-    },
-    {
-      "id": "115",
-      "code": "GIG",
-      "name": "Rio de Janeiro Galeão",
-      "countryId": "BR"
-    },
-    {
-      "id": "116",
-      "code": "BOG",
-      "name": "Bogotá El Dorado",
-      "countryId": "CO"
-    },
-    {
-      "id": "117",
-      "code": "LIM",
-      "name": "Lima Jorge Chávez",
-      "countryId": "PE"
-    },
-    {
-      "id": "118",
-      "code": "SCL",
-      "name": "Santiago de Chile",
-      "countryId": "CL"
-    },
-    {
-      "id": "119",
-      "code": "EZE",
-      "name": "Buenos Aires Ezeiza",
-      "countryId": "AR"
-    },
-    {
-      "id": "120",
-      "code": "MEX",
-      "name": "Mexico City International",
-      "countryId": "MX"
-    },
-    {
-      "id": "121",
-      "code": "CUN",
-      "name": "Cancún International",
-      "countryId": "MX"
-    },
-    {
-      "id": "122",
-      "code": "PTY",
-      "name": "Panama City Tocumen",
-      "countryId": "PA"
-    }
-  ],
+    { "id": "1", "code": "IST", "name": "İstanbul Havalimanı", "countryId": "TR", "cityId": "city-ist" },
+    { "id": "2", "code": "SAW", "name": "Sabiha Gökçen Havalimanı", "countryId": "TR", "cityId": "city-ist" },
+    { "id": "3", "code": "ESB", "name": "Ankara Esenboğa", "countryId": "TR", "cityId": "city-ank" },
+    { "id": "4", "code": "ADB", "name": "İzmir Adnan Menderes", "countryId": "TR", "cityId": "city-izmir" },
+    { "id": "5", "code": "AYT", "name": "Antalya Havalimanı", "countryId": "TR", "cityId": "city-ant" },
+    { "id": "6", "code": "DLM", "name": "Dalaman Havalimanı", "countryId": "TR", "cityId": "city-dlm" },
+    { "id": "7", "code": "BJV", "name": "Milas-Bodrum Havalimanı", "countryId": "TR", "cityId": "city-bjv" },
+    { "id": "8", "code": "TZX", "name": "Trabzon Havalimanı", "countryId": "TR", "cityId": "city-trz" },
+    { "id": "9", "code": "GZT", "name": "Gaziantep Havalimanı", "countryId": "TR", "cityId": "city-gzt" },
+    { "id": "10", "code": "ADA", "name": "Adana Şakirpaşa", "countryId": "TR", "cityId": "city-adn" },
+    { "id": "11", "code": "KYA", "name": "Konya Havalimanı", "countryId": "TR", "cityId": "city-kon" },
+    { "id": "12", "code": "ASR", "name": "Kayseri Erkilet", "countryId": "TR", "cityId": "city-kay" },
+    { "id": "13", "code": "LHR", "name": "London Heathrow", "countryId": "UK", "cityId": "city-lon" },
+    { "id": "14", "code": "LGW", "name": "London Gatwick", "countryId": "UK", "cityId": "city-lon" },
+    { "id": "15", "code": "STN", "name": "London Stansted", "countryId": "UK", "cityId": "city-lon" },
+    { "id": "16", "code": "LTN", "name": "London Luton", "countryId": "UK", "cityId": "city-lon" },
+    { "id": "17", "code": "MAN", "name": "Manchester Airport", "countryId": "UK", "cityId": "city-man" },
+    { "id": "18", "code": "CDG", "name": "Paris Charles de Gaulle", "countryId": "FR", "cityId": "city-par" },
+    { "id": "19", "code": "ORY", "name": "Paris Orly", "countryId": "FR", "cityId": "city-par" },
+    { "id": "20", "code": "NCE", "name": "Nice Côte d'Azur", "countryId": "FR", "cityId": "city-nice" },
+    { "id": "21", "code": "FRA", "name": "Frankfurt Airport", "countryId": "DE", "cityId": "city-fra" },
+    { "id": "22", "code": "MUC", "name": "Munich Airport", "countryId": "DE", "cityId": "city-muc" },
+    { "id": "23", "code": "BER", "name": "Berlin Brandenburg", "countryId": "DE", "cityId": "city-ber" },
+    { "id": "24", "code": "DUS", "name": "Düsseldorf Airport", "countryId": "DE", "cityId": "city-dus" },
+    { "id": "25", "code": "HAM", "name": "Hamburg Airport", "countryId": "DE", "cityId": "city-ham" },
+    { "id": "26", "code": "AMS", "name": "Amsterdam Schiphol", "countryId": "NL", "cityId": "city-ams" },
+    { "id": "31", "code": "FCO", "name": "Rome Fiumicino", "countryId": "IT", "cityId": "city-rom" },
+    { "id": "32", "code": "MXP", "name": "Milan Malpensa", "countryId": "IT", "cityId": "city-mil" },
+    { "id": "33", "code": "LIN", "name": "Milan Linate", "countryId": "IT", "cityId": "city-mil" },
+    { "id": "58", "code": "JFK", "name": "New York JFK", "countryId": "US", "cityId": "city-nyc" },
+    { "id": "59", "code": "EWR", "name": "Newark Liberty", "countryId": "US", "cityId": "city-nyc" },
+    { "id": "60", "code": "LGA", "name": "LaGuardia Airport", "countryId": "US", "cityId": "city-nyc" },
+    { "id": "85", "code": "ICN", "name": "Seoul Incheon", "countryId": "KR", "cityId": "city-sel" },
+    { "id": "86", "code": "GMP", "name": "Seoul Gimpo", "countryId": "KR", "cityId": "city-sel" },
+    { "id": "87", "code": "PEK", "name": "Beijing Capital", "countryId": "CN", "cityId": "city-pei" },
+    { "id": "88", "code": "PKX", "name": "Beijing Daxing", "countryId": "CN", "cityId": "city-pei" }
+],
   "personnel": [
     {
       "id": "1",
       "name": "Pilot 03",
       "role": "Pilot",
       "flightHours": 0,
-      "dailyFlightHours": 0,
-      "fatiguePoint": 0,
+      "dailyFlightHours": 2,
+      "fatiguePoint": 23,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-21"
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "2",
       "name": "Pilot 02",
       "role": "Kabin Memuru",
       "flightHours": 0,
-      "dailyFlightHours": 10.1,
-      "fatiguePoint": 90,
-      "status": "Yorgun",
-      "risk": "Yüksek",
-      "lastUpdate": "2026-02-21"
+      "dailyFlightHours": 4,
+      "fatiguePoint": 38,
+      "status": "Müsait",
+      "risk": "Düşük",
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "3",
@@ -1387,7 +667,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-21"
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "4",
@@ -1398,7 +678,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-21"
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "5",
@@ -1409,29 +689,29 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-21"
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "6",
       "name": "Burak Aktaş",
       "role": "Kabin Memuru",
       "flightHours": 0,
-      "dailyFlightHours": 10.1,
-      "fatiguePoint": 90,
-      "status": "Yorgun",
-      "risk": "Yüksek",
-      "lastUpdate": "2026-02-21"
+      "dailyFlightHours": 4,
+      "fatiguePoint": 38,
+      "status": "Müsait",
+      "risk": "Düşük",
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "7",
       "name": "Hasan Yılmaz",
       "role": "Kabin Memuru",
       "flightHours": 0,
-      "dailyFlightHours": 0,
-      "fatiguePoint": 0,
+      "dailyFlightHours": 2,
+      "fatiguePoint": 15,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-21"
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "8",
@@ -1442,40 +722,40 @@
       "fatiguePoint": 15,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-21"
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "9",
       "name": "Pelin Birköse",
       "role": "Kabin Memuru",
       "flightHours": 0,
-      "dailyFlightHours": 2,
-      "fatiguePoint": 15,
+      "dailyFlightHours": 0,
+      "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-21"
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "10",
       "name": "Canberk Özkaynak",
       "role": "Pilot",
       "flightHours": 0,
-      "dailyFlightHours": 8.1,
-      "fatiguePoint": 75,
+      "dailyFlightHours": 0,
+      "fatiguePoint": 0,
       "status": "Müsait",
-      "risk": "Orta",
-      "lastUpdate": "2026-02-21"
+      "risk": "Düşük",
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "11",
       "name": "Sude Uykun",
       "role": "Kabin Memuru",
       "flightHours": 0,
-      "dailyFlightHours": 2,
-      "fatiguePoint": 15,
+      "dailyFlightHours": 0,
+      "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-21"
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "12",
@@ -1486,7 +766,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-21"
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "13",
@@ -1497,18 +777,18 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-21"
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "14",
       "name": "Meryem Çelik",
       "role": "Pilot",
       "flightHours": 0,
-      "dailyFlightHours": 2,
-      "fatiguePoint": 15,
+      "dailyFlightHours": 0,
+      "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-21"
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "15",
@@ -1519,7 +799,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-21"
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "16",
@@ -1530,7 +810,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-21"
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "17",
@@ -1541,7 +821,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-21"
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "18",
@@ -1552,7 +832,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-21"
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "19",
@@ -1563,7 +843,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-21"
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "20",
@@ -1574,7 +854,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-21"
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "21",
@@ -1585,13 +865,13 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-21"
+      "lastUpdate": "2026-02-22"
     },
     {
       "id": "22",
       "name": "Ayşe Dündar",
       "role": "Kabin Memuru",
-      "lastUpdate": "2026-02-21",
+      "lastUpdate": "2026-02-22",
       "flightHours": 0,
       "dailyFlightHours": 0,
       "fatiguePoint": 0,

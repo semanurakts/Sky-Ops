@@ -7,6 +7,41 @@ let globalAirlines = [];
 let globalCountries = []; 
 let routeDurations = [];
 
+// --- ÖZEL MODAL YÖNETİCİSİ (Dinamik Butonlu) ---
+let confirmCallback = null;
+let cancelCallback = null; // Vazgeçme durumunu yönetmek için eklendi
+
+// --- 1. MODAL YÖNETİCİSİ (Metin parametresi eklendi) ---
+function showConfirmModal(title, body, callback, onCancel = null, isDeleteAction = false, btnText = "Onayla") {
+    document.getElementById('confirmModalTitle').innerText = title;
+    document.getElementById('confirmModalBody').innerText = body;
+    
+    const confirmBtn = document.getElementById('confirmBtnAction');
+    const confirmIconContainer = document.querySelector('#confirmModal .mb-3'); // İkonun olduğu div
+    confirmBtn.innerText = btnText;
+    
+    // Sınıfları temizle
+    confirmBtn.className = "btn rounded-pill px-4 ";
+    confirmIconContainer.className = "mb-3 ";
+
+    if (isDeleteAction) {
+        confirmBtn.classList.add('btn-danger');
+        confirmIconContainer.classList.add('text-danger');
+    } else if (btnText === "Güncelle") {
+        // GÜNCELLEME MODU: YEŞİL YAP
+        confirmBtn.classList.add('btn-success');
+        confirmIconContainer.classList.add('text-success');
+    } else {
+        confirmBtn.classList.add('btn-primary');
+        confirmIconContainer.classList.add('text-primary');
+    }
+
+    confirmCallback = callback;
+    cancelCallback = onCancel;
+    const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    modal.show();
+}
+
 // --- BURAYA EKLİYORSUN: TARİH YARDIMCILARI ---
 const getFormattedDate = (offset = 0) => {
     const d = new Date();
@@ -31,23 +66,37 @@ let tempHour = "";
 let selectedCrewIds = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Canlı saat döngüsü
     setInterval(() => {
         const clock = document.getElementById('liveClock');
         if(clock) clock.textContent = new Date().toLocaleTimeString('tr-TR');
     }, 1000);
 
+    // --- YENİ: MODAL ÜZERİNDEKİ "EVET" BUTONU DİNLEYİCİSİ ---
+    // Bu dinleyiciyi veriler yüklenmeden hemen önce tanımlıyoruz ki her an tetiklenmeye hazır olsun.
+    document.getElementById('confirmBtnAction')?.addEventListener('click', () => {
+        if (confirmCallback) confirmCallback(); // Hafızaya aldığımız silme fonksiyonunu çalıştırır.
+        const modalEl = document.getElementById('confirmModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalEl);
+        if (modalInstance) modalInstance.hide(); // İşlem başlayınca modalı kapatır.
+    });
+    // -------------------------------------------------------
+
+    // 2. Verilerin sunucudan çekilmesi
     await loadPersonnelData();   
-    await loadDropdownData();    
+    await loadDropdownData();   
+    renderAirlineOptions(globalAirlines); 
     await fetchFlights(); 
     await fetchRouteDurations(); 
 
-    // --- BURAYA EKLİYORSUN ---
-    await handleDailyReset(); // Sayfa açıldığında dünden kalan uçuşları ve yorgunlukları temizle
-    // -------------------------
+    // 3. Günlük operasyonel sıfırlama kontrolü
+    await handleDailyReset(); 
 
+    // 4. Form ve Saat seçici kontrollerinin kurulması
     setupFormControls();
     setupTimePicker(); 
 
+    // 5. Kayıt modalı kapandığında formu temizleme dinleyicisi
     const modalEl = document.getElementById('addFlightModal');
     if (modalEl) {
         modalEl.addEventListener('hidden.bs.modal', () => resetFlightForm());
@@ -218,36 +267,42 @@ function setupFormControls() {
     const addFlightForm = document.getElementById('addFlightForm');
     const flightNumInput = document.getElementById('flightNumberInput');
     const airlineInput = document.getElementById('airlineCodeInput');
+    // Kutuyu 3 karaktere zorla
+    if(airlineInput) airlineInput.setAttribute('maxlength', '3'); 
+
+    airlineInput?.addEventListener('input', (e) => {
+        let val = e.target.value;
+        const charMap = { 'i': 'I', 'İ': 'I', 'ı': 'I', 'ğ': 'G', 'Ğ': 'G', 'ü': 'U', 'Ü': 'U', 'ş': 'S', 'Ş': 'S', 'ö': 'O', 'Ö': 'O', 'ç': 'C', 'Ç': 'C' };
+        
+        // Türkçe eşleme + Büyük harf + Sayı/Harf izni + Max 3 karakter
+        let correctedVal = val.split('').map(char => charMap[char] || char).join('').toUpperCase();
+        correctedVal = correctedVal.replace(/[^A-Z0-9]/g, '').substring(0, 3);
+        e.target.value = correctedVal;
+
+        // Yazdıkça filtrele
+        const filtered = globalAirlines.filter(a => a.code.startsWith(correctedVal));
+        renderAirlineOptions(filtered);
+    });
     const originSelect = document.getElementById('originInput');
     const destSelect = document.getElementById('destinationInput');
     const gateInput = document.getElementById('gate');
     const pilotSelect = document.getElementById('pilotName');
     const statusSelect = document.getElementById('flightStatus');
 
-    // 1. STATÜ DEĞİŞİKLİĞİ DİNLEYİCİSİ
-    statusSelect?.addEventListener('change', (e) => {
-        const newVal = e.target.value;
-        if (!isEditing && newVal === "İndi") {
-            alert("⚠️ Yeni eklenen bir uçuş henüz kalkmadan 'İndi' olarak girilemez!");
-            e.target.value = "Zamanında";
-            return;
-        }
-        if (newVal === "İptal") {
-            const confirmCancel = confirm("UYARI: Statüyü 'İptal' olarak seçtiniz...\nDevam etmek istiyor musunuz?");
-            if (!confirmCancel) {
-                e.target.value = isEditing ? allFlights.find(f => f.id === editingFlightId).status : "Zamanında";
-                return;
-            }
-        }
-        if (newVal === "İndi") {
-            const confirmLanded = confirm("BİLGİ: Statüyü 'İndi' olarak seçtiniz...\nOnaylıyor musunuz?");
-            if (!confirmLanded) {
-                e.target.value = isEditing ? allFlights.find(f => f.id === editingFlightId).status : "Zamanında";
-                return;
-            }
-        }
-        populateCrewSelects();
-    });
+// --- STATÜ DEĞİŞİKLİĞİ DİNLEYİCİSİ (SADELEŞTİRİLDİ) ---
+statusSelect?.addEventListener('change', (e) => {
+    const newVal = e.target.value;
+
+    // Sadece 'İndi' engeli (Yeni ekleme için geçerli)
+    if (!isEditing && newVal === "İndi") {
+        alert("⚠️ Yeni eklenen bir uçuş henüz kalkmadan 'İndi' olarak girilemez!");
+        e.target.value = "Zamanında";
+        return;
+    }
+
+    // Seçim yapıldığında sadece ekip listesini tazele, pop-up çıkarma!
+    populateCrewSelects();
+});
 
     // 2. ARAMA VE DURUM FİLTRESİ DİNLEYİCİLERİ
     document.getElementById('globalSearchInput')?.addEventListener('input', (e) => { 
@@ -297,32 +352,32 @@ function setupFormControls() {
         }
     });
 
-    // --- GÜNCELLENMİŞ HAVAYOLU KODU GİRİŞİ (Küçük -> Büyük ve Türkçe Karakter Düzeltme) ---
-    airlineInput?.addEventListener('input', (e) => {
-        let val = e.target.value;
+    // --- 1. HAVAYOLU GİRİŞ ALANI (Harf, Sayı, Max 3 Karakter ve Türkçe Eşleme) ---
+airlineInput?.addEventListener('input', (e) => {
+    let val = e.target.value;
 
-        // 1. Önce küçük i'leri ve noktalı İ'leri I'ya çevir (Havacılık standardı)
-        val = val.replace(/i/g, 'i').replace(/İ/g, 'I').replace(/ı/g, 'I');
+    // Türkçe karakterleri manuel olarak havacılık standartlarına eşliyoruz
+    const charMap = {
+        'i': 'I', 'İ': 'I', 'ı': 'I',
+        'ğ': 'G', 'Ğ': 'G', 
+        'ü': 'U', 'Ü': 'U', 
+        'ş': 'S', 'Ş': 'S', 
+        'ö': 'O', 'Ö': 'O', 
+        'ç': 'C', 'Ç': 'C'
+    };
+    
+    // Her karakteri kontrol et, eşle ve büyük harfe çevir
+    let correctedVal = val.split('').map(char => charMap[char] || char).join('').toUpperCase();
 
-        // 2. Diğer Türkçe karakterleri manuel eşle
-        const charMap = {
-            'ğ': 'G', 'Ğ': 'G', 
-            'ü': 'U', 'Ü': 'U', 
-            'ş': 'S', 'Ş': 'S', 
-            'ö': 'O', 'Ö': 'O', 
-            'ç': 'C', 'Ç': 'C'
-        };
+    // Sadece A-Z ve 0-9 karakterlerine izin ver, MAX 3 karakterde kes
+    correctedVal = correctedVal.replace(/[^A-Z0-9]/g, '').substring(0, 3);
+    
+    e.target.value = correctedVal;
 
-        let correctedVal = val.split('').map(char => charMap[char] || char).join('');
+    // db.json üzerinde anlık filtreleme yap
+    const filteredAirlines = globalAirlines.filter(a => a.code.startsWith(correctedVal));
+    renderAirlineOptions(filteredAirlines);
 
-        // 3. Küçük harfleri BÜYÜK harfe çevir ve sadece A-Z arası harflere izin ver
-        correctedVal = correctedVal.toUpperCase().replace(/[^A-Z]/g, '');
-        
-        e.target.value = correctedVal;
-
-        // Filtreleme ve Dropdown işlemlerine devam et
-        const filteredAirlines = globalAirlines.filter(a => a.code.startsWith(correctedVal));
-        renderAirlineOptions(filteredAirlines);
         
         const selected = globalAirlines.find(a => a.code === correctedVal);
         if (selected && selected.countryId) {
@@ -334,19 +389,27 @@ function setupFormControls() {
     });
 
     const checkRoute = () => {
-        const origin = originSelect.value;
-        const dest = destSelect.value;
-        if (origin && dest) {
-            const istanbulPorts = ["IST", "SAW"];
-            let isSameCity = false;
-            if (istanbulPorts.includes(origin) && istanbulPorts.includes(dest)) isSameCity = true;
-            if (origin === dest) isSameCity = true;
-            if (isSameCity) {
-                alert("⚠️ Aynı şehir içindeki havalimanları arasında uçuş planlanamaz!");
-                destSelect.value = "";
-            }
+    const origin = originSelect.value;
+    const dest = destSelect.value;
+
+    if (origin && dest) {
+        // 1. Aynı havalimanı kontrolü
+        if (origin === dest) {
+            alert("⚠️ Kalkış ve varış noktası aynı havalimanı olamaz!");
+            destSelect.value = "";
+            return;
         }
-    };
+
+        // 2. CityID bazlı akıllı şehir kontrolü
+        const originData = globalAirports.find(a => a.code === origin);
+        const destData = globalAirports.find(a => a.code === dest);
+
+        if (originData && destData && originData.cityId === destData.cityId) {
+            alert(`⚠️ AYNI ŞEHİR ENGELİ: Bu havalimanları aynı operasyonel bölgeye (${originData.cityId}) hizmet verdiği için uçuş planlanamaz!`);
+            destSelect.value = "";
+        }
+    }
+};
     originSelect?.addEventListener('change', checkRoute);
     destSelect?.addEventListener('change', checkRoute);
 
@@ -368,192 +431,123 @@ flightNumInput?.addEventListener('blur', (e) => {
     }
 });
 
-    addFlightForm.addEventListener('submit', async (e) => {
+addFlightForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-    // --- BURAYA EKLİYORUZ: WORKFLOW (DURUM GEÇİŞ) KONTROLLERİ ---
-    const oldFlight = isEditing ? allFlights.find(f => f.id === editingFlightId) : null;
-    const newStatus = statusSelect.value;
-
-    if (isEditing && oldFlight) {
-        // 1. İptal edilmiş bir uçuş hiçbir şeye dönemez
-        if (oldFlight.status === "İptal" && newStatus !== "İptal") {
-            alert("⚠️ İptal edilmiş bir uçuş tekrar aktif edilemez!");
-            return;
-        }
-
-        // 2. İnmiş bir uçuş hiçbir şeye dönemez
-        if (oldFlight.status === "İndi" && newStatus !== "İndi") {
-            alert("⚠️ Uçuş 'İndi' durumuna ulaştıktan sonra geçmişe dönük değiştirilemez!");
-            return;
-        }
-
-        // 3. İptal edilmiş bir uçuş "İndi" yapılamaz
-        if (oldFlight.status === "İptal" && newStatus === "İndi") {
-            alert("⚠️ Hiç gerçekleşmemiş (İptal edilmiş) bir uçuş 'İndi' olarak işaretlenemez!");
-            return;
-        }
-    }
-
-    // --- 2. ADIM: BURAYA EKLİYORUZ: ÇAKIŞMA ÖNLEYİCİ FİLTRE (CONFLICT PREVENTION) ---
-        const newFlightNo = `${airlineInput.value}-${flightNumInput.value.padStart(4, '0')}`;
-        const newGate = gateInput.value;
-        const newOrigin = originSelect.value;
-        const newDest = destSelect.value;
-        const newTime = document.getElementById('flightTime').value; // flightTime değişkeni aşağıda tanımlı, burada formdan alıyoruz
+        // --- 1. DEĞİŞKENLERİ HAZIRLA ---
+        const newStatus = document.getElementById('flightStatus').value;
+        const airlineCode = document.getElementById('airlineCodeInput').value;
+        const flightNum = document.getElementById('flightNumberInput').value.padStart(4, '0');
+        const newFlightNo = `${airlineCode}-${flightNum}`;
+        const newGate = document.getElementById('gate').value;
+        const newOrigin = document.getElementById('originInput').value;
+        const newDest = document.getElementById('destinationInput').value;
+        const newTime = document.getElementById('flightTime').value;
         const newTimeMins = timeToMinutes(newTime);
+        const pilotId = document.getElementById('pilotName').value;
+        const selectedDayVal = document.querySelector('input[name="flightDay"]:checked').value;
+        const flightDate = selectedDayVal === 'today' ? TODAY_DATE : TOMORROW_DATE;
 
-        // ROTA KONTROLÜ (Aynı yer olamaz)
-        if (newOrigin === newDest) {
-            alert("⚠️ HATA: Kalkış ve Varış noktası aynı olamaz!");
-            return;
-        }
-
+        // --- 2. KAPI VE UÇUŞ NO ÇAKIŞMA TESTİ (SENARYO 3'Ü KURTARAN KISIM) ---
         const conflict = allFlights.find(f => {
             if (isEditing && f.id === editingFlightId) return false; 
             if (f.status === "İptal" || f.status === "İndi") return false; 
 
-            // AYNI UÇUŞ NUMARASI (Duplicate Flight Number)
+            // Aynı Uçuş Numarası Kontrolü
             if (f.flightNo === newFlightNo) {
-                alert(`⚠️ HATA: ${newFlightNo} numaralı uçuş şu an zaten aktif!`);
+                alert(`⚠️ HATA: ${newFlightNo} numaralı uçuş zaten aktif!`);
                 return true;
             }
 
-            // KAPI ÇAKIŞMASI (Gate Conflict)
-            const fOrigin = f.route.split(' > ')[0];
+            // Kapı Çakışması Kontrolü (Aynı gün, aynı kalkış yeri, aynı kapı, 45 dk kuralı)
             const fTimeMins = timeToMinutes(f.time);
             const timeDiff = Math.abs(fTimeMins - newTimeMins);
+            const fOrigin = f.route.split(' > ')[0];
 
-            if (fOrigin === newOrigin && f.gate === newGate && timeDiff < 45) {
+            if (f.date === flightDate && fOrigin === newOrigin && f.gate === newGate && timeDiff < 45) {
                 alert(`⚠️ KAPI ÇAKIŞMASI: ${newGate} numaralı kapı ${f.time} saatindeki uçuş tarafından kullanılıyor! (En az 45 dk ara olmalı)`);
                 return true;
             }
             return false;
         });
+        if (conflict) return;
 
-        if (conflict) return; 
-        // -----------------------------------------------------------------------------
-
-    // 3. ADIM: MEVCUT KONTROLLERİN DEVAMI (Pilot/Ekip meşguliyet vb.)
-
-    // Mevcut kodların buradan itibaren devam ediyor...
-    const pilotValue = pilotSelect.value;
-    const statusValue = statusSelect.value;
-    const flightTime = document.getElementById('flightTime').value;
-
-        const gateRegex = /^[A-Z]-[0-9]+$/;
-        if (!gateRegex.test(gateInput.value)) {
-            alert("⚠️ Lütfen geçerli bir kapı numarası giriniz! (Örnek: A-01)");
-            gateInput.focus();
-            return;
-        }
-
-        const pilotBusy = getBusyStatus(pilotValue, flightTime);
+        // --- 3. PİLOT VE EKİP MEŞGULİYET TESTİ ---
+        const pilotBusy = getBusyStatus(pilotId, newTime, flightDate);
         if (pilotBusy.busy) {
-            alert(`⚠️ Seçilen pilot bu saatte uygun değil! ${pilotBusy.msg}`);
+            alert(`⚠️ Seçilen pilot bu saatte başka bir uçuşta meşgul!`);
             return;
         }
 
-        for (let crewId of selectedCrewIds) {
-            const crewBusy = getBusyStatus(crewId, flightTime);
-            if (crewBusy.busy) {
-                alert(`⚠️ Kabin ekibinden bir personel bu saatte uygun değil!`);
-                return;
-            }
+        // --- 4. KABİN EKİBİ SAYI KONTROLÜ (MİN 2 - MAX 8) ---
+        if (selectedCrewIds.length < 2) {
+            alert("⚠️ EKSİK EKİP: Bir uçuş planlayabilmek için en az 2 kabin memuru seçmelisiniz!");
+            return; // Kaydı durdurur
         }
 
-        if (!pilotValue || pilotValue === "") { alert("Lütfen geçerli bir pilot seçiniz!"); pilotSelect.focus(); return; }
-        if (!statusValue || statusValue === "") { alert("Lütfen geçerli bir uçuş durumu seçiniz!"); statusSelect.focus(); return; }
-        if (!flightTime) { alert("Lütfen uçuş saatini seçiniz!"); return; }
-        if (selectedCrewIds.length < 2 || selectedCrewIds.length > 8) { document.getElementById('crewValidationMsg').classList.remove('d-none'); 
-            return; 
+        if (selectedCrewIds.length > 8) {
+            alert("⚠️ FAZLA EKİP: Bir uçuş için en fazla 8 kabin memuru seçilebilir!");
+            return; // Kaydı durdurur
         }
-        
-        const routeId = `${originSelect.value}-${destSelect.value}`;
+
+        // --- 4. ROTA SÜRESİ HESAPLA ---
+        const routeId = `${newOrigin}-${newDest}`;
         const routeData = routeDurations.find(r => r.id === routeId);
-        const duration = routeData ? routeData.duration : 2.0;
-
-        // --- BURAYA EKLİYORSUN: GÜN SEÇİMİ VE PAYLOAD GÜNCELLEMESİ ---
-        const selectedDayVal = document.querySelector('input[name="flightDay"]:checked').value;
-        const flightDate = selectedDayVal === 'today' ? TODAY_DATE : TOMORROW_DATE;
+        const duration = routeData ? parseFloat(routeData.duration) : 2.0;
 
         const payload = {
             id: isEditing ? editingFlightId : (allFlights.length > 0 ? (Math.max(...allFlights.map(f => parseInt(f.id))) + 1).toString() : "1"),
-            flightNo: `${airlineInput.value}-${flightNumInput.value.padStart(4, '0')}`,
-            route: `${originSelect.value} > ${destSelect.value}`,
-            time: flightTime,
-            date: flightDate, // Yeni eklenen tarih alanı
-            gate: gateInput.value,
-            pilot: pilotValue,
+            flightNo: newFlightNo,
+            route: `${newOrigin} > ${newDest}`,
+            time: newTime,
+            date: flightDate,
+            gate: newGate,
+            pilot: pilotId,
             cabinCrew: selectedCrewIds,
-            status: statusValue
+            status: newStatus
         };
 
-        const method = isEditing ? 'PUT' : 'POST';
-        const url = isEditing ? `${API_BASE_URL}/flights/${editingFlightId}` : `${API_BASE_URL}/flights`;
+        // --- 5. ASIL KAYIT VE YORGUNLUK MOTORU (GÜVENLİ LİMAN) ---
+        const handleFlightSave = async () => {
+            const method = isEditing ? 'PUT' : 'POST';
+            const url = isEditing ? `${API_BASE_URL}/flights/${editingFlightId}` : `${API_BASE_URL}/flights`;
+            const res = await fetch(url, { method, headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
 
-        const res = await fetch(url, {
-            method: method,
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(payload)
-        });
+            if (res.ok) {
+                if (payload.status === "İndi") {
+                    const teamIds = [payload.pilot, ...payload.cabinCrew];
+                    const flightHour = parseInt(payload.time.split(':')[0]);
+                    let nightMultiplier = (flightHour >= 0 && flightHour < 6) ? 1.5 : 1.0;
 
-        if (res.ok) {
-            // --- GÜNCEL YORGUNLUK VE DURUM MANTIĞI ---
-            if (statusValue === "İndi") {
-    const teamIds = [pilotValue, ...selectedCrewIds];
-    
-    // --- GECE UÇUŞU PRİMİ HESAPLAMA ---
-    const flightTime = document.getElementById('flightTime').value; // Örn: "02:30"
-    const flightHour = parseInt(flightTime.split(':')[0]);
-    
-    let nightMultiplier = 1.0;
-    // Eğer saat 00:00 ile 06:00 arasındaysa yorgunluğu 1.5 ile çarp
-    if (flightHour >= 0 && flightHour < 6) {
-        nightMultiplier = 1.5;
-    }
-    // ----------------------------------
+                    for (const personId of teamIds) {
+                        const pRes = await fetch(`${API_BASE_URL}/personnel/${personId}`);
+                        const pData = await pRes.json();
+                        const addedFatigue = Math.round((duration <= 2.5 ? 15 : 20) * nightMultiplier);
+                        
+                        await fetch(`${API_BASE_URL}/personnel/${personId}`, {
+                            method: 'PATCH',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({
+                                dailyFlightHours: parseFloat(((pData.dailyFlightHours || 0) + duration).toFixed(1)),
+                                fatiguePoint: Math.min((pData.fatiguePoint || 0) + addedFatigue, 100),
+                                status: ((pData.fatiguePoint || 0) + addedFatigue) >= 80 ? "Yorgun" : "Müsait",
+                                risk: ((pData.fatiguePoint || 0) + addedFatigue) >= 80 ? "Yüksek" : (((pData.fatiguePoint || 0) + addedFatigue) >= 50 ? "Orta" : "Düşük"),
+                                lastUpdate: TODAY_DATE
+                            })
+                        });
+                    }
+                }
+                bootstrap.Modal.getInstance(document.getElementById('addFlightModal')).hide();
+                resetFlightForm();
+                await fetchFlights();
+                await loadPersonnelData();
+            }
+        };
 
-    for (const personId of teamIds) {
-        const pIndex = allPersonnel.findIndex(per => per.id == personId);
-        if (pIndex !== -1) {
-            const p = allPersonnel[pIndex];
-            
-            // Senin belirlediğin oranlar: Kısa (2 saat varsayalım) %15, Uzun %20
-            const baseFatigueScore = duration <= 2.5 ? 15 : 20; 
-            
-            // Çarpanı uygula ve yuvarla (%22.5 -> %23 olsun diye)
-            const addedFatigue = Math.round(baseFatigueScore * nightMultiplier);
-            
-            const newFatigue = Math.min((p.fatiguePoint || 0) + addedFatigue, 100);
-            const newDailyHours = (p.dailyFlightHours || 0) + duration;
-
-            // YEREL DİZİYİ GÜNCELLE
-            allPersonnel[pIndex].dailyFlightHours = newDailyHours;
-            allPersonnel[pIndex].fatiguePoint = newFatigue;
-            allPersonnel[pIndex].lastUpdate = TODAY_DATE;
-
-            // VERİTABANINA KAYDET
-            await fetch(`${API_BASE_URL}/personnel/${personId}`, {
-                method: 'PATCH',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    dailyFlightHours: newDailyHours,
-                    fatiguePoint: newFatigue,
-                    status: newFatigue >= 80 ? "Yorgun" : "Müsait",
-                    risk: newFatigue >= 80 ? "Yüksek" : (newFatigue >= 50 ? "Orta" : "Düşük"),
-                    lastUpdate: TODAY_DATE
-                })
-            });
-        }
-    }
-}
-            // ----------------------------------------
-
-            bootstrap.Modal.getInstance(document.getElementById('addFlightModal')).hide();
-            resetFlightForm();
-            await fetchFlights();
-            await loadPersonnelData();
+        if (isEditing) {
+            showConfirmModal("Onay", "Bilgileri güncelleyip yorgunluğu işlemek istiyor musunuz?", handleFlightSave, null, false, "Güncelle");
+        } else {
+            await handleFlightSave();
         }
     });
 
@@ -587,31 +581,49 @@ function populateCrewSelects() {
     }
 
     if (cabinContainer) {
-        cabinContainer.innerHTML = '';
-        allPersonnel.filter(p => p.role === 'Kabin Memuru').forEach(c => {
-            const status = getBusyStatus(c.id, selectedTime, flightDateForBusy); // Tarih eklendi
-            const item = document.createElement('div');
-            // Meşgulse kırmızı ve silik göster
-            item.className = `crew-item ${status.busy ? 'text-danger fw-bold border-danger' : ''}`;
-            if(selectedCrewIds.includes(c.id)) item.classList.add('active');
-            item.innerHTML = `<span>${c.name} <br> <small>${status.busy ? status.msg : ''}</small></span>`;
+    cabinContainer.innerHTML = '';
+    allPersonnel.filter(p => p.role === 'Kabin Memuru').forEach(c => {
+        const status = getBusyStatus(c.id, selectedTime, flightDateForBusy); 
+        const item = document.createElement('div');
+        
+        // Görsel stil: Meşgulse kırmızı ve çerçeveli göster
+        item.className = `crew-item ${status.busy ? 'text-danger fw-bold border-danger' : ''}`;
+        if(selectedCrewIds.includes(c.id)) item.classList.add('active');
+        
+        item.innerHTML = `<span>${c.name} <br> <small>${status.busy ? status.msg : ''}</small></span>`;
+        
+        item.onclick = () => {
+            // 1. Meşguliyet Kontrolü
+            if (status.busy) { 
+                alert(`⚠️ ${c.name} bu saatte meşgul!`); 
+                return; 
+            }
             
-            item.onclick = () => {
-                if (status.busy) { alert(`⚠️ ${c.name} bu saatte meşgul!`); return; }
-                const index = selectedCrewIds.indexOf(c.id);
-                if (index > -1) {
-                    selectedCrewIds.splice(index, 1);
-                    item.classList.remove('active');
-                } else {
-                    if (selectedCrewIds.length >= 8) { alert("Maksimum 8 memur!"); return; }
-                    selectedCrewIds.push(c.id);
-                    item.classList.add('active');
+            const index = selectedCrewIds.indexOf(c.id);
+            if (index > -1) {
+                // Seçimden çıkar
+                selectedCrewIds.splice(index, 1);
+                item.classList.remove('active');
+            } else {
+                // 2. Maksimum 8 Sınırı Kontrolü
+                if (selectedCrewIds.length >= 8) { 
+                    alert("⚠️ Maksimum 8 kabin memuru seçebilirsiniz!"); 
+                    return; 
                 }
-                document.getElementById('selectedCrewCount').innerText = selectedCrewIds.length;
-            };
-            cabinContainer.appendChild(item);
-        });
-    }
+                // Seçime ekle
+                selectedCrewIds.push(c.id);
+                item.classList.add('active');
+            }
+            
+            // 3. "Seçilen: X" Sayacını Anlık Güncelle
+            const countEl = document.getElementById('selectedCrewCount');
+            if (countEl) {
+                countEl.innerText = selectedCrewIds.length;
+            }
+        };
+        cabinContainer.appendChild(item);
+    });
+}
 }
 
 async function loadPersonnelData() {
@@ -755,12 +767,19 @@ function populateAirportSelect(id, data, ph) {
     data.forEach(a => el.options.add(new Option(`${a.code} - ${a.name}`, a.code)));
 }
 
+// --- 2. HAVAYOLU LİSTESİ (db.json'daki TÜM listeyi eksiksiz basar) ---
 function renderAirlineOptions(data) {
     const dl = document.getElementById('airlineOptions');
     if (!dl) return;
+
+    // globalCountries dizisinden ülke adlarını çekerek listeyi oluştur
     dl.innerHTML = data.map(airline => {
-        const country = globalCountries.find(c => c.id === airline.countryId);
-        return `<option value="${airline.code}">${airline.code} (${country ? country.name : airline.countryId}) - ${airline.name}</option>`;
+        // airlines.countryId (Örn: "TR") ile countries.id (Örn: "TR") eşleşmesi
+        const countryObj = globalCountries.find(c => c.id === airline.countryId);
+        const countryName = countryObj ? countryObj.name : airline.countryId;
+
+        // Görseldeki kutuda: "TK (Türkiye) - Turkish Airlines" şeklinde görünür
+        return `<option value="${airline.code}">${airline.code} (${countryName}) - ${airline.name}</option>`;
     }).join('');
 }
 
@@ -825,74 +844,6 @@ async function editFlight(id) {
     new bootstrap.Modal(document.getElementById('addFlightModal')).show();
 }
 
-async function deleteFlight(id) {
-    // 1. ADIM: Detaylı ve bilgilendirici onay mesajı
-    const confirmDelete = confirm(
-        "⚠️ UÇUŞ SİLME ONAYI\n\n" +
-        "Bu uçuşu silmek istediğinize emin misiniz?\n\n" +
-        "NOT: Bu işlem personelin uçuş saatlerini ve yorgunluk puanlarını otomatik olarak güncelleyecektir. Bu işlem geri alınamaz!"
-    );
-
-    if (confirmDelete) {
-        try {
-            // 2. ADIM: Silinecek uçuşun detaylarını bul
-            const flightToDelete = allFlights.find(f => String(f.id) === String(id));
-            if (!flightToDelete) return;
-
-            // Sadece "İndi" statüsündeki uçuşlar yorgunluk eklediği için puan iadesi yapılır
-            if (flightToDelete.status === "İndi") {
-                const teamIds = [flightToDelete.pilot, ...(flightToDelete.cabinCrew || [])];
-                
-                // Rota süresini ve yorgunluk çarpanını hesapla
-                const routeParts = flightToDelete.route.split(' > ');
-                const routeKey = `${routeParts[0]}-${routeParts[1]}`;
-                const routeData = routeDurations.find(r => r.id === routeKey);
-                const duration = routeData ? parseFloat(routeData.duration) : 2.0;
-
-                const flightHour = parseInt(flightToDelete.time.split(':')[0]);
-                const nightMultiplier = (flightHour >= 0 && flightHour < 6) ? 1.5 : 1.0;
-                const fatigueToReturn = Math.round((duration <= 2.5 ? 15 : 20) * nightMultiplier);
-
-                for (const personId of teamIds) {
-                    const pIndex = allPersonnel.findIndex(per => String(per.id) === String(personId));
-                    if (pIndex !== -1) {
-                        const p = allPersonnel[pIndex];
-
-                        // Değerleri güvenli bir şekilde geri al
-                        const updatedHours = Math.max(0, (p.dailyFlightHours || 0) - duration);
-                        const updatedFatigue = Math.max(0, (p.fatiguePoint || 0) - fatigueToReturn);
-
-                        // Veritabanı güncellemesi
-                        await fetch(`${API_BASE_URL}/personnel/${personId}`, {
-                            method: 'PATCH',
-                            headers: {'Content-Type': 'application/json'},
-                            body: JSON.stringify({
-                                dailyFlightHours: updatedHours,
-                                fatiguePoint: updatedFatigue,
-                                status: updatedFatigue >= 80 ? "Yorgun" : "Müsait",
-                                risk: updatedFatigue >= 80 ? "Yüksek" : (updatedFatigue >= 50 ? "Orta" : "Düşük")
-                            })
-                        });
-                    }
-                }
-            }
-
-            // 3. ADIM: Uçuşu sil ve tabloları yenile
-            const deleteRes = await fetch(`${API_BASE_URL}/flights/${id}`, { method: 'DELETE' });
-            
-            if (deleteRes.ok) {
-                await fetchFlights();
-                await loadPersonnelData();
-                alert("Uçuş başarıyla silindi ve personel verileri senkronize edildi.");
-            }
-
-        } catch (error) {
-            console.error("Silme hatası:", error);
-            alert("Hata: İşlem gerçekleştirilirken bir sorun oluştu.");
-        }
-    }
-}
-
 function getBadgeClass(status) {
     switch(status) {
         case 'Zamanında': return 'bg-success-subtle text-success';
@@ -941,73 +892,83 @@ function resetFlightForm() {
     statusSelectEl.value = "Zamanında"; 
 }
 
-// --- TÜM UÇUŞLARI TEMİZLEME VE YORGUNLUK İADESİ ---
-document.getElementById('deleteAllFlightsBtn')?.addEventListener('click', async () => {
-    // 1. Kullanıcıdan onay al
-    const confirmDelete = confirm("⚠️ DİKKAT: Sistemdeki TÜM uçuşlar silinecek ve personel yorgunlukları iade edilecektir. Bu işlem geri alınamaz! Emin misiniz?");
-    
-    if (confirmDelete) {
-        try {
-            // Görsel bir geri bildirim için butonu devre dışı bırakalım
+// =============================================================================
+// --- GÜNCELLENMİŞ SİLME İŞLEMLERİ (ÖZEL POP-UP SİSTEMİ) ---
+// =============================================================================
+
+// --- 2. TEKLİ SİLME (Buton metni 'Sil' yapıldı) ---
+async function deleteFlight(id) {
+    showConfirmModal(
+        "Uçuş Siliniyor", 
+        "Bu uçuşu silmek personelin yorgunluk puanlarını güncelleyecektir. Onaylıyor musunuz?", 
+        async () => {
+            const flightToDelete = allFlights.find(f => String(f.id) === String(id));
+            if (flightToDelete?.status === "İndi") await processFatigueReturnOnly(id);
+            await fetch(`${API_BASE_URL}/flights/${id}`, { method: 'DELETE' });
+            await fetchFlights();
+            await loadPersonnelData();
+        },
+        null,
+        true,   // isDeleteAction: true
+        "Sil"   // btnText: "Sil"
+    );
+}
+
+// --- 3. TÜMÜNÜ SİLME (Buton metni 'Tümünü Sil' yapıldı) ---
+document.getElementById('deleteAllFlightsBtn')?.addEventListener('click', () => {
+    showConfirmModal(
+        "TÜMÜNÜ SİL", 
+        "Sistemdeki TÜM uçuşlar silinecek. BU İŞLEM GERİ ALINAMAZ!", 
+        async () => {
             const btn = document.getElementById('deleteAllFlightsBtn');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Siliniyor...';
-
-            // 2. Sistemdeki her uçuşu tek tek dön
             for (const flight of allFlights) {
-                // Sadece "İndi" statüsündeki uçuşların yorgunluğunu iade etmemiz yeterli
-                if (flight.status === "İndi") {
-                    const teamIds = [flight.pilot, ...(flight.cabinCrew || [])];
-                    
-                    // Rota süresini bul
-                    const routeParts = flight.route.split(' > ');
-                    const routeKey = `${routeParts[0]}-${routeParts[1]}`;
-                    const routeData = routeDurations.find(r => r.id === routeKey);
-                    const duration = routeData ? parseFloat(routeData.duration) : 2.0;
-
-                    // Gece çarpanını hesapla
-                    const flightHour = parseInt(flight.time.split(':')[0]);
-                    const nightMultiplier = (flightHour >= 0 && flightHour < 6) ? 1.5 : 1.0;
-                    const fatiguePoints = Math.round((duration <= 2.5 ? 15 : 20) * nightMultiplier);
-
-                    // Personelleri güncelle
-                    for (const personId of teamIds) {
-                        const pIndex = allPersonnel.findIndex(per => String(per.id) === String(personId));
-                        if (pIndex !== -1) {
-                            const p = allPersonnel[pIndex];
-                            const updatedHours = Math.max(0, (p.dailyFlightHours || 0) - duration);
-                            const updatedFatigue = Math.max(0, (p.fatiguePoint || 0) - fatiguePoints);
-
-                            await fetch(`${API_BASE_URL}/personnel/${personId}`, {
-                                method: 'PATCH',
-                                headers: {'Content-Type': 'application/json'},
-                                body: JSON.stringify({
-                                    dailyFlightHours: updatedHours,
-                                    fatiguePoint: updatedFatigue,
-                                    status: updatedFatigue >= 80 ? "Yorgun" : "Müsait",
-                                    risk: updatedFatigue >= 80 ? "Yüksek" : (updatedFatigue >= 50 ? "Orta" : "Düşük")
-                                })
-                            });
-                        }
-                    }
-                }
-
-                // 3. Uçuşu veritabanından sil
+                if (flight.status === "İndi") await processFatigueReturnOnly(flight.id);
                 await fetch(`${API_BASE_URL}/flights/${flight.id}`, { method: 'DELETE' });
             }
-            
-            alert("Sistem başarıyla temizlendi ve personel verileri güncellendi.");
-            // Sayfayı yenilemek yerine verileri tekrar çekerek tabloyu güncelle
             await loadPersonnelData();
             await fetchFlights();
-            
-            // Butonu eski haline getir
             btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-trash-alt me-2"></i> Tümünü Sil';
+        },
+        null,
+        true,           // isDeleteAction: true
+        "Tümünü Sil"    // btnText: "Tümünü Sil"
+    );
+});
 
-        } catch (error) {
-            console.error("Temizleme sırasında hata:", error);
-            alert("İşlem sırasında bir hata oluştu.");
+// --- 3. YORGUNLUK İADE YARDIMCISI (Sadece Puan Hesaplar ve Patch Atar) ---
+async function processFatigueReturnOnly(id) {
+    const flightToDelete = allFlights.find(f => String(f.id) === String(id));
+    if (!flightToDelete) return;
+
+    const teamIds = [flightToDelete.pilot, ...(flightToDelete.cabinCrew || [])];
+    const routeParts = flightToDelete.route.split(' > ');
+    const routeKey = `${routeParts[0]}-${routeParts[1]}`;
+    const routeData = routeDurations.find(r => r.id === routeKey);
+    const duration = routeData ? parseFloat(routeData.duration) : 2.0;
+
+    // Gece çarpanını geri al
+    const flightHour = parseInt(flightToDelete.time.split(':')[0]);
+    const nightMultiplier = (flightHour >= 0 && flightHour < 6) ? 1.5 : 1.0;
+    const fatigueToReturn = Math.round((duration <= 2.5 ? 15 : 20) * nightMultiplier);
+
+    for (const personId of teamIds) {
+        const pIndex = allPersonnel.findIndex(per => String(per.id) === String(personId));
+        if (pIndex !== -1) {
+            const p = allPersonnel[pIndex];
+            const updatedHours = Math.max(0, (p.dailyFlightHours || 0) - duration);
+            const updatedFatigue = Math.max(0, (p.fatiguePoint || 0) - fatigueToReturn);
+
+            await fetch(`${API_BASE_URL}/personnel/${personId}`, {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    dailyFlightHours: updatedHours,
+                    fatiguePoint: updatedFatigue,
+                    status: updatedFatigue >= 80 ? "Yorgun" : "Müsait",
+                    risk: updatedFatigue >= 80 ? "Yüksek" : (updatedFatigue >= 50 ? "Orta" : "Düşük")
+                })
+            });
         }
     }
-});
+}

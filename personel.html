@@ -22,7 +22,7 @@
         .filter-btn {border-radius: 20px; font-size: 13px; font-weight: 500; padding: 6px 16px; border: 1px solid #e2e8f0; background: white; color: #64748b;}
         .filter-btn.active {background: #e0f2fe; color: #0284c7; border-color: #0284c7;}
         .filter-btn:hover {background: #f8fafc;}
-        /* EN SADE KURUMSAL PAGINATION STİLİ */
+        
         #paginationControls {
             display: flex;
             gap: 5px;
@@ -137,9 +137,15 @@
                         <button class="filter-btn">Kabin Ekibi</button>
                     </div>
                 </div>
-                <button class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#addPersonnelModal">
-                    <i class="fas fa-user-plus me-2"></i> Personel Ekle
-                </button>
+                
+                <div class="d-flex align-items-center gap-2">
+                    <button id="deleteAllPersonnelBtn" class="btn btn-outline-danger btn-sm rounded-pill px-3 shadow-sm d-inline-flex align-items-center justify-content-center" style="height: 38px; white-space: nowrap; font-weight: 500;">
+                        <i class="fas fa-trash-alt me-2"></i> Tümünü Sil
+                    </button>
+                    <button class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#addPersonnelModal" style="height: 38px; white-space: nowrap; font-weight: 500;">
+                        <i class="fas fa-user-plus me-2"></i> Personel Ekle
+                    </button>
+                </div>
             </div>
             
             <div class="table-responsive">
@@ -154,14 +160,13 @@
                             <th class="text-end">İşlemler</th>
                         </tr>
                     </thead>
-                    <tbody id="personnelTableBody">
-                        </tbody>
+                    <tbody id="personnelTableBody"></tbody>
                 </table>
             </div>
 
-                <nav aria-label="Personel Sayfalandırma" class="mt-4 border-top pt-3">
-                    <ul id="paginationControls" class="justify-content-center"></ul>
-                </nav>
+            <nav aria-label="Personel Sayfalandırma" class="mt-4 border-top pt-3">
+                <ul id="paginationControls" class="justify-content-center"></ul>
+            </nav>
         </div>
     </main>
 
@@ -190,6 +195,25 @@
                             <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 12px; font-size: 16px; font-weight: 600;">Kaydı Tamamla</button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+            <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                <div class="modal-body p-4 text-center">
+                    <div class="mb-3 text-danger" id="confirmIcon">
+                        <i class="fas fa-exclamation-triangle fa-3x"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2" id="confirmModalTitle">Emin misiniz?</h5>
+                    <p class="text-muted mb-4" id="confirmModalBody">Bu işlem geri alınamaz ve tüm veriler senkronize edilecektir.</p>
+                    
+                    <div class="modal-footer border-0 d-flex gap-2 justify-content-center pb-0">
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Vazgeç</button>
+                        <button type="button" class="btn btn-primary rounded-pill px-4" id="confirmBtnAction">Onayla</button>
+                    </div>
                 </div>
             </div>
         </div>
