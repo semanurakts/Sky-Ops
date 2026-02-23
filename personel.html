@@ -183,14 +183,26 @@
                             <label class="form-label small fw-bold text-muted">Ad Soyad</label>
                             <input type="text" class="form-control" id="staffName" placeholder="Örn: Selin Yılmaz" required style="border-radius: 10px;">
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold text-muted">Görevi</label>
-                            <select class="form-select" id="staffRole" required style="border-radius: 10px;">
-                                <option value="">Seçiniz...</option>
-                                <option value="Pilot">Pilot</option>
-                                <option value="Kabin Memuru">Kabin Memuru</option>
-                            </select>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">Görevi</label>
+                                <select class="form-select" id="staffRole" required style="border-radius: 10px;">
+                                    <option value="">Seçiniz...</option>
+                                    <option value="Pilot">Pilot</option>
+                                    <option value="Kabin Memuru">Kabin Memuru</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">Cinsiyet</label>
+                                <select id="personnelGender" class="form-select" required style="border-radius: 10px;">
+                                    <option value="" selected disabled>Seçiniz...</option>
+                                    <option value="1">Erkek</option> <option value="2">Kadın</option>
+                                </select>
+                            </div>
                         </div>
+
                         <div class="d-grid pt-2">
                             <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 12px; font-size: 16px; font-weight: 600;">Kaydı Tamamla</button>
                         </div>
