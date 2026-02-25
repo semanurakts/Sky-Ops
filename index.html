@@ -8,6 +8,88 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* YENİ: EKİP DETAY KARTLARI İÇİN STİLLER */
+        .crew-profile-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.2s;
+            height: 100%;
+        }
+        .crew-profile-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transform: translateY(-2px);
+            border-color: #cbd5e1;
+        }
+        .crew-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .crew-avatar.pilot { background-color: #e0f2fe; color: #0284c7; border: 2px solid #bae6fd; }
+        .crew-avatar.cabin { background-color: #f1f5f9; color: #475569; border: 2px solid #e2e8f0; }
+        
+        .crew-role-badge {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 8px;
+            border-radius: 20px;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+        .role-pilot { background-color: #e0f2fe; color: #0284c7; }
+        .role-cabin { background-color: #f1f5f9; color: #475569; }
+
+        .crew-fatigue-bar {
+            height: 6px;
+            border-radius: 3px;
+            background-color: #f1f5f9;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        /* YENİ: DASHBOARD SAYFALANDIRMA (PAGINATION) STİLLERİ */
+        #dashboardPaginationControls {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #dashboardPaginationControls .page-item .page-link {
+            background: transparent !important;
+            border: none !important;
+            color: #64748b !important; 
+            font-size: 14px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            box-shadow: none !important;
+        }
+        #dashboardPaginationControls .page-item.active .page-link {
+            color: #0f172a !important; 
+            background-color: #f1f5f9 !important;
+            font-weight: 700;
+        }
+        #dashboardPaginationControls .page-item .page-link:hover:not(.active) {
+            background-color: #f8fafc !important;
+            color: #334155 !important;
+        }
+    </style>
 </head>
 <body>
     <nav class="sidebar">
@@ -20,7 +102,7 @@
             <li><a href="#" class="active"><i class="fas fa-th-large"></i> <span>Genel Bakış</span></a></li>
             <li><a href="ucus.html"><i class="fas fa-plane"></i> <span>Uçuş Yönetimi</span></a></li>
             <li><a href="personel.html"><i class="fas fa-users-cog"></i> <span>Personel Planlama</span></a></li>
-            <li><a href="#"><i class="fas fa-chart-pie"></i> <span>Raporlar</span></a></li>
+            <li><a href="raporlar.html"><i class="fas fa-chart-pie"></i> <span>Raporlar</span></a></li>
         </ul>
         <div class="sidebar-footer">
             <a href="#" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
@@ -79,13 +161,36 @@
             <div class="table-responsive">
                 <table class="table table-hover align-middle custom-table">
                     <thead class="table-light">
-                        <tr><th>Uçuş No</th><th>Rota</th><th>Saat</th><th>Kapı</th><th>Durum</th><th>Pilot</th><th>İşlem</th></tr>
+                        <tr><th>Uçuş No</th><th>Rota</th><th>Saat</th><th>Kapı</th><th>Durum</th><th>Görevli Ekip</th><th>İncele</th></tr>
                     </thead>
                     <tbody></tbody>
                 </table>
             </div>
+            <nav aria-label="Dashboard Sayfalandırma" class="mt-4 border-top pt-3">
+                <ul id="dashboardPaginationControls" class="justify-content-center mb-0"></ul>
+            </nav>
         </div>
     </main>
+
+    <div class="modal fade" id="crewDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.15);">
+                <div class="modal-header border-0 bg-light" style="border-radius: 20px 20px 0 0; padding: 20px 25px;">
+                    <div>
+                        <h5 class="modal-title fw-bold text-dark mb-1"><i class="fas fa-users me-2 text-primary"></i>Ekip Detayları</h5>
+                        <p class="mb-0 text-muted small" id="crewModalFlightInfo">Uçuş: -- | Rota: --</p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body p-4 bg-light" style="border-radius: 0 0 20px 20px;">
+                    <div class="row g-3" id="crewCardsContainer">
+                        <div class="text-center text-muted"><i class="fas fa-spinner fa-spin me-2"></i>Ekip bilgileri yükleniyor...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
     <script src="script.js"></script>
