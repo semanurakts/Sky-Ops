@@ -255,13 +255,10 @@
 //         const filtered = globalAirlines.filter(a => a.code.startsWith(correctedVal));
 //         renderAirlineOptions(filtered);
 
-//         const selected = globalAirlines.find(a => a.code === correctedVal);
-//         if (selected && selected.countryId) {
-//             const filteredAirports = globalAirports.filter(ap => ap.countryId === selected.countryId);
-//             populateAirportSelect('originInput', filteredAirports, 'Kalkış');
-//         } else {
-//             populateAirportSelect('originInput', globalAirports, 'Kalkış');
-//         }
+//         // --- DEĞİŞTİRİLEN KISIM BAŞLANGICI ---
+//         // Ülke kısıtlaması kaldırıldı, tüm havalimanları listelenecek
+//         populateAirportSelect('originInput', globalAirports, 'Kalkış');
+//         // --- DEĞİŞTİRİLEN KISIM BİTİŞİ ---
 //     });
 
 //     const originSelect = document.getElementById('originInput');
@@ -923,6 +920,7 @@
 //     }
 // }
 
+
 const API_BASE_URL = 'http://localhost:3000';
 
 let allPersonnel = [];
@@ -1030,7 +1028,15 @@ function timeToMinutes(timeStr) {
     return (hrs * 60) + mins;
 }
 
-function getBusyStatus(personId, newFlightTime, selectedDate) {
+// --- KONUM KONTROLÜ EKLENEN ANA FONKSİYON ---
+function getBusyStatus(personId, newFlightTime, selectedDate, selectedOrigin) {
+    const person = allPersonnel.find(p => String(p.id) === String(personId));
+
+    // 1. KONUM KONTROLÜ: Personel kalkış noktasında mı?
+    if (person && person.currentLocation && selectedOrigin && person.currentLocation !== selectedOrigin) {
+        return { busy: true, msg: `(KONUM HATASI: Şu an ${person.currentLocation} meydanında)` };
+    }
+
     if (!newFlightTime || allFlights.length === 0) return { busy: false };
     
     const newStart = timeToMinutes(newFlightTime);
@@ -1090,7 +1096,19 @@ async function handleDailyReset() {
         return (isPastDate || isPastHour) && f.status !== "İndi" && f.status !== "İptal";
     });
 
+    // Uçuş gecmişse otomatik "İndi" yap ve EKİBİN KONUMUNU GÜNCELLE
     for (const f of pastFlights) {
+        const teamIds = [f.pilot, ...(f.cabinCrew || [])];
+        const dest = f.route.split(' > ')[1]; // Vardıkları Şehir
+        
+        for (const personId of teamIds) {
+            await fetch(`${API_BASE_URL}/personnel/${personId}`, {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ currentLocation: dest })
+            });
+        }
+
         await fetch(`${API_BASE_URL}/flights/${f.id}`, {
             method: 'PATCH',
             headers: {'Content-Type': 'application/json'},
@@ -1179,11 +1197,7 @@ function setupFormControls() {
 
         const filtered = globalAirlines.filter(a => a.code.startsWith(correctedVal));
         renderAirlineOptions(filtered);
-
-        // --- DEĞİŞTİRİLEN KISIM BAŞLANGICI ---
-        // Ülke kısıtlaması kaldırıldı, tüm havalimanları listelenecek
         populateAirportSelect('originInput', globalAirports, 'Kalkış');
-        // --- DEĞİŞTİRİLEN KISIM BİTİŞİ ---
     });
 
     const originSelect = document.getElementById('originInput');
@@ -1211,6 +1225,7 @@ function setupFormControls() {
             destSelect.value = "";
         }
     }
+    populateCrewSelects(); // Kalkış noktası değiştiğinde listeyi de kontrol et!
 };
     originSelect?.addEventListener('change', checkRoute);
     destSelect?.addEventListener('change', checkRoute);
@@ -1234,7 +1249,7 @@ function setupFormControls() {
         const newVal = e.target.value;
         if (!isEditing && newVal === "İndi") {
             alert("⚠️ Yeni eklenen bir uçuş henüz kalkmadan 'İndi' olarak girilemez!");
-            e.target.value = ""; // "Zamanında" yerine boş değere dön
+            e.target.value = ""; 
             return;
         }
         populateCrewSelects();
@@ -1294,15 +1309,13 @@ function setupFormControls() {
         e.preventDefault();
 
         const airlineCode = document.getElementById('airlineCodeInput').value;
-        
         const isValidAirline = globalAirlines.some(a => a.code === airlineCode);
         if (!isValidAirline) {
-            alert(`⚠️ '${airlineCode}' sistemde kayıtlı bir havayolu değil! Lütfen geçerli bir kod giriniz (Örn: TK, PC, U2).`);
+            alert(`⚠️ '${airlineCode}' sistemde kayıtlı bir havayolu değil!`);
             return;
         }
 
         const newStatus = document.getElementById('flightStatus').value;
-        
         if (!newStatus) {
             alert("⚠️ Lütfen uçuş için bir durum (Statü) seçiniz!");
             return;
@@ -1333,16 +1346,16 @@ function setupFormControls() {
             const fOrigin = f.route.split(' > ')[0];
 
             if (f.date === flightDate && fOrigin === newOrigin && f.gate === newGate && timeDiff < 45) {
-                alert(`⚠️ KAPI ÇAKIŞMASI: ${newGate} numaralı kapı ${f.time} saatindeki uçuş tarafından kullanılıyor! (En az 45 dk ara olmalı)`);
+                alert(`⚠️ KAPI ÇAKIŞMASI: ${newGate} numaralı kapı ${f.time} saatindeki uçuş tarafından kullanılıyor!`);
                 return true;
             }
             return false;
         });
         if (conflict) return;
 
-        const pilotBusy = getBusyStatus(pilotId, newTime, flightDate);
+        const pilotBusy = getBusyStatus(pilotId, newTime, flightDate, newOrigin);
         if (pilotBusy.busy) {
-            alert(`⚠️ Seçilen pilot bu saatte başka bir uçuşta meşgul!`);
+            alert(`⚠️ Seçilen pilot atanamaz: ${pilotBusy.msg}`);
             return;
         }
 
@@ -1395,32 +1408,33 @@ function setupFormControls() {
 
                 if (res.ok) {
                     if (payload.status === "İndi") {
-    const teamIds = [payload.pilot, ...payload.cabinCrew];
-    const flightHour = parseInt(payload.time.split(':')[0]);
-    let nightMultiplier = (flightHour >= 0 && flightHour < 6) ? 1.5 : 1.0;
+                        const teamIds = [payload.pilot, ...payload.cabinCrew];
+                        const flightHour = parseInt(payload.time.split(':')[0]);
+                        let nightMultiplier = (flightHour >= 0 && flightHour < 6) ? 1.5 : 1.0;
 
-    for (const personId of teamIds) {
-        const pRes = await fetch(`${API_BASE_URL}/personnel/${personId}`);
-        const pData = await pRes.json();
+                        for (const personId of teamIds) {
+                            const pRes = await fetch(`${API_BASE_URL}/personnel/${personId}`);
+                            const pData = await pRes.json();
 
-        const currentHours = parseFloat(pData.dailyFlightHours) || 0;
-        const currentFatigue = parseInt(pData.fatiguePoint) || 0;
+                            const currentHours = parseFloat(pData.dailyFlightHours) || 0;
+                            const currentFatigue = parseInt(pData.fatiguePoint) || 0;
 
-        const addedFatigue = Math.round((duration <= 2.5 ? 15 : 20) * nightMultiplier);
-        
-        await fetch(`${API_BASE_URL}/personnel/${personId}`, {
-            method: 'PATCH',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                dailyFlightHours: parseFloat((currentHours + duration).toFixed(1)),
-                fatiguePoint: Math.min(currentFatigue + addedFatigue, 100),
-                status: (currentFatigue + addedFatigue) >= 80 ? "Yorgun" : "Müsait",
-                risk: (currentFatigue + addedFatigue) >= 80 ? "Yüksek" : ((currentFatigue + addedFatigue) >= 50 ? "Orta" : "Düşük"),
-                lastUpdate: getTodayDate()
-            })
-        });
-    }
-}
+                            const addedFatigue = Math.round((duration <= 2.5 ? 15 : 20) * nightMultiplier);
+                            
+                            await fetch(`${API_BASE_URL}/personnel/${personId}`, {
+                                method: 'PATCH',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify({
+                                    currentLocation: newDest, // UÇAK İNDİ, EKİBİN YENİ KONUMU GÜNCELLENDİ
+                                    dailyFlightHours: parseFloat((currentHours + duration).toFixed(1)),
+                                    fatiguePoint: Math.min(currentFatigue + addedFatigue, 100),
+                                    status: (currentFatigue + addedFatigue) >= 80 ? "Yorgun" : "Müsait",
+                                    risk: (currentFatigue + addedFatigue) >= 80 ? "Yüksek" : ((currentFatigue + addedFatigue) >= 50 ? "Orta" : "Düşük"),
+                                    lastUpdate: getTodayDate()
+                                })
+                            });
+                        }
+                    }
                     bootstrap.Modal.getInstance(document.getElementById('addFlightModal')).hide();
                     resetFlightForm();
                     await fetchFlights();
@@ -1436,7 +1450,7 @@ function setupFormControls() {
         };
 
         if (isEditing) {
-            showConfirmModal("Onay", "Bilgileri güncelleyip yorgunluğu işlemek istiyor musunuz?", handleFlightSave, null, false, "Güncelle");
+            showConfirmModal("Onay", "Bilgileri güncelleyip ekip konumlarını işlemek istiyor musunuz?", handleFlightSave, null, false, "Güncelle");
         } else {
             await handleFlightSave();
         }
@@ -1447,6 +1461,7 @@ function populateCrewSelects() {
     const pilotSelect = document.getElementById('pilotName');
     const cabinContainer = document.getElementById('cabinCrewList');
     const selectedTime = document.getElementById('flightTime').value;
+    const selectedOrigin = document.getElementById('originInput').value;
 
     const selectedDayVal = document.querySelector('input[name="flightDay"]:checked')?.value || 'today';
     const flightDateForBusy = selectedDayVal === 'today' ? getTodayDate() : getTomorrowDate();
@@ -1455,7 +1470,7 @@ function populateCrewSelects() {
         const currentVal = pilotSelect.value;
         pilotSelect.innerHTML = '<option value="" selected>Pilot Seçiniz...</option>';
         allPersonnel.filter(p => p.role === 'Pilot').forEach(p => {
-            const status = getBusyStatus(p.id, selectedTime, flightDateForBusy); 
+            const status = getBusyStatus(p.id, selectedTime, flightDateForBusy, selectedOrigin); 
             const opt = new Option(`${p.name} ${status.busy ? status.msg : ''}`, p.id);
             
             if (status.busy) {
@@ -1470,7 +1485,7 @@ function populateCrewSelects() {
     if (cabinContainer) {
     cabinContainer.innerHTML = '';
     allPersonnel.filter(p => p.role === 'Kabin Memuru').forEach(c => {
-        const status = getBusyStatus(c.id, selectedTime, flightDateForBusy); 
+        const status = getBusyStatus(c.id, selectedTime, flightDateForBusy, selectedOrigin); 
         const item = document.createElement('div');
         
         item.className = `crew-item ${status.busy ? 'text-danger fw-bold border-danger' : ''}`;
@@ -1480,7 +1495,7 @@ function populateCrewSelects() {
         
         item.onclick = () => {
             if (status.busy) { 
-                alert(`⚠️ ${c.name} bu saatte meşgul!`); 
+                alert(`⚠️ ${c.name} atanamaz: ${status.msg}`); 
                 return; 
             }
             
@@ -1534,7 +1549,6 @@ function renderFlightManagementTable() {
     const todayStr = getTodayDate();
     const tomorrowStr = getTomorrowDate();
 
-    // 1. Önce her uçuşun ROZET (Badge) bilgisini belirliyoruz
     const getBadgeLabel = (flight) => {
         if (flight.date < todayStr || flight.status === "İndi") return 'GEÇMİŞ';
         if (flight.date === todayStr) return 'BUGÜN';
@@ -1542,7 +1556,6 @@ function renderFlightManagementTable() {
         return 'İLERİ TARİH';
     };
 
-    // 2. Filtrelemeyi SADECE rozet etiketine göre yapıyoruz
     let filtered = allFlights.filter(f => {
         const matchesStatus = statusFilter === "Tüm Durumlar" || f.status === statusFilter;
         const matchesSearch = f.flightNo.toLowerCase().includes(searchTerm.toLowerCase());

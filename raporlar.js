@@ -5,8 +5,6 @@ let allPersonnel = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
     await fetchReportData();
-    
-    // PDF İndirme Butonu Tetikleyicisi
     document.getElementById('downloadPdfBtn').addEventListener('click', downloadPDF);
 });
 
@@ -36,13 +34,11 @@ function renderFlightPerformanceChart() {
     const ctx = document.getElementById('flightPerformanceChart');
     if (!ctx || allFlights.length === 0) return;
 
-    // Statülere göre sayım yap (Zamanında, Gecikmeli, İptal)
     let onTimeCount = 0;
     let delayedCount = 0;
     let cancelledCount = 0;
 
     allFlights.forEach(f => {
-        // İndi veya Zamanında ise başarılı kabul ediyoruz
         if (f.status === "Zamanında" || f.status === "İndi" || f.status === "Yolcu Alımı") {
             onTimeCount++;
         } else if (f.status === "Gecikmeli") {
@@ -53,16 +49,12 @@ function renderFlightPerformanceChart() {
     });
 
     new Chart(ctx, {
-        type: 'doughnut', // İçi boş pasta grafik daha şık durur
+        type: 'doughnut', 
         data: {
             labels: ['Zamanında / Başarılı', 'Gecikmeli', 'İptal Edilen'],
             datasets: [{
                 data: [onTimeCount, delayedCount, cancelledCount],
-                backgroundColor: [
-                    '#10b981', // Yeşil (Başarılı)
-                    '#f59e0b', // Sarı (Gecikmeli)
-                    '#ef4444'  // Kırmızı (İptal)
-                ],
+                backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
                 borderWidth: 2,
                 borderColor: '#ffffff'
             }]
@@ -70,9 +62,7 @@ function renderFlightPerformanceChart() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'bottom' }
-            }
+            plugins: { legend: { position: 'bottom' } }
         }
     });
 }
@@ -84,10 +74,9 @@ function renderFatigueChart() {
     const ctx = document.getElementById('fatigueDistributionChart');
     if (!ctx || allPersonnel.length === 0) return;
 
-    // 3 Kategoriye ayırıyoruz
-    let restedCount = 0;   // 0 - 49
-    let warningCount = 0;  // 50 - 79
-    let criticalCount = 0; // 80 - 100
+    let restedCount = 0;   
+    let warningCount = 0;  
+    let criticalCount = 0; 
 
     allPersonnel.forEach(p => {
         const fatigue = p.fatiguePoint || 0;
@@ -103,32 +92,19 @@ function renderFatigueChart() {
             datasets: [{
                 label: 'Personel Sayısı',
                 data: [restedCount, warningCount, criticalCount],
-                backgroundColor: [
-                    'rgba(16, 185, 129, 0.7)', // Yeşil transparan
-                    'rgba(245, 158, 11, 0.7)', // Sarı transparan
-                    'rgba(239, 68, 68, 0.7)'   // Kırmızı transparan
-                ],
-                borderColor: [
-                    '#10b981', '#f59e0b', '#ef4444'
-                ],
+                backgroundColor: ['rgba(16, 185, 129, 0.7)', 'rgba(245, 158, 11, 0.7)', 'rgba(239, 68, 68, 0.7)'],
+                borderColor: ['#10b981', '#f59e0b', '#ef4444'],
                 borderWidth: 1,
-                borderRadius: 6 // Çubukların üstünü hafif oval yapar (Premium görünüm)
+                borderRadius: 6 
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false } // Tek veri olduğu için legende gerek yok
-            },
+            plugins: { legend: { display: false } },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { stepSize: 1 }
-                },
-                x: {
-                    grid: { display: false }
-                }
+                y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                x: { grid: { display: false } }
             }
         }
     });
@@ -141,25 +117,18 @@ function renderTopRoutes() {
     const container = document.getElementById('topRoutesList');
     if (!container || allFlights.length === 0) return;
 
-    // Rotaları sayalım { "IST > LHR": 5, "MUC > CDG": 2 ... }
     const routeCounts = {};
     allFlights.forEach(f => {
-        if (routeCounts[f.route]) {
-            routeCounts[f.route]++;
-        } else {
-            routeCounts[f.route] = 1;
-        }
+        if (routeCounts[f.route]) routeCounts[f.route]++;
+        else routeCounts[f.route] = 1;
     });
 
-    // Objeyi Diziye çevirip büyükten küçüğe sıralayalım
     const sortedRoutes = Object.keys(routeCounts)
         .map(route => ({ route: route, count: routeCounts[route] }))
         .sort((a, b) => b.count - a.count);
 
-    // İlk 5'i al
     const top5 = sortedRoutes.slice(0, 5);
 
-    // Ekrana HTML olarak bas
     container.innerHTML = top5.map((item, index) => `
         <div class="route-item">
             <div>
@@ -172,33 +141,71 @@ function renderTopRoutes() {
 }
 
 // ==========================================
-// 4. PDF OLARAK İNDİRME MOTORU
+// 4. PDF İNDİRME MOTORU (YATAY VE ZORUNLU GENİŞLİK ÇÖZÜMÜ)
 // ==========================================
-function downloadPDF() {
-    const btn = document.getElementById('downloadPdfBtn');
-    const originalText = btn.innerHTML;
-    
-    // Kullanıcıya bilgi veriyoruz (Buton yazısı değişir)
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Hazırlanıyor...';
-    btn.disabled = true;
 
-    // PDF'e dönüştürülecek HTML alanı (İçinde grafikler ve listeler var)
-    const element = document.getElementById('pdfExportArea');
-
-    // html2pdf ayarları
-    const opt = {
-        margin:       0.5,
-        filename:     `SkyOps_Rapor_${new Date().toISOString().split('T')[0]}.pdf`,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }, // Grafikler büyük olduğu için yatay (landscape) daha iyi sığar
-        pagebreak: { mode: ['css', 'legacy'] },
-    };
-
-    // PDF'i oluştur ve indir
-    html2pdf().set(opt).from(element).save().then(() => {
-        // İndirme bitince butonu eski haline getir
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-    });
+function getLocalCurrentDateTime() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}_${hours}-${minutes}`;
 }
+
+function downloadPDF(){
+
+const btn=document.getElementById("downloadPdfBtn")
+const originalText=btn.innerHTML
+
+btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Hazırlanıyor'
+btn.disabled=true
+
+setTimeout(()=>{
+
+const element=document.getElementById("pdfExportArea")
+
+const originalWidth=element.style.width
+const originalMaxWidth=element.style.maxWidth
+
+element.style.width="1060px"
+element.style.maxWidth="1060px"
+element.style.margin="0 auto"
+
+const opt={
+margin:0.4,
+filename:`SkyOps_Rapor_${getLocalCurrentDateTime()}.pdf`,
+image:{type:'jpeg',quality:1},
+
+html2canvas:{
+scale:2.5,
+useCORS:true,
+scrollY:0
+},
+
+jsPDF:{
+unit:'mm',
+format:'a4',
+orientation:'landscape'
+},
+
+pagebreak:{
+mode:['avoid-all','css']
+}
+}
+
+html2pdf().set(opt).from(element).save().then(()=>{
+
+element.style.width=originalWidth
+element.style.maxWidth=originalMaxWidth
+
+btn.innerHTML=originalText
+btn.disabled=false
+
+})
+
+},500)
+
+}
+

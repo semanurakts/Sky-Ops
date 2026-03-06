@@ -373,82 +373,12 @@
       "status": "İptal"
     },
     {
-      "id": "12",
-      "flightNo": "TK-0007",
-      "route": "IST > LGW",
-      "time": "22:58",
-      "date": "2026-02-25",
-      "gate": "G-04",
-      "pilot": "16",
-      "cabinCrew": [
-        "7",
-        "9"
-      ],
-      "status": "İndi"
-    },
-    {
-      "id": "13",
-      "flightNo": "PC-0010",
-      "route": "ESB > LGW",
-      "time": "23:03",
-      "date": "2026-02-25",
-      "gate": "G-05",
-      "pilot": "16",
-      "cabinCrew": [
-        "9",
-        "11"
-      ],
-      "status": "İndi"
-    },
-    {
-      "id": "14",
-      "flightNo": "U2-0005",
-      "route": "LGW > AYT",
-      "time": "23:03",
-      "date": "2026-02-25",
-      "gate": "G-06",
-      "pilot": "16",
-      "cabinCrew": [
-        "9",
-        "11"
-      ],
-      "status": "İndi"
-    },
-    {
-      "id": "15",
-      "flightNo": "AZ-0001",
-      "route": "FCO > ASR",
-      "time": "11:02",
-      "date": "2026-02-26",
-      "gate": "B-02",
-      "pilot": "16",
-      "cabinCrew": [
-        "2",
-        "6"
-      ],
-      "status": "İndi"
-    },
-    {
       "id": "16",
       "flightNo": "VF-0006",
       "route": "ADA > LGW",
       "time": "23:10",
       "date": "2026-02-25",
       "gate": "A-00",
-      "pilot": "16",
-      "cabinCrew": [
-        "7",
-        "9"
-      ],
-      "status": "İndi"
-    },
-    {
-      "id": "17",
-      "flightNo": "BA-0055",
-      "route": "STN > ADA",
-      "time": "23:32",
-      "date": "2026-02-25",
-      "gate": "D-03",
       "pilot": "16",
       "cabinCrew": [
         "7",
@@ -467,6 +397,20 @@
       "cabinCrew": [
         "2",
         "6"
+      ],
+      "status": "İndi"
+    },
+    {
+      "id": "19",
+      "flightNo": "AZ-5555",
+      "route": "IST > DLM",
+      "time": "09:02",
+      "date": "2026-03-08",
+      "gate": "B-03",
+      "pilot": "3",
+      "cabinCrew": [
+        "7",
+        "9"
       ],
       "status": "Zamanında"
     }
@@ -865,187 +809,203 @@
       "name": "Pilot 03",
       "role": "Pilot",
       "genderId": "1",
+      "currentLocation": "AYT",
       "flightHours": 0,
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-26"
+      "lastUpdate": "2026-03-07"
     },
     {
       "id": "2",
       "name": "Pilot 02",
       "role": "Kabin Memuru",
       "genderId": "1",
+      "currentLocation": "AYT",
       "flightHours": 0,
-      "dailyFlightHours": 2,
-      "fatiguePoint": 15,
+      "dailyFlightHours": 0,
+      "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-25"
+      "lastUpdate": "2026-03-07"
     },
     {
       "id": "3",
       "name": "Caner Erkin",
       "role": "Pilot",
       "genderId": "1",
+      "currentLocation": "IST",
       "flightHours": 0,
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-26"
+      "lastUpdate": "2026-03-07"
     },
     {
       "id": "4",
       "name": "Selin Yılmaz",
       "role": "Pilot",
       "genderId": "2",
+      "currentLocation": "IST",
       "flightHours": 0,
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-26"
+      "lastUpdate": "2026-03-07"
     },
     {
       "id": "5",
       "name": "Ayşe Aktaş",
       "role": "Pilot",
       "genderId": "2",
+      "currentLocation": "IST",
       "flightHours": 0,
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-26"
+      "lastUpdate": "2026-03-07"
     },
     {
       "id": "6",
       "name": "Burak Aktaş",
       "role": "Kabin Memuru",
       "genderId": "1",
+      "currentLocation": "AYT",
       "flightHours": 0,
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-26"
+      "lastUpdate": "2026-03-07"
     },
     {
       "id": "7",
       "name": "Hasan Yılmaz",
       "role": "Kabin Memuru",
       "genderId": "1",
+      "currentLocation": "IST",
       "flightHours": 0,
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-26"
+      "lastUpdate": "2026-03-07"
     },
     {
       "id": "8",
       "name": "Meltem Şen",
       "role": "Pilot",
       "genderId": "2",
+      "currentLocation": "IST",
       "flightHours": 0,
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-26"
+      "lastUpdate": "2026-03-07"
     },
     {
       "id": "9",
       "name": "Pelin Birköse",
       "role": "Kabin Memuru",
       "genderId": "2",
+      "currentLocation": "IST",
       "flightHours": 0,
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-26"
+      "lastUpdate": "2026-03-07"
     },
     {
       "id": "10",
       "name": "Canberk Özkaynak",
       "role": "Pilot",
       "genderId": "1",
+      "currentLocation": "IST",
       "flightHours": 0,
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-26"
+      "lastUpdate": "2026-03-07"
     },
     {
       "id": "11",
       "name": "Sude Uykun",
       "role": "Kabin Memuru",
       "genderId": "2",
+      "currentLocation": "IST",
       "flightHours": 0,
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-26"
+      "lastUpdate": "2026-03-07"
     },
     {
       "id": "12",
       "name": "Neslihan Yıldız",
       "role": "Pilot",
       "genderId": "2",
+      "currentLocation": "IST",
       "flightHours": 0,
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-26"
+      "lastUpdate": "2026-03-07"
     },
     {
       "id": "13",
       "name": "Sakarie Hussein",
       "role": "Kabin Memuru",
       "genderId": "1",
+      "currentLocation": "IST",
       "flightHours": 0,
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-26"
+      "lastUpdate": "2026-03-07"
     },
     {
       "id": "14",
       "name": "Meryem Çelik",
       "role": "Pilot",
       "genderId": "2",
+      "currentLocation": "IST",
       "flightHours": 0,
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-26"
+      "lastUpdate": "2026-03-07"
     },
     {
       "id": "16",
       "name": "Buse Kara",
       "role": "Pilot",
       "genderId": "2",
+      "currentLocation": "IST",
       "flightHours": 0,
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "lastUpdate": "2026-02-26"
+      "lastUpdate": "2026-03-07"
     },
     {
       "id": "17",
       "name": "Habibe Aktaş",
       "role": "Pilot",
       "genderId": "2",
-      "lastUpdate": "2026-02-26",
+      "currentLocation": "IST",
+      "lastUpdate": "2026-03-07",
       "flightHours": 0,
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
