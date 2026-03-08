@@ -7,6 +7,16 @@ let isEditMode = false;
 let currentEditId = null;  
 let confirmCallback = null; 
 
+// 🌟 YENİ: SABİT VERİ LİSTELERİ 🌟
+const roleDataList = [
+    { code: 'Pilot', name: 'Pilot', icon: 'fa-plane' },
+    { code: 'Kabin Memuru', name: 'Kabin Memuru', icon: 'fa-users' }
+];
+const genderDataList = [
+    { code: '1', name: 'Erkek', icon: 'fa-mars text-primary' },
+    { code: '2', name: 'Kadın', icon: 'fa-venus text-danger' }
+];
+
 function showConfirmModal(title, body, callback, isDeleteAction = false, btnText = "Onayla") {
     document.getElementById('confirmModalTitle').innerText = title;
     document.getElementById('confirmModalBody').innerText = body;
@@ -37,7 +47,6 @@ let currentPage = 1;
 const rowsPerPage = 15;
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 🌟 ÇÖZÜM 1: Onay butonuna "async/await" ekledik. Artık işlemler bitmeden modal kapanmayacak!
     document.getElementById('confirmBtnAction')?.addEventListener('click', async () => {
         if (confirmCallback) {
             const btn = document.getElementById('confirmBtnAction');
@@ -45,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Bekleyin...';
             btn.disabled = true;
 
-            await confirmCallback(); // Silme veya Güncelleme işleminin TAMAMEN bitmesini bekler
+            await confirmCallback(); 
             
             btn.innerHTML = originalText;
             btn.disabled = false;
@@ -58,7 +67,18 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchFlights(); 
     setupPersonnelFormControls();
     setupFilters();
+    
+    // 🌟 AUTOCOMPLETE MOTORLARINI BAŞLAT 🌟
+    setupModalAutocomplete('staffRoleText', 'staffRole', 'roleDropdown', roleDataList);
+    setupModalAutocomplete('genderText', 'personnelGender', 'genderDropdown', genderDataList);
+
     document.getElementById('addPersonnelModal')?.addEventListener('hidden.bs.modal', resetFormToDefault);
+    
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.autocomplete-wrapper')) {
+            document.querySelectorAll('.custom-dropdown').forEach(el => el.style.display = 'none');
+        }
+    });
 });
 
 function startLiveClock() {
@@ -231,11 +251,20 @@ function viewProfile(id) {
 function setupPersonnelFormControls() {
     document.getElementById('addPersonnelForm')?.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const role = document.getElementById('staffRole').value;
+        const gender = document.getElementById('personnelGender').value;
+
+        if(!role || !gender) {
+            alert("⚠️ Lütfen Görev ve Cinsiyet alanlarını listeden seçiniz.");
+            return;
+        }
+
         const newId = isEditMode ? currentEditId : (allPersonnel.length > 0 ? (Math.max(...allPersonnel.map(p => parseInt(p.id) || 0)) + 1).toString() : "1");
         const payload = {
-            id: newId, name: document.getElementById('staffName').value,
-            role: document.getElementById('staffRole').value,
-            genderId: document.getElementById('personnelGender').value,
+            id: newId, 
+            name: document.getElementById('staffName').value,
+            role: role,
+            genderId: gender,
             lastUpdate: getTodayDate()
         };
         if (!isEditMode) {
@@ -253,13 +282,105 @@ function setupPersonnelFormControls() {
     });
 }
 
+// 🌟 KLAVYE DESTEKLİ EVRENSEL MOTOR 🌟
+function setupModalAutocomplete(inputId, hiddenId, dropdownId, dataArray) {
+    const input = document.getElementById(inputId);
+    const hidden = document.getElementById(hiddenId);
+    const dropdown = document.getElementById(dropdownId);
+    if (!input || !dropdown) return;
+
+    let currentFocus = -1;
+
+    const renderList = function() {
+        const term = input.value.toLocaleLowerCase('tr-TR').trim();
+        dropdown.innerHTML = '';
+        currentFocus = -1;
+        
+        const matched = dataArray.filter(item => {
+            if (term === "") return true;
+            return item.name.toLocaleLowerCase('tr-TR').includes(term);
+        });
+
+        if (matched.length === 0) {
+            dropdown.innerHTML = '<li class="text-muted"><i class="fas fa-search-minus me-2"></i>Kayıt bulunamadı</li>';
+            dropdown.style.display = 'block';
+            return;
+        }
+
+        matched.forEach(item => {
+            const li = document.createElement('li');
+            li.innerHTML = `<i class="fas ${item.icon} me-2 text-muted"></i> <b>${item.name}</b>`;
+            
+            li.addEventListener('click', () => {
+                selectItem(item);
+            });
+            dropdown.appendChild(li);
+        });
+        dropdown.style.display = 'block';
+    };
+
+    function selectItem(item) {
+        input.value = item.name; 
+        hidden.value = item.code; 
+        dropdown.style.display = 'none';
+    }
+
+    input.addEventListener('input', () => { hidden.value = ''; renderList(); });
+    input.addEventListener('focus', renderList);
+
+    input.addEventListener('keydown', function(e) {
+        let items = dropdown.getElementsByTagName('li');
+        if (!items || items.length === 0 || items[0].innerText.includes("bulunamadı")) return;
+
+        if (e.key === "ArrowDown") {
+            currentFocus++;
+            addActive(items);
+        } else if (e.key === "ArrowUp") {
+            currentFocus--;
+            addActive(items);
+        } else if (e.key === "Enter") {
+            e.preventDefault();
+            if (currentFocus > -1) {
+                if (items[currentFocus]) items[currentFocus].click();
+            }
+        }
+    });
+
+    function addActive(items) {
+        if (!items) return false;
+        removeActive(items);
+        if (currentFocus >= items.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = (items.length - 1);
+        items[currentFocus].classList.add("bg-light"); 
+        items[currentFocus].style.color = "#2563eb";
+        items[currentFocus].scrollIntoView({ block: "nearest" }); 
+    }
+
+    function removeActive(items) {
+        for (let i = 0; i < items.length; i++) {
+            items[i].classList.remove("bg-light");
+            items[i].style.color = "#475569";
+        }
+    }
+}
+
+
 async function editPersonnel(id) {
     const person = allPersonnel.find(p => String(p.id) === String(id));
     if (!person) return;
     isEditMode = true; currentEditId = id;
+    
     document.getElementById('staffName').value = person.name;
+
+    // Gizli Inputları Doldur
     document.getElementById('staffRole').value = person.role;
     document.getElementById('personnelGender').value = person.genderId || "";
+
+    // Ekranda Görünen Text Inputları Doldur
+    document.getElementById('staffRoleText').value = person.role;
+    const genderObj = genderDataList.find(g => g.code === person.genderId);
+    document.getElementById('genderText').value = genderObj ? genderObj.name : "";
+    
     document.querySelector('#addPersonnelModal .modal-title').innerHTML = '<i class="fas fa-edit me-2 text-success"></i>Personel Güncelle';
     const submitBtn = document.querySelector('#addPersonnelForm button[type="submit"]');
     if (submitBtn) { submitBtn.textContent = 'Güncelle'; submitBtn.classList.replace('btn-primary', 'btn-success'); }
@@ -269,6 +390,13 @@ async function editPersonnel(id) {
 function resetFormToDefault() {
     isEditMode = false; currentEditId = null;
     document.getElementById('addPersonnelForm')?.reset();
+    
+    // Gizli ve Text Inputları temizle
+    document.getElementById('staffRole').value = '';
+    document.getElementById('staffRoleText').value = '';
+    document.getElementById('personnelGender').value = '';
+    document.getElementById('genderText').value = '';
+
     document.querySelector('#addPersonnelModal .modal-title').innerHTML = '<i class="fas fa-user-plus me-2 text-primary"></i>Yeni Personel Kaydı';
     const submitBtn = document.querySelector('#addPersonnelForm button[type="submit"]');
     if (submitBtn) { submitBtn.textContent = 'Kaydı Tamamla'; submitBtn.classList.replace('btn-success', 'btn-primary'); }
@@ -281,14 +409,11 @@ async function deletePersonnel(id) {
     }, true, "Sil");
 }
 
-// 🌟 ÇÖZÜM 2: location.reload()'un yarattığı nefes darlığını sildik.
 document.getElementById('deleteAllPersonnelBtn')?.addEventListener('click', () => {
     showConfirmModal("KRİTİK TEMİZLİK", "Tüm personeller silinecek. Onaylıyor musunuz?", async () => {
-        // Döngü her bir silme işleminin veritabanına yazılmasını bekler
         for (const p of allPersonnel) { 
             await fetch(`${API_URL}/${p.id}`, { method: 'DELETE' }); 
         }
-        // Sayfayı yenilemek yerine, veriyi tekrar çekerek tabloyu güvenlice temizleriz
         await fetchPersonnel(); 
     }, true, "Tümünü Sil");
 });

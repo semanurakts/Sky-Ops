@@ -120,6 +120,24 @@
             border-radius: 50%;
             background-color: #3b82f6;
         }
+
+        /* 🌟 MODERN AÇILIR LİSTE (AUTOCOMPLETE) STİLLERİ 🌟 */
+        .autocomplete-wrapper { position: relative; }
+        .custom-dropdown {
+            position: absolute; top: 100%; left: 0; right: 0; background: white;
+            border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15); max-height: 200px; overflow-y: auto;
+            z-index: 1060; list-style: none; padding: 0; margin: 0; display: none;
+        }
+        .custom-dropdown li {
+            padding: 10px 15px; cursor: pointer; border-bottom: 1px solid #f8fafc;
+            color: #475569; font-size: 0.95rem; transition: all 0.2s ease;
+            display: flex; align-items: center;
+        }
+        .custom-dropdown li:hover { background-color: #f1f5f9; color: #2563eb; padding-left: 20px; }
+        .custom-dropdown::-webkit-scrollbar { width: 6px; }
+        .custom-dropdown::-webkit-scrollbar-track { background: #f8fafc; }
+        .custom-dropdown::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
      </style>
 </head>
 <body>
@@ -253,19 +271,20 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-muted">Görevi</label>
-                                <select class="form-select" id="staffRole" required style="border-radius: 10px;">
-                                    <option value="">Seçiniz...</option>
-                                    <option value="Pilot">Pilot</option>
-                                    <option value="Kabin Memuru">Kabin Memuru</option>
-                                </select>
+                                <div class="autocomplete-wrapper">
+                                    <input type="text" class="form-control" id="staffRoleText" placeholder="Seçiniz..." autocomplete="off" required style="border-radius: 10px; cursor: pointer;">
+                                    <input type="hidden" id="staffRole">
+                                    <ul class="custom-dropdown w-100 shadow-lg" id="roleDropdown"></ul>
+                                </div>
                             </div>
                             
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-muted">Cinsiyet</label>
-                                <select id="personnelGender" class="form-select" required style="border-radius: 10px;">
-                                    <option value="" selected disabled>Seçiniz...</option>
-                                    <option value="1">Erkek</option> <option value="2">Kadın</option>
-                                </select>
+                                <div class="autocomplete-wrapper">
+                                    <input type="text" class="form-control" id="genderText" placeholder="Seçiniz..." autocomplete="off" required style="border-radius: 10px; cursor: pointer;">
+                                    <input type="hidden" id="personnelGender">
+                                    <ul class="custom-dropdown w-100 shadow-lg" id="genderDropdown"></ul>
+                                </div>
                             </div>
                         </div>
 

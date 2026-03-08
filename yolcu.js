@@ -1,43 +1,41 @@
 const API_BASE_URL = 'http://localhost:3000';
 
 let globalAirports = [];
+let filteredOriginAirports = []; 
 let routeDurations = [];
 let allFlights = [];
 let globalAirlines = [];
 
+// Kabin Sınıfları Verisi
+const cabinClasses = [
+    { value: 'economy', text: 'Ekonomi', icon: 'fa-chair' },
+    { value: 'business', text: 'Business', icon: 'fa-chair' },
+    { value: 'first', text: 'First Class', icon: 'fa-chair' }
+];
+
 document.addEventListener('DOMContentLoaded', async () => {
     await fetchInitialData();
 
-    // Gece yarısı hatalarını çözen yerel tarih ayarı
-    const todayObj = new Date();
-    const year = todayObj.getFullYear();
-    const month = String(todayObj.getMonth() + 1).padStart(2, '0');
-    const day = String(todayObj.getDate()).padStart(2, '0');
-    const todayStr = `${year}-${month}-${day}`;
-
-    const maxDateObj = new Date();
-    maxDateObj.setDate(todayObj.getDate() + 360);
-    const maxYear = maxDateObj.getFullYear();
-    const maxMonth = String(maxDateObj.getMonth() + 1).padStart(2, '0');
-    const maxDay = String(maxDateObj.getDate()).padStart(2, '0');
-    const maxDateStr = `${maxYear}-${maxMonth}-${maxDay}`;
-
-    const dateInput = document.getElementById('searchDate');
-    dateInput.setAttribute('min', todayStr);
-    dateInput.setAttribute('max', maxDateStr);
-    dateInput.value = todayStr;
+    // 🌟 MODERN TARİH SEÇİCİ (FLATPICKR) BAŞLATILIYOR 🌟
+    flatpickr("#searchDate", {
+        locale: "tr", // Türkçe dil ayarı
+        altInput: true, // Kullanıcıya farklı format (08.03.2026), arka plana farklı format (2026-03-08)
+        altFormat: "d.m.Y",
+        dateFormat: "Y-m-d",
+        defaultDate: "today", // Açılışta bugünü seç
+        minDate: "today", // Geçmişi engelle
+        maxDate: new Date().fp_incr(360), // Maksimum 360 gün ileriye izin ver
+        disableMobile: "true" // Mobilde de şık kalsın, kaba tarayıcı takvimi açılmasın
+    });
 
     document.getElementById('flightSearchForm').addEventListener('submit', handleFlightSearch);
     
-    // Arama Daraltma Kutusunu Dinle
     const filterInput = document.getElementById('globalFilterInput');
     filterInput.addEventListener('input', handleGlobalFilter);
 
-    // Kutu dışına tıklanırsa açılan listeyi gizle
     document.addEventListener('click', (e) => {
-        const dropdown = document.getElementById('globalDropdown');
-        if (!filterInput.contains(e.target) && !dropdown.contains(e.target)) {
-            dropdown.style.display = 'none';
+        if (!e.target.closest('.autocomplete-wrapper')) {
+            document.querySelectorAll('.custom-dropdown').forEach(el => el.style.display = 'none');
         }
     });
 });
@@ -52,17 +50,21 @@ async function fetchInitialData() {
         ]);
 
         globalAirports = await airportsRes.json();
+        filteredOriginAirports = [...globalAirports]; 
         routeDurations = await routesRes.json();
         allFlights = await flightsRes.json();
         globalAirlines = await airlinesRes.json();
         
-        populateAirportSelect('searchOrigin', 'Kalkış Noktası', globalAirports);
-        populateAirportSelect('searchDest', 'Varış Noktası', globalAirports);
+        setupAutocomplete('searchOriginText', 'searchOrigin', 'originDropdown', 'origin');
+        setupAutocomplete('searchDestText', 'searchDest', 'destDropdown', 'dest');
+        setupClassAutocomplete();
+
     } catch (error) {
         console.error("Veriler çekilirken hata:", error);
     }
 }
 
+// Global Arama Daraltma Fonksiyonu
 function handleGlobalFilter(e) {
     const term = e.target.value.toLocaleLowerCase('tr-TR').trim();
     const dropdown = document.getElementById('globalDropdown');
@@ -70,7 +72,9 @@ function handleGlobalFilter(e) {
 
     if (term === "") {
         dropdown.style.display = 'none';
-        populateAirportSelect('searchOrigin', 'Kalkış Noktası', globalAirports);
+        filteredOriginAirports = [...globalAirports]; 
+        document.getElementById('searchOriginText').value = '';
+        document.getElementById('searchOrigin').value = '';
         return;
     }
 
@@ -106,12 +110,14 @@ function handleGlobalFilter(e) {
             document.getElementById('globalFilterInput').value = item.text;
             dropdown.style.display = 'none';
             
-            const finalFiltered = globalAirports.filter(a => {
+            filteredOriginAirports = globalAirports.filter(a => {
                 if (item.type === "city") return a.city === item.text;
                 if (item.type === "country") return a.country === item.text;
             });
-            
-            populateAirportSelect('searchOrigin', 'Kalkış Noktası', finalFiltered);
+
+            document.getElementById('searchOriginText').value = '';
+            document.getElementById('searchOrigin').value = '';
+            document.getElementById('searchOriginText').focus(); 
         });
 
         dropdown.appendChild(li);
@@ -120,28 +126,84 @@ function handleGlobalFilter(e) {
     dropdown.style.display = 'block'; 
 }
 
-function populateAirportSelect(selectId, placeholder, dataArray) {
-    const selectEl = document.getElementById(selectId);
-    if (!selectEl) return;
-    
-    selectEl.innerHTML = `<option value="" selected disabled>${placeholder}</option>`;
-    
-    if (dataArray.length === 0) {
-        selectEl.options.add(new Option(`Kayıt Bulunamadı`, ""));
-        return;
-    }
+// Nereden & Nereye Autocomplete Fonksiyonu
+function setupAutocomplete(inputId, hiddenId, dropdownId, boxType) {
+    const input = document.getElementById(inputId);
+    const hidden = document.getElementById(hiddenId);
+    const dropdown = document.getElementById(dropdownId);
 
-    dataArray.forEach(airport => {
-        let optionText = `${airport.code} - ${airport.name}`;
-        if(airport.city && airport.country) {
-            optionText += ` (${airport.city}, ${airport.country})`;
-        } else if (airport.cityId) {
-            optionText += ` (${airport.cityId})`;
+    const renderList = function() {
+        const term = input.value.toLocaleLowerCase('tr-TR').trim();
+        dropdown.innerHTML = '';
+        
+        const dataToSearch = (boxType === 'origin') ? filteredOriginAirports : globalAirports;
+
+        const matched = dataToSearch.filter(a => {
+            if (term === "") return true;
+            const fullText = `${a.code} ${a.name} ${a.city} ${a.country}`.toLocaleLowerCase('tr-TR');
+            return fullText.includes(term);
+        });
+
+        if (matched.length === 0) {
+            dropdown.innerHTML = '<li class="text-muted"><i class="fas fa-plane-slash me-2"></i>Uçuş Noktası Bulunamadı</li>';
+            dropdown.style.display = 'block';
+            return;
         }
-        selectEl.options.add(new Option(optionText, airport.code));
+
+        matched.forEach(a => {
+            const li = document.createElement('li');
+            li.innerHTML = `<b>${a.code}</b> - ${a.name} <small class="text-muted ms-auto">(${a.city}, ${a.country})</small>`;
+            
+            li.addEventListener('click', () => {
+                input.value = `${a.code} - ${a.name}`; 
+                hidden.value = a.code; 
+                dropdown.style.display = 'none';
+            });
+
+            dropdown.appendChild(li);
+        });
+
+        dropdown.style.display = 'block';
+    };
+
+    input.addEventListener('input', () => {
+        document.getElementById(hiddenId).value = ''; 
+        renderList();
     });
+    
+    input.addEventListener('focus', renderList); 
 }
 
+// Kabin Sınıfı Autocomplete
+function setupClassAutocomplete() {
+    const input = document.getElementById('searchClassText');
+    const hidden = document.getElementById('searchClass');
+    const dropdown = document.getElementById('searchClassDropdown');
+
+    const renderList = function() {
+        dropdown.innerHTML = '';
+        
+        cabinClasses.forEach(c => {
+            const li = document.createElement('li');
+            li.innerHTML = `<i class="fas ${c.icon} me-2 text-muted"></i> <b>${c.text}</b>`;
+            
+            li.addEventListener('click', () => {
+                input.value = c.text; 
+                hidden.value = c.value; 
+                dropdown.style.display = 'none';
+            });
+
+            dropdown.appendChild(li);
+        });
+
+        dropdown.style.display = 'block';
+    };
+
+    input.addEventListener('focus', renderList); 
+    input.addEventListener('click', renderList); 
+}
+
+// Hesaplamalar
 function calculateArrivalTime(startTime, durationHours) {
     const [hrs, mins] = startTime.split(':').map(Number);
     const totalMins = (hrs * 60) + mins + (durationHours * 60);
@@ -157,6 +219,7 @@ function calculatePrice(durationHours, cabinClass) {
     return Math.round(basePrice).toLocaleString('tr-TR');
 }
 
+// Arama İşlemi
 function handleFlightSearch(e) {
     e.preventDefault();
 
@@ -166,24 +229,18 @@ function handleFlightSearch(e) {
     const cabinClass = document.getElementById('searchClass').value;
 
     if (!origin || !dest || origin === "" || dest === "") {
-        alert("⚠️ Lütfen kalkış ve varış noktası seçiniz!");
+        alert("⚠️ Lütfen listeden geçerli bir kalkış ve varış noktası seçiniz!");
         return;
     }
 
-    // 🌟 AYNI ŞEHİR KONTROLÜ (YENİ EKLENDİ) 🌟
     const originAirport = globalAirports.find(a => a.code === origin);
     const destAirport = globalAirports.find(a => a.code === dest);
 
     if (originAirport && destAirport) {
-        // İki havalimanının "cityId" (şehir kimliği) aynı mı diye bakıyoruz
         if (originAirport.cityId === destAirport.cityId) {
             alert(`⚠️ Uçuş kuralları gereği kalkış ve varış noktası aynı şehirde (${originAirport.city}) olamaz!\nLütfen farklı bir varış noktası seçin.`);
             return;
         }
-    } else if (origin === dest) {
-        // Her ihtimale karşı eski kontrol de burada kalsın
-        alert("⚠️ Kalkış ve varış noktası aynı olamaz!");
-        return;
     }
 
     const resultsContainer = document.getElementById('flightResults');

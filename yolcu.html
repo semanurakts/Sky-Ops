@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -116,8 +118,13 @@
             background-color: #ffffff;
         }
 
-        /* 🌟 YENİ: AŞAĞI DOĞRU AÇILAN ŞIK LİSTE (AUTOCOMPLETE) 🌟 */
-        .global-dropdown {
+        /* Autocomplete Wrapper */
+        .autocomplete-wrapper {
+            position: relative;
+        }
+
+        /* MODERN AUTOCOMPLETE CSS */
+        .custom-dropdown {
             position: absolute;
             top: 100%;
             left: 0;
@@ -133,31 +140,75 @@
             list-style: none;
             padding: 0;
             margin: 0;
-            display: none; /* JS ile arama yapılınca açılacak */
+            display: none;
         }
 
-        .global-dropdown li {
+        .custom-dropdown li {
             padding: 12px 15px;
             cursor: pointer;
             border-bottom: 1px solid #f8fafc;
             color: #475569;
-            font-size: 1rem;
+            font-size: 0.95rem;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
         }
 
-        .global-dropdown li:hover {
-            background-color: #f1f5f9;
-            color: #2563eb;
-            padding-left: 20px; /* Üstüne gelince sağa kaysın */
+        .custom-dropdown li:last-child {
+            border-bottom: none;
         }
 
-        /* Liste Scrollbar */
-        .global-dropdown::-webkit-scrollbar { width: 6px; }
-        .global-dropdown::-webkit-scrollbar-track { background: #f8fafc; }
-        .global-dropdown::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .global-dropdown::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .custom-dropdown li:hover {
+            background-color: #f1f5f9;
+            color: #2563eb;
+            padding-left: 20px;
+        }
+
+        .custom-dropdown li b {
+            color: #1e293b;
+            font-size: 1.05rem;
+            margin-right: 5px;
+        }
+        
+        /* Liste İnce Scrollbar */
+        .custom-dropdown::-webkit-scrollbar { width: 6px; }
+        .custom-dropdown::-webkit-scrollbar-track { background: #f8fafc; }
+        .custom-dropdown::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-dropdown::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* KABİN SINIFI MODERN STİL */
+        #searchClassAutocompleteWrapper .input-group {
+            position: relative;
+        }
+
+        #searchClassAutocompleteWrapper .input-group-text {
+            color: #94a3b8;
+        }
+
+        #searchClassText {
+            border-left: none;
+            cursor: pointer; 
+        }
+
+        #searchClassDropdown {
+            border-top: 1px solid #e2e8f0; 
+            border-radius: 12px; 
+        }
+
+        #searchClassDropdown li i {
+            color: #94a3b8;
+        }
+
+        #searchClassDropdown li b {
+            font-weight: 700;
+        }
+
+        /* 🌟 YENİ: TAKVİM INPUT DÜZELTMESİ 🌟 */
+        /* Flatpickr inputu kilitleyince arka planı gri yapar, onu şeffaf yapıyoruz */
+        .flatpickr-input[readonly] {
+            background-color: transparent !important;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -186,53 +237,51 @@
                 <div class="row mb-4">
                     <div class="col-12">
                         <label class="form-label text-primary"><i class="fas fa-globe-americas me-1"></i> Arama Daraltma (Opsiyonel)</label>
-                        <div class="position-relative">
+                        <div class="autocomplete-wrapper">
                             <input type="text" id="globalFilterInput" class="form-control border rounded shadow-sm" placeholder="Hangi şehir veya ülkeye uçmak istiyorsunuz? (Örn: İstanbul, Muğla, Türkiye...)">
-                            <ul id="globalDropdown" class="global-dropdown"></ul>
+                            <ul id="globalDropdown" class="custom-dropdown"></ul>
                         </div>
                     </div>
                 </div>
 
                 <div class="row g-3 align-items-end">
                     
-                    <div class="col-md-3">
+                    <div class="col-md-3 autocomplete-wrapper">
                         <label class="form-label">Nereden</label>
-                        <div class="input-group border rounded">
+                        <div class="input-group border rounded bg-white">
                             <span class="input-group-text"><i class="fas fa-plane-departure"></i></span>
-                            <select class="form-select border-0" id="searchOrigin" required>
-                                <option value="" selected disabled>Kalkış Noktası</option>
-                            </select>
+                            <input type="text" class="form-control border-0 fw-medium" id="searchOriginText" placeholder="Kalkış Şehri / Havalimanı" autocomplete="off" required>
+                            <input type="hidden" id="searchOrigin"> 
                         </div>
+                        <ul class="custom-dropdown" id="originDropdown"></ul>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-3 autocomplete-wrapper">
                         <label class="form-label">Nereye</label>
-                        <div class="input-group border rounded">
+                        <div class="input-group border rounded bg-white">
                             <span class="input-group-text"><i class="fas fa-plane-arrival"></i></span>
-                            <select class="form-select border-0" id="searchDest" required>
-                                <option value="" selected disabled>Varış Noktası</option>
-                            </select>
+                            <input type="text" class="form-control border-0 fw-medium" id="searchDestText" placeholder="Varış Şehri / Havalimanı" autocomplete="off" required>
+                            <input type="hidden" id="searchDest">
                         </div>
+                        <ul class="custom-dropdown" id="destDropdown"></ul>
                     </div>
 
                     <div class="col-md-2">
                         <label class="form-label">Tarih</label>
-                        <div class="input-group border rounded">
+                        <div class="input-group border rounded bg-white">
                             <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                            <input type="date" class="form-control border-0" id="searchDate" required>
+                            <input type="text" class="form-control border-0 fw-medium" id="searchDate" placeholder="Tarih Seç" required>
                         </div>
                     </div>
 
-                    <div class="col-md-2">
+                    <div class="col-md-2 autocomplete-wrapper" id="searchClassAutocompleteWrapper">
                         <label class="form-label">Kabin Sınıfı</label>
-                        <div class="input-group border rounded">
+                        <div class="input-group border rounded bg-white">
                             <span class="input-group-text"><i class="fas fa-chair"></i></span>
-                            <select class="form-select border-0" id="searchClass" required>
-                                <option value="economy" selected>Ekonomi</option>
-                                <option value="business">Business</option>
-                                <option value="first">First Class</option>
-                            </select>
+                            <input type="text" class="form-control border-0 fw-medium" id="searchClassText" value="Ekonomi" autocomplete="off" readonly required>
+                            <input type="hidden" id="searchClass" value="economy">
                         </div>
+                        <ul class="custom-dropdown" id="searchClassDropdown"></ul>
                     </div>
 
                     <div class="col-md-2">
@@ -251,6 +300,10 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/tr.js"></script>
+    
     <script src="yolcu.js"></script>
 </body>
 </html>
