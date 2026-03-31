@@ -57,7 +57,7 @@
             border-radius: 16px;
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            max-width: 1000px;
+            max-width: 1100px;
             margin: -80px auto 40px auto;
             position: relative;
             z-index: 10;
@@ -133,7 +133,7 @@
             border: 1px solid #e2e8f0;
             border-top: none;
             border-radius: 0 0 12px 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             max-height: 250px;
             overflow-y: auto;
             z-index: 1050;
@@ -154,10 +154,6 @@
             align-items: center;
         }
 
-        .custom-dropdown li:last-child {
-            border-bottom: none;
-        }
-
         .custom-dropdown li:hover {
             background-color: #f1f5f9;
             color: #2563eb;
@@ -170,44 +166,140 @@
             margin-right: 5px;
         }
         
-        /* Liste İnce Scrollbar */
         .custom-dropdown::-webkit-scrollbar { width: 6px; }
         .custom-dropdown::-webkit-scrollbar-track { background: #f8fafc; }
         .custom-dropdown::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .custom-dropdown::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* KABİN SINIFI MODERN STİL */
-        #searchClassAutocompleteWrapper .input-group {
-            position: relative;
-        }
+        #searchClassAutocompleteWrapper .input-group-text { color: #94a3b8; }
+        #searchClassText { border-left: none; cursor: pointer; }
+        #searchClassDropdown { border-top: 1px solid #e2e8f0; border-radius: 12px; }
+        #searchClassDropdown li i { color: #94a3b8; }
+        #searchClassDropdown li b { font-weight: 700; }
 
-        #searchClassAutocompleteWrapper .input-group-text {
-            color: #94a3b8;
-        }
-
-        #searchClassText {
-            border-left: none;
-            cursor: pointer; 
-        }
-
-        #searchClassDropdown {
-            border-top: 1px solid #e2e8f0; 
-            border-radius: 12px; 
-        }
-
-        #searchClassDropdown li i {
-            color: #94a3b8;
-        }
-
-        #searchClassDropdown li b {
-            font-weight: 700;
-        }
-
-        /* 🌟 YENİ: TAKVİM INPUT DÜZELTMESİ 🌟 */
-        /* Flatpickr inputu kilitleyince arka planı gri yapar, onu şeffaf yapıyoruz */
         .flatpickr-input[readonly] {
             background-color: transparent !important;
             cursor: pointer;
+        }
+
+        /* 🌟 YENİ: UÇAK KROKİSİ STİLLERİ 🌟 */
+        .plane-nose {
+            width: 100%;
+            max-width: 380px;
+            height: 120px;
+            margin: 0 auto;
+            background: linear-gradient(to bottom, #e2e8f0 0%, #f8fafc 100%);
+            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+            position: relative;
+            border: 4px solid #cbd5e1;
+            border-bottom: none;
+        }
+        .cockpit-window {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 40px;
+            background: #334155;
+            border-radius: 50% 50% 10px 10px;
+            opacity: 0.8;
+        }
+        .plane-body {
+            width: 100%;
+            max-width: 380px;
+            margin: 0 auto;
+            background-color: #f8fafc;
+            border-left: 4px solid #cbd5e1;
+            border-right: 4px solid #cbd5e1;
+            padding: 30px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .plane-tail {
+            width: 100%;
+            max-width: 380px;
+            height: 80px;
+            margin: 0 auto;
+            background: #f8fafc;
+            border-radius: 0 0 50% 50% / 0 0 100% 100%;
+            border: 4px solid #cbd5e1;
+            border-top: none;
+            position: relative;
+        }
+
+        /* 🌟 YENİ: KARE KUTU KOLTUK STİLLERİ 🌟 */
+        .seat {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid #cbd5e1; 
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        
+        .seat::after {
+            display: none !important;
+        }
+
+        .seat.available:hover {
+            background-color: #e0f2fe;
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
+        }
+        
+        .seat.selected {
+            background-color: #3b82f6;
+            border-color: #1d4ed8;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4);
+        }
+        
+        .seat.occupied {
+            background-color: #f1f5f9;
+            border-color: #e2e8f0;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        /* Business Sınıfı Renkleri */
+        .seat.business.available { border-color: #8b5cf6; }
+        .seat.business.available:hover { background-color: #ede9fe; }
+        .seat.business.selected { background-color: #8b5cf6; border-color: #6d28d9; }
+
+        /* First Class Renkleri */
+        .seat.first.available { border-color: #f59e0b; color: #b45309; }
+        .seat.first.available:hover { background-color: #fef3c7; }
+        .seat.first.selected { background-color: #f59e0b; border-color: #d97706; }
+        
+        /* Sınıf Ayırıcı Çizgi */
+        .class-divider {
+            width: 100%;
+            height: 2px;
+            background: repeating-linear-gradient(to right, #cbd5e1 0, #cbd5e1 10px, transparent 10px, transparent 20px);
+            margin: 10px 0;
+            position: relative;
+        }
+        .class-divider::after {
+            content: attr(data-label);
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f8fafc;
+            padding: 0 10px;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
     </style>
 </head>
@@ -244,49 +336,69 @@
                     </div>
                 </div>
 
-                <div class="row g-3 align-items-end">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="btn-group shadow-sm" role="group">
+                            <input type="radio" class="btn-check" name="tripType" id="oneWay" value="oneway" checked>
+                            <label class="btn btn-outline-primary" for="oneWay"><i class="fas fa-arrow-right me-2"></i>Tek Yön</label>
+
+                            <input type="radio" class="btn-check" name="tripType" id="roundTrip" value="roundtrip">
+                            <label class="btn btn-outline-primary" for="roundTrip"><i class="fas fa-exchange-alt me-2"></i>Gidiş-Dönüş</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-2 align-items-end">
                     
-                    <div class="col-md-3 autocomplete-wrapper">
+                    <div class="col autocomplete-wrapper">
                         <label class="form-label">Nereden</label>
                         <div class="input-group border rounded bg-white">
                             <span class="input-group-text"><i class="fas fa-plane-departure"></i></span>
-                            <input type="text" class="form-control border-0 fw-medium" id="searchOriginText" placeholder="Kalkış Şehri / Havalimanı" autocomplete="off" required>
+                            <input type="text" class="form-control border-0 fw-medium px-1" id="searchOriginText" placeholder="Kalkış Seç" autocomplete="off" required>
                             <input type="hidden" id="searchOrigin"> 
                         </div>
                         <ul class="custom-dropdown" id="originDropdown"></ul>
                     </div>
 
-                    <div class="col-md-3 autocomplete-wrapper">
+                    <div class="col autocomplete-wrapper">
                         <label class="form-label">Nereye</label>
                         <div class="input-group border rounded bg-white">
                             <span class="input-group-text"><i class="fas fa-plane-arrival"></i></span>
-                            <input type="text" class="form-control border-0 fw-medium" id="searchDestText" placeholder="Varış Şehri / Havalimanı" autocomplete="off" required>
+                            <input type="text" class="form-control border-0 fw-medium px-1" id="searchDestText" placeholder="Varış Seç" autocomplete="off" required>
                             <input type="hidden" id="searchDest">
                         </div>
                         <ul class="custom-dropdown" id="destDropdown"></ul>
                     </div>
 
-                    <div class="col-md-2">
-                        <label class="form-label">Tarih</label>
+                    <div class="col">
+                        <label class="form-label">Gidiş Tarihi</label>
                         <div class="input-group border rounded bg-white">
                             <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                            <input type="text" class="form-control border-0 fw-medium" id="searchDate" placeholder="Tarih Seç" required>
+                            <input type="text" class="form-control border-0 fw-medium px-1" id="searchDate" placeholder="Tarih" required>
                         </div>
                     </div>
 
-                    <div class="col-md-2 autocomplete-wrapper" id="searchClassAutocompleteWrapper">
-                        <label class="form-label">Kabin Sınıfı</label>
+                    <div class="col" id="returnDateContainer" style="display: none;">
+                        <label class="form-label">Dönüş Tarihi</label>
+                        <div class="input-group border rounded bg-white">
+                            <span class="input-group-text text-primary"><i class="fas fa-calendar-check"></i></span>
+                            <input type="text" class="form-control border-0 fw-medium px-1" id="returnDate" placeholder="Tarih">
+                        </div>
+                    </div>
+
+                    <div class="col autocomplete-wrapper" id="searchClassAutocompleteWrapper">
+                        <label class="form-label">Sınıf</label>
                         <div class="input-group border rounded bg-white">
                             <span class="input-group-text"><i class="fas fa-chair"></i></span>
-                            <input type="text" class="form-control border-0 fw-medium" id="searchClassText" value="Ekonomi" autocomplete="off" readonly required>
+                            <input type="text" class="form-control border-0 fw-medium px-1" id="searchClassText" value="Ekonomi" autocomplete="off" readonly required>
                             <input type="hidden" id="searchClass" value="economy">
                         </div>
                         <ul class="custom-dropdown" id="searchClassDropdown"></ul>
                     </div>
 
-                    <div class="col-md-2">
+                    <div class="col-auto flex-grow-1">
                         <button type="submit" class="btn btn-search">
-                            <i class="fas fa-search me-2"></i> Uçuş Bul
+                            <i class="fas fa-search me-2"></i> Bul
                         </button>
                     </div>
 
@@ -299,11 +411,110 @@
         <div id="flightResults"></div>
     </div>
 
+    <div class="modal fade" id="seatMapModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+                <div class="modal-header bg-primary text-white border-0 py-3">
+                    <div class="d-flex flex-column">
+                        <h5 class="modal-title fw-bold mb-0"><i class="fas fa-plane me-2"></i>Koltuk Seçimi</h5>
+                        <small class="text-white-50" id="seatMapFlightInfo">Lütfen Koltuğunuzu Seçin</small>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                
+                <div class="modal-body p-0" style="background-color: #f1f5f9;">
+                    <div class="row g-0">
+                        <div class="col-lg-8 p-4 border-end" style="max-height: 70vh; overflow-y: auto; position: relative;">
+                            
+                            <div class="plane-nose">
+                                <div class="cockpit-window"></div>
+                            </div>
+                            
+                            <div class="plane-body" id="planeBody">
+                                </div>
+                            
+                            <div class="plane-tail"></div>
+                            
+                        </div>
+                        
+                        <div class="col-lg-4 p-4 bg-white d-flex flex-column">
+                            <h5 class="fw-bold text-dark mb-4 border-bottom pb-2">Seçim Özeti</h5>
+                            
+                            <div class="mb-4">
+                                <span class="text-muted small fw-bold text-uppercase d-block mb-1">Seçilen Koltuk</span>
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-primary text-white fw-bold rounded-3 d-flex justify-content-center align-items-center shadow-sm" style="width: 50px; height: 50px; font-size: 1.2rem;" id="summarySeatNo">--</div>
+                                    <div class="ms-3">
+                                        <h6 class="mb-0 fw-bold text-dark" id="summarySeatType">Henüz Seçilmedi</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <span class="text-muted small fw-bold text-uppercase d-block mb-1">Kabin Sınıfı</span>
+                                <span class="badge bg-secondary px-3 py-2" id="summaryCabinClass">--</span>
+                            </div>
+
+                            <div class="mt-auto border-top pt-4">
+                                <button class="btn btn-primary btn-lg w-100 fw-bold shadow-sm" id="btnProceedToPayment" disabled>
+                                    Ödemeye Geç <i class="fas fa-lock ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+                <div class="modal-header bg-dark text-white border-0 py-3">
+                    <h5 class="modal-title fw-bold mb-0"><i class="fas fa-lock me-2"></i>Güvenli Ödeme</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body p-4" style="background-color: #f8fafc;">
+                    
+                    <div class="text-center mb-4">
+                        <i class="fas fa-credit-card fa-3x text-primary mb-2"></i>
+                        <h4 class="fw-bold text-dark mb-0">Toplam Tutar: <span id="paymentTotalAmount" class="text-success">0 ₺</span></h4>
+                        <small class="text-muted">Gidiş ve Dönüş Biletleriniz İçin</small>
+                    </div>
+
+                    <form id="paymentForm">
+                        <div class="mb-3">
+                            <label class="form-label text-muted fw-bold small">Kart Üzerindeki İsim</label>
+                            <input type="text" class="form-control border border-2 shadow-sm py-2 fw-medium" placeholder="Örn: ALİ YILMAZ" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted fw-bold small">Kart Numarası</label>
+                            <input type="text" class="form-control border border-2 shadow-sm py-2 fw-medium" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                        </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <label class="form-label text-muted fw-bold small">Son Kullanma (AA/YY)</label>
+                                <input type="text" class="form-control border border-2 shadow-sm py-2 fw-medium text-center" placeholder="12/28" maxlength="5" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label text-muted fw-bold small">CVV</label>
+                                <input type="password" class="form-control border border-2 shadow-sm py-2 fw-medium text-center" placeholder="***" maxlength="3" required>
+                            </div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg fw-bold shadow-sm">
+                                <i class="fas fa-check-circle me-2"></i> Ödemeyi Tamamla
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/tr.js"></script>
-    
     <script src="yolcu.js"></script>
 </body>
 </html>
