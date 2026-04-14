@@ -121,6 +121,7 @@
         /* Autocomplete Wrapper */
         .autocomplete-wrapper {
             position: relative;
+            z-index: 100;
         }
 
         /* MODERN AUTOCOMPLETE CSS */
@@ -136,7 +137,8 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             max-height: 250px;
             overflow-y: auto;
-            z-index: 1050;
+            /* 🌟 EKLENEN KURAL: Açılan listenin diğer her şeyin üstünde (havada) durmasını sağlar 🌟 */
+            z-index: 1050 !important; 
             list-style: none;
             padding: 0;
             margin: 0;
@@ -181,7 +183,7 @@
             cursor: pointer;
         }
 
-        /* 🌟 YENİ: UÇAK KROKİSİ STİLLERİ 🌟 */
+        /* 🌟 UÇAK KROKİSİ STİLLERİ 🌟 */
         .plane-nose {
             width: 100%;
             max-width: 380px;
@@ -228,7 +230,7 @@
             position: relative;
         }
 
-        /* 🌟 YENİ: KARE KUTU KOLTUK STİLLERİ 🌟 */
+        /* 🌟 KARE KUTU KOLTUK STİLLERİ 🌟 */
         .seat {
             width: 40px;
             height: 40px;
@@ -301,6 +303,30 @@
             font-weight: 700;
             letter-spacing: 1px;
         }
+
+        /* 🌟 ÖZEL ÖDEME INPUT STİLLERİ (FERAH KUTUCUKLAR) 🌟 */
+        .custom-payment-input {
+            padding: 14px 18px !important; 
+            border-radius: 12px !important; 
+            border: 1px solid #cbd5e1 !important;
+            font-size: 15px;
+            font-weight: 500;
+            color: #334155;
+            background-color: #f8fafc;
+            transition: all 0.2s ease;
+        }
+
+        .custom-payment-input:focus {
+            background-color: #ffffff;
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15) !important;
+            outline: none;
+        }
+
+        .custom-payment-input::placeholder {
+            color: #94a3b8;
+            font-weight: 400;
+        }
     </style>
 </head>
 <body>
@@ -309,7 +335,7 @@
         <div class="container d-flex justify-content-between align-items-center">
             <a href="yolcu.html" class="brand-logo"><i class="fas fa-plane"></i> SkyOps</a>
             <div>
-                <a href="#" class="btn btn-outline-primary rounded-pill fw-semibold px-4 me-2">Biletlerim</a>
+                <a href="bilet.html" class="btn btn-outline-primary rounded-pill fw-semibold px-4 me-2">Biletlerim</a>
                 <a href="#" class="btn btn-primary rounded-pill fw-semibold px-4">Giriş Yap</a>
             </div>
         </div>
@@ -326,7 +352,7 @@
         <div class="search-container">
             <form id="flightSearchForm">
                 
-                <div class="row mb-4">
+                <div class="row mb-4" style="position: relative; z-index: 200;">
                     <div class="col-12">
                         <label class="form-label text-primary"><i class="fas fa-globe-americas me-1"></i> Arama Daraltma (Opsiyonel)</label>
                         <div class="autocomplete-wrapper">
@@ -348,7 +374,7 @@
                     </div>
                 </div>
 
-                <div class="row g-2 align-items-end">
+                <div class="row g-2 align-items-end" style="position: relative; z-index: 50;">
                     
                     <div class="col autocomplete-wrapper">
                         <label class="form-label">Nereden</label>
@@ -469,44 +495,54 @@
 
     <div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
-                <div class="modal-header bg-dark text-white border-0 py-3">
-                    <h5 class="modal-title fw-bold mb-0"><i class="fas fa-lock me-2"></i>Güvenli Ödeme</h5>
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                
+                <div class="modal-header bg-dark text-white p-4 border-0">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-lock me-2 text-success"></i>Güvenli Ödeme Adımı</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
                 </div>
-                <div class="modal-body p-4" style="background-color: #f8fafc;">
+                
+                <div class="modal-body p-4 bg-light">
                     
-                    <div class="text-center mb-4">
-                        <i class="fas fa-credit-card fa-3x text-primary mb-2"></i>
-                        <h4 class="fw-bold text-dark mb-0">Toplam Tutar: <span id="paymentTotalAmount" class="text-success">0 ₺</span></h4>
-                        <small class="text-muted">Gidiş ve Dönüş Biletleriniz İçin</small>
+                    <div class="alert alert-info py-3 px-3 mb-4 d-flex align-items-center shadow-sm" style="border-radius: 12px; border: 1px solid #bae6fd;">
+                        <i class="fas fa-info-circle fa-2x me-3 text-info"></i>
+                        <div style="font-size: 13px; color: #0369a1;">
+                            <strong class="d-block mb-1">Akademik Proje / Test Ortamı</strong>
+                            Sistemi test etmek için gerçek kart bilgisi girmeyiniz. Rastgele sayılar kullanabilirsiniz.
+                        </div>
                     </div>
 
-                    <form id="paymentForm">
-                        <div class="mb-3">
-                            <label class="form-label text-muted fw-bold small">Kart Üzerindeki İsim</label>
-                            <input type="text" class="form-control border border-2 shadow-sm py-2 fw-medium" placeholder="Örn: ALİ YILMAZ" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-muted fw-bold small">Kart Numarası</label>
-                            <input type="text" class="form-control border border-2 shadow-sm py-2 fw-medium" placeholder="0000 0000 0000 0000" maxlength="19" required>
-                        </div>
-                        <div class="row g-3 mb-4">
-                            <div class="col-6">
-                                <label class="form-label text-muted fw-bold small">Son Kullanma (AA/YY)</label>
-                                <input type="text" class="form-control border border-2 shadow-sm py-2 fw-medium text-center" placeholder="12/28" maxlength="5" required>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label text-muted fw-bold small">CVV</label>
-                                <input type="password" class="form-control border border-2 shadow-sm py-2 fw-medium text-center" placeholder="***" maxlength="3" required>
-                            </div>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-success btn-lg fw-bold shadow-sm">
-                                <i class="fas fa-check-circle me-2"></i> Ödemeyi Tamamla
-                            </button>
-                        </div>
-                    </form>
+                    <div class="text-center mb-4 bg-white p-3 shadow-sm" style="border-radius: 16px; border: 1px solid #e2e8f0;">
+                        <i class="fas fa-credit-card fa-2x text-primary mb-2"></i>
+                        <h3 class="fw-bold text-dark mb-0" id="paymentTotalAmount">0 ₺</h3>
+                        <span class="text-muted small fw-medium">Bilet(ler) İçin Toplam Tutar</span>
+                    </div>
+
+<form id="paymentForm">
+    <div class="mb-3">
+        <label class="form-label small fw-bold text-secondary ps-1">Kart Üzerindeki İsim</label>
+        <input type="text" id="cardNameInput" class="form-control custom-payment-input" placeholder="Örn: ALİ YILMAZ" required>
+    </div>
+    <div class="mb-4">
+        <label class="form-label small fw-bold text-secondary ps-1">Kart Numarası</label>
+        <input type="text" id="cardNumberInput" class="form-control custom-payment-input" placeholder="0000 0000 0000 0000" maxlength="19" required>
+    </div>
+    <div class="row g-3 mb-4">
+        <div class="col-6">
+            <label class="form-label small fw-bold text-secondary ps-1">Son Kullanma Tarihi</label>
+            <input type="text" id="expiryDateInput" class="form-control custom-payment-input text-center" placeholder="AA/YY" maxlength="5" required>
+        </div>
+        <div class="col-6">
+            <label class="form-label small fw-bold text-secondary ps-1">CVV</label>
+            <input type="password" class="form-control custom-payment-input text-center" placeholder="***" maxlength="3" required>
+        </div>
+    </div>
+    
+    <button type="submit" class="btn btn-success w-100 py-3 fw-bold shadow-sm" style="border-radius: 12px; font-size: 16px; transition: all 0.3s;">
+        <i class="fas fa-check-circle me-2"></i> Ödemeyi Tamamla ve Biletini Al
+    </button>
+</form>
+
                 </div>
             </div>
         </div>

@@ -18,9 +18,11 @@ let currentSearchIsRoundTrip = false;
 let selectedOutboundFlight = null;
 let selectedReturnFlight = null;
 
-// 🌟 AKIŞ DURUMUNU (STATE) TUTACAK DEĞİŞKENLER 🌟
+// 🌟 BİLET BİLGİLERİNİ TUTACAK DEĞİŞKENLER 🌟
 let currentMapDirection = 'outbound'; 
 let finalTotalPrice = "0"; 
+let outboundSeatNo = null; // Gidiş Koltuğu
+let returnSeatNo = null;   // Dönüş Koltuğu
 
 document.addEventListener('DOMContentLoaded', async () => {
     await fetchInitialData();
@@ -61,10 +63,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // 🌟 ÖDEME VE DÖNÜŞE GEÇ BUTON DİNLEYİCİSİ 🌟
+    // 🌟 KOLTUK SEÇİMİNDEN SONRA ÖDEMEYE/DÖNÜŞE GEÇ 🌟
     document.getElementById('btnProceedToPayment').addEventListener('click', () => {
         if (currentMapDirection === 'outbound') {
-            console.log(`Gidiş Uçağı Koltuğu Seçildi: ${currentlySelectedSeat}`);
+            outboundSeatNo = currentlySelectedSeat;
             
             if (currentSearchIsRoundTrip) {
                 openSeatMap(selectedReturnFlight, "Dönüş Uçuşu", "return");
@@ -73,23 +75,73 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         } 
         else if (currentMapDirection === 'return') {
-            console.log(`Dönüş Uçağı Koltuğu Seçildi: ${currentlySelectedSeat}`);
+            returnSeatNo = currentlySelectedSeat;
             openPaymentModal();
         }
     });
 
-    // 🌟 KREDİ KARTI FORMU GÖNDERİMİ 🌟
+    // 🌟 KART NUMARASI OTOMATİK BOŞLUK MASKESİ (0000 0000 0000 0000) 🌟
+    const cardNumberInput = document.getElementById('cardNumberInput');
+    if (cardNumberInput) {
+        cardNumberInput.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(.{4})/g, '$1 ').trim();
+            e.target.value = value;
+        });
+    }
+
+    // 🌟 SON KULLANMA TARİHİ OTOMATİK SLASH MASKESİ (AA/YY) 🌟
+    const expiryDateInput = document.getElementById('expiryDateInput');
+    if (expiryDateInput) {
+        expiryDateInput.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 3) {
+                e.target.value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            } else {
+                e.target.value = value;
+            }
+        });
+    }
+
+    // 🌟 YENİ: ÖDEMEYİ TAMAMLA VE VERİYİ KAYDET 🌟
     document.getElementById('paymentForm').addEventListener('submit', (e) => {
         e.preventDefault(); 
+        
         const submitBtn = e.target.querySelector('button[type="submit"]');
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Biletiniz Kesiliyor...';
         submitBtn.disabled = true;
 
+        // Yolcunun girdiği ismi ve sistem bilgilerini topla
+        const passengerName = document.getElementById('cardNameInput').value.toUpperCase();
+        const pnrCode = Math.random().toString(36).substr(2, 6).toUpperCase();
+        const selectedClass = document.getElementById('searchClassText').value;
+
+        // Bilet datasını oluştur
+        const ticketData = {
+            pnr: pnrCode,
+            passengerName: passengerName,
+            cabinClass: selectedClass,
+            outboundFlightId: selectedOutboundFlight,
+            outboundSeat: outboundSeatNo,
+            isRoundTrip: currentSearchIsRoundTrip,
+            returnFlightId: currentSearchIsRoundTrip ? selectedReturnFlight : null,
+            returnSeat: currentSearchIsRoundTrip ? returnSeatNo : null,
+            price: finalTotalPrice,
+            purchaseDate: new Date().toISOString()
+        };
+
+        // Veriyi Tarayıcının Hafızasına (Local Storage) Kaydet
+        let myTickets = JSON.parse(localStorage.getItem('skyOpsTickets')) || [];
+        myTickets.push(ticketData);
+        localStorage.setItem('skyOpsTickets', JSON.stringify(myTickets));
+
+        // Sahte bekleme süresi ve yönlendirme
         setTimeout(() => {
-            alert(`🎉 TEBRİKLER!\n\nÖdemeniz başarıyla alındı ve biletiniz kesildi.\nPNR Numarası: ${Math.random().toString(36).substr(2, 6).toUpperCase()}\n\nBiletlerim sayfasına yönlendiriliyorsunuz.`);
             const paymentModal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
             paymentModal.hide();
-            window.location.reload(); 
+            
+            // Biletlerim sayfasına git
+            window.location.href = 'bilet.html';
         }, 1500);
     });
 });
@@ -164,7 +216,6 @@ function handleGlobalFilter(e) {
             });
             document.getElementById('searchOriginText').value = '';
             document.getElementById('searchOrigin').value = '';
-            document.getElementById('searchOriginText').focus(); 
         });
         dropdown.appendChild(li);
     });
@@ -216,7 +267,7 @@ function setupAutocomplete(inputId, hiddenId, dropdownId, boxType) {
         renderList(); 
     });
     
-    input.addEventListener('focus', renderList); 
+    input.addEventListener('click', renderList); 
 
     input.addEventListener('keydown', function(e) {
         let items = dropdown.getElementsByTagName('li');
@@ -284,7 +335,6 @@ function setupClassAutocomplete() {
         dropdown.style.display = 'block';
     };
     
-    input.addEventListener('focus', renderList); 
     input.addEventListener('click', renderList); 
 
     input.addEventListener('keydown', function(e) {
@@ -379,6 +429,8 @@ function handleFlightSearch(e) {
 
     selectedOutboundFlight = null;
     selectedReturnFlight = null;
+    outboundSeatNo = null;
+    returnSeatNo = null;
 
     if (!origin || !dest || origin === "" || dest === "") {
         alert("⚠️ Lütfen listeden geçerli bir kalkış ve varış noktası seçiniz!");
@@ -578,13 +630,13 @@ function selectFlight(flightId, direction) {
     }
 }
 
-// 🌟 GERÇEKÇİ UÇAK MİMARİSİ (FIRST: 1-1, BUSINESS: 2-2, ECONOMY: 3-3) 🌟
+// 🌟 GERÇEKÇİ UÇAK MİMARİSİ 🌟
 function openSeatMap(flightId, infoPrefix = "", direction = "outbound") {
     currentMapDirection = direction; 
     
     const selectedBtn = document.getElementById(`btn-${flightId}`);
     if (selectedBtn) {
-        const priceElement = selectedBtn.parentElement.querySelector('.text-success');
+        const priceElement = selectedBtn.parentElement.querySelector('.text-success') || selectedBtn.parentElement.querySelector('h3');
         if (priceElement) finalTotalPrice = priceElement.innerText;
     }
 
@@ -599,7 +651,6 @@ function openSeatMap(flightId, infoPrefix = "", direction = "outbound") {
     const totalRows = 15;
     let html = '';
 
-    // 🌟 ÜST BAŞLIK HARFLERİ 🌟
     html += `
     <div class="d-flex justify-content-center align-items-center mb-3">
         <div style="width: 25px;"></div> 
@@ -617,13 +668,11 @@ function openSeatMap(flightId, infoPrefix = "", direction = "outbound") {
         <div style="width: 25px;"></div> 
     </div>`;
 
-    // 🌟 TÜM UÇAĞI MİMARİYE UYGUN ÇİZ 🌟
     for (let i = 1; i <= totalRows; i++) {
         let rowClass = 'economy';
         let leftLayout = ['A', 'B', 'C'];
         let rightLayout = ['D', 'E', 'F'];
         
-        // Boyutlandırma hilesi ile kabin lüksünü yansıtıyoruz
         let seatW = '40px'; 
         let seatH = '40px';
 
@@ -631,17 +680,16 @@ function openSeatMap(flightId, infoPrefix = "", direction = "outbound") {
             rowClass = 'first';
             leftLayout = ['A'];
             rightLayout = ['F'];
-            seatW = '70px'; // Özel Oda (Devasa)
+            seatW = '70px'; 
             seatH = '50px';
         } else if (i <= 3) {
             rowClass = 'business';
             leftLayout = ['A', 'C'];
             rightLayout = ['D', 'F'];
-            seatW = '55px'; // Geniş Koltuk
+            seatW = '55px'; 
             seatH = '45px';
         }
 
-        // Sınıf Ayırıcı Çizgiler
         if (i === 1) html += `<div class="class-divider mt-2 mb-3" data-label="FIRST CLASS"></div>`;
         if (i === 2) html += `<div class="class-divider mt-4 mb-3" data-label="BUSINESS CLASS"></div>`;
         if (i === 4) html += `<div class="class-divider mt-4 mb-3" data-label="ECONOMY CLASS"></div>`;
@@ -649,16 +697,15 @@ function openSeatMap(flightId, infoPrefix = "", direction = "outbound") {
         html += `<div class="d-flex justify-content-center align-items-center mb-2" style="gap: 8px;">`;
         html += `<div style="width: 25px; text-align: right; font-weight: 800; color: #94a3b8; font-size: 0.9rem;">${i}</div>`;
 
-        // 🌟 SOL TARAF (A, B, C vb.) 🌟
         html += `<div class="d-flex justify-content-end" style="gap: 8px; width: 140px;">`;
         leftLayout.forEach(seatLetter => {
             const seatId = `${i}${seatLetter}`;
-            const isOccupied = false; // Bilet alınana kadar her şey BEMBEYAZ boş
+            const isOccupied = false; 
             
-            const isRestricted = (searchClass !== rowClass) && !(searchClass === 'business' && rowClass === 'first'); // (Örn: Business biletli biri First classa geçemez)
+            const isRestricted = (searchClass !== rowClass); 
             
             let seatStatusClass = isOccupied ? 'occupied' : 'available';
-            if (isRestricted && !isOccupied) seatStatusClass = 'occupied'; // Gri yap ama çarpı atma!
+            if (isRestricted && !isOccupied) seatStatusClass = 'occupied'; 
             
             let innerIcon = seatStatusClass === 'occupied' && isOccupied ? '<i class="fas fa-times" style="opacity: 0.3;"></i>' : '';
 
@@ -666,10 +713,8 @@ function openSeatMap(flightId, infoPrefix = "", direction = "outbound") {
         });
         html += `</div>`;
 
-        // KORİDOR
         html += `<div style="width: 30px;"></div>`;
 
-        // 🌟 SAĞ TARAF (D, E, F vb.) 🌟
         html += `<div class="d-flex justify-content-start" style="gap: 8px; width: 140px;">`;
         rightLayout.forEach(seatLetter => {
             const seatId = `${i}${seatLetter}`;
