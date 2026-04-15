@@ -510,7 +510,7 @@
         "19",
         "20"
       ],
-      "status": "Zamanında"
+      "status": "İndi"
     },
     {
       "id": "22",
@@ -524,7 +524,7 @@
         "23",
         "24"
       ],
-      "status": "Zamanında"
+      "status": "İndi"
     },
     {
       "id": "23",
@@ -538,7 +538,7 @@
         "25",
         "26"
       ],
-      "status": "Gecikmeli"
+      "status": "İndi"
     },
     {
       "id": "24",
@@ -552,7 +552,7 @@
         "27",
         "28"
       ],
-      "status": "Zamanında"
+      "status": "İndi"
     },
     {
       "id": "25",
@@ -566,7 +566,7 @@
         "29",
         "30"
       ],
-      "status": "Zamanında"
+      "status": "İndi"
     },
     {
       "id": "26",
@@ -580,7 +580,7 @@
         "11",
         "12"
       ],
-      "status": "Zamanında"
+      "status": "İndi"
     },
     {
       "id": "27",
@@ -594,7 +594,7 @@
         "23",
         "24"
       ],
-      "status": "Zamanında"
+      "status": "İndi"
     },
     {
       "id": "28",
@@ -608,7 +608,7 @@
         "19",
         "20"
       ],
-      "status": "Zamanında"
+      "status": "İndi"
     },
     {
       "id": "29",
@@ -622,7 +622,7 @@
         "25",
         "26"
       ],
-      "status": "Zamanında"
+      "status": "İndi"
     },
     {
       "id": "30",
@@ -636,7 +636,7 @@
         "27",
         "28"
       ],
-      "status": "Gecikmeli"
+      "status": "İndi"
     },
     {
       "id": "31",
@@ -650,7 +650,7 @@
         "23",
         "24"
       ],
-      "status": "Zamanında"
+      "status": "İndi"
     },
     {
       "id": "32",
@@ -664,7 +664,7 @@
         "29",
         "30"
       ],
-      "status": "Zamanında"
+      "status": "İndi"
     },
     {
       "id": "33",
@@ -678,7 +678,7 @@
         "25",
         "26"
       ],
-      "status": "Zamanında"
+      "status": "İndi"
     },
     {
       "id": "34",
@@ -1167,7 +1167,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "LHR"
+      "currentLocation": "IST"
     },
     {
       "id": "2",
@@ -1219,7 +1219,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "IST"
+      "currentLocation": "LHR"
     },
     {
       "id": "6",
@@ -1231,7 +1231,8 @@
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
-      "risk": "Düşük"
+      "risk": "Düşük",
+      "currentLocation": "BER"
     },
     {
       "id": "7",
@@ -1243,7 +1244,8 @@
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
-      "risk": "Düşük"
+      "risk": "Düşük",
+      "currentLocation": "PKX"
     },
     {
       "id": "8",
@@ -1253,11 +1255,11 @@
       "lastUpdate": "2026-04-14",
       "flightHours": 0,
       "dailyFlightHours": 1.3,
-      "fatiguePoint": 15,
+      "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "DLM",
-      "lastDecayTime": "2026-04-14T18:03:13.647Z"
+      "currentLocation": "IST",
+      "lastDecayTime": null
     },
     {
       "id": "9",
@@ -1269,7 +1271,8 @@
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
-      "risk": "Düşük"
+      "risk": "Düşük",
+      "currentLocation": "IST"
     },
     {
       "id": "10",
@@ -1294,7 +1297,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "LHR"
+      "currentLocation": "IST"
     },
     {
       "id": "12",
@@ -1307,7 +1310,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "LHR"
+      "currentLocation": "IST"
     },
     {
       "id": "13",
@@ -1411,7 +1414,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "IST"
+      "currentLocation": "LHR"
     },
     {
       "id": "21",
@@ -1449,7 +1452,8 @@
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
-      "risk": "Düşük"
+      "risk": "Düşük",
+      "currentLocation": "BER"
     },
     {
       "id": "24",
@@ -1461,7 +1465,8 @@
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
-      "risk": "Düşük"
+      "risk": "Düşük",
+      "currentLocation": "BER"
     },
     {
       "id": "25",
@@ -1473,7 +1478,8 @@
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
-      "risk": "Düşük"
+      "risk": "Düşük",
+      "currentLocation": "PKX"
     },
     {
       "id": "26",
@@ -1485,7 +1491,8 @@
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
-      "risk": "Düşük"
+      "risk": "Düşük",
+      "currentLocation": "PKX"
     },
     {
       "id": "27",
@@ -1495,11 +1502,11 @@
       "lastUpdate": "2026-04-14",
       "flightHours": 0,
       "dailyFlightHours": 1.3,
-      "fatiguePoint": 15,
+      "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "DLM",
-      "lastDecayTime": "2026-04-14T18:03:13.655Z"
+      "currentLocation": "IST",
+      "lastDecayTime": null
     },
     {
       "id": "28",
@@ -1509,11 +1516,11 @@
       "lastUpdate": "2026-04-14",
       "flightHours": 0,
       "dailyFlightHours": 1.3,
-      "fatiguePoint": 15,
+      "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "DLM",
-      "lastDecayTime": "2026-04-14T18:03:13.663Z"
+      "currentLocation": "IST",
+      "lastDecayTime": null
     },
     {
       "id": "29",
@@ -1525,7 +1532,8 @@
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
-      "risk": "Düşük"
+      "risk": "Düşük",
+      "currentLocation": "IST"
     },
     {
       "id": "30",
@@ -1537,7 +1545,8 @@
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
-      "risk": "Düşük"
+      "risk": "Düşük",
+      "currentLocation": "IST"
     }
   ],
   "routes_duration": [

@@ -25,6 +25,145 @@ let outboundSeatNo = null; // Gidiş Koltuğu
 let returnSeatNo = null;   // Dönüş Koltuğu
 
 document.addEventListener('DOMContentLoaded', async () => {
+
+    // 🌟 KULLANICI ADINI YAZDIRMA VE ÇIKIŞ YAPMA İŞLEMİ 🌟
+    const users = JSON.parse(localStorage.getItem('skyOpsUsers')) || [];
+    if(users.length > 0) {
+        const lastUser = users[users.length - 1];
+        if(lastUser && lastUser.name) {
+            document.getElementById('navPassengerName').innerText = lastUser.name.split(' ')[0]; 
+        }
+    }
+
+    const btnLogout = document.getElementById('btnLogout');
+    const logoutModal = new bootstrap.Modal(document.getElementById('logoutConfirmModal'));
+
+    if (btnLogout) {
+        btnLogout.addEventListener('click', (e) => {
+            e.preventDefault();
+            logoutModal.show();
+        });
+    }
+
+    const btnConfirmLogout = document.getElementById('btnConfirmLogout');
+    if (btnConfirmLogout) {
+        btnConfirmLogout.addEventListener('click', () => {
+            btnConfirmLogout.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Çıkılıyor...';
+            btnConfirmLogout.disabled = true;
+
+            setTimeout(() => {
+                localStorage.removeItem('skyOpsActiveUser');
+                window.location.href = 'login.html';
+            }, 600);
+        });
+    }
+
+    // 🌟 YENİ: YOLCU PROFİLİ DÜZENLE VE AYARLAR MODALLARI 🌟
+    const btnProfileEdit = document.getElementById('btnProfileEdit');
+    const btnUserSettings = document.getElementById('btnUserSettings');
+    
+    // Modal nesnelerini hata vermeyecek şekilde çağır
+    const profileModalEl = document.getElementById('passengerProfileModal');
+    const settingsModalEl = document.getElementById('passengerSettingsModal');
+    
+    const profileModal = profileModalEl ? new bootstrap.Modal(profileModalEl) : null;
+    const settingsModal = settingsModalEl ? new bootstrap.Modal(settingsModalEl) : null;
+
+    const activeUserName = localStorage.getItem('skyOpsActiveUser');
+    const systemUsers = JSON.parse(localStorage.getItem('skyOpsUsers')) || [];
+    const activeUserData = systemUsers.find(u => u.name === activeUserName);
+
+    if (btnProfileEdit && profileModal) {
+        btnProfileEdit.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (activeUserData) {
+                document.getElementById('profileEditName').value = activeUserData.name;
+                document.getElementById('profileEditEmail').value = activeUserData.email;
+                document.getElementById('profileEditPassword').value = ''; 
+            }
+            profileModal.show();
+        });
+    }
+
+    if (btnUserSettings && settingsModal) {
+        btnUserSettings.addEventListener('click', (e) => {
+            e.preventDefault();
+            settingsModal.show();
+        });
+    }
+
+    const profileForm = document.getElementById('passengerProfileForm');
+    if (profileForm) {
+        profileForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const submitBtn = profileForm.querySelector('button[type="submit"]');
+            
+            const newName = document.getElementById('profileEditName').value.trim();
+            const newPassword = document.getElementById('profileEditPassword').value.trim();
+
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Kaydediliyor...';
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                if (activeUserData) {
+                    activeUserData.name = newName;
+                    if (newPassword !== "") {
+                        activeUserData.password = newPassword;
+                    }
+                    localStorage.setItem('skyOpsUsers', JSON.stringify(systemUsers));
+                    localStorage.setItem('skyOpsActiveUser', newName); 
+                    
+                    document.getElementById('navPassengerName').innerText = newName.split(' ')[0]; 
+                }
+
+                submitBtn.innerHTML = 'Değişiklikleri Kaydet';
+                submitBtn.disabled = false;
+                if(profileModal) profileModal.hide();
+                
+                alert("✅ Profil bilgileriniz başarıyla güncellendi.");
+            }, 800);
+        });
+    }
+
+    // --- 🌟 AYARLARI KALICI HALE GETİREN VE MODALI AÇAN SİSTEM 🌟 ---
+    
+    // Elementleri yakala
+    const set_email = document.getElementById('set_emailNotify');
+    const set_sms = document.getElementById('set_smsNotify');
+    const set_curr = document.getElementById('set_currency');
+
+    // 1. Sayfa açıldığında LocalStorage'dan ayarları yükle
+    const savedSettings = JSON.parse(localStorage.getItem('skyOpsSettings')) || { email: true, sms: false, currency: 'TRY' };
+    
+    // UI'a uygula
+    if(set_email) set_email.checked = savedSettings.email;
+    if(set_sms) set_sms.checked = savedSettings.sms;
+    if(set_curr) set_curr.value = savedSettings.currency;
+
+    // 2. Ayarlar değiştikçe ANINDA LocalStorage'a kaydet (Save butonuna gerek kalmaz)
+    const saveToMemory = () => {
+        const settings = {
+            email: set_email.checked,
+            sms: set_sms.checked,
+            currency: set_curr.value
+        };
+        localStorage.setItem('skyOpsSettings', JSON.stringify(settings));
+    };
+
+    if(set_email) set_email.addEventListener('change', saveToMemory);
+    if(set_sms) set_sms.addEventListener('change', saveToMemory);
+    if(set_curr) set_curr.addEventListener('change', saveToMemory);
+
+    // 3. Ayarlar Modalını Açan Buton (Senin kodunda btnUserSettings zaten tanımlı olmalı)
+    if (btnUserSettings) {
+        btnUserSettings.addEventListener('click', (e) => {
+            e.preventDefault();
+            const settingsModal = new bootstrap.Modal(document.getElementById('passengerSettingsModal'));
+            settingsModal.show();
+        });
+    }
+    
+    // --- UÇUŞ ARAMA VE BİLETLEME İŞLEMLERİ ---
     await fetchInitialData();
 
     flatpickr("#searchDate", {
@@ -58,12 +197,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     filterInput.addEventListener('input', handleGlobalFilter);
 
     document.addEventListener('click', (e) => {
-        if (!e.target.closest('.autocomplete-wrapper')) {
-            document.querySelectorAll('.custom-dropdown').forEach(el => el.style.display = 'none');
-        }
+        document.querySelectorAll('.custom-dropdown').forEach(dropdown => {
+            if (!dropdown.parentElement.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
     });
 
-    // 🌟 KOLTUK SEÇİMİNDEN SONRA ÖDEMEYE/DÖNÜŞE GEÇ 🌟
     document.getElementById('btnProceedToPayment').addEventListener('click', () => {
         if (currentMapDirection === 'outbound') {
             outboundSeatNo = currentlySelectedSeat;
@@ -80,7 +220,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // 🌟 KART NUMARASI OTOMATİK BOŞLUK MASKESİ (0000 0000 0000 0000) 🌟
     const cardNumberInput = document.getElementById('cardNumberInput');
     if (cardNumberInput) {
         cardNumberInput.addEventListener('input', function (e) {
@@ -90,7 +229,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // 🌟 SON KULLANMA TARİHİ OTOMATİK SLASH MASKESİ (AA/YY) 🌟
     const expiryDateInput = document.getElementById('expiryDateInput');
     if (expiryDateInput) {
         expiryDateInput.addEventListener('input', function (e) {
@@ -103,7 +241,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // 🌟 YENİ: ÖDEMEYİ TAMAMLA VE VERİYİ KAYDET 🌟
     document.getElementById('paymentForm').addEventListener('submit', (e) => {
         e.preventDefault(); 
         
@@ -111,12 +248,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Biletiniz Kesiliyor...';
         submitBtn.disabled = true;
 
-        // Yolcunun girdiği ismi ve sistem bilgilerini topla
         const passengerName = document.getElementById('cardNameInput').value.toUpperCase();
         const pnrCode = Math.random().toString(36).substr(2, 6).toUpperCase();
         const selectedClass = document.getElementById('searchClassText').value;
 
-        // Bilet datasını oluştur
         const ticketData = {
             pnr: pnrCode,
             passengerName: passengerName,
@@ -130,17 +265,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             purchaseDate: new Date().toISOString()
         };
 
-        // Veriyi Tarayıcının Hafızasına (Local Storage) Kaydet
         let myTickets = JSON.parse(localStorage.getItem('skyOpsTickets')) || [];
         myTickets.push(ticketData);
         localStorage.setItem('skyOpsTickets', JSON.stringify(myTickets));
 
-        // Sahte bekleme süresi ve yönlendirme
         setTimeout(() => {
             const paymentModal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
             paymentModal.hide();
-            
-            // Biletlerim sayfasına git
             window.location.href = 'bilet.html';
         }, 1500);
     });
@@ -702,7 +833,7 @@ function openSeatMap(flightId, infoPrefix = "", direction = "outbound") {
             const seatId = `${i}${seatLetter}`;
             const isOccupied = false; 
             
-            const isRestricted = (searchClass !== rowClass); 
+            const isRestricted = (searchClass !== rowClass) && !(searchClass === 'business' && rowClass === 'first'); 
             
             let seatStatusClass = isOccupied ? 'occupied' : 'available';
             if (isRestricted && !isOccupied) seatStatusClass = 'occupied'; 

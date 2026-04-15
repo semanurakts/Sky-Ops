@@ -62,6 +62,25 @@ document.addEventListener('DOMContentLoaded', () => {
         bootstrap.Modal.getInstance(document.getElementById('confirmModal'))?.hide();
     });
 
+    // 🌟 ADMİN ÇIKIŞ YAPMA İŞLEMİ (ŞIK MODAL İLE) 🌟
+    const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+    if (adminLogoutBtn) {
+        adminLogoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const logoutModal = new bootstrap.Modal(document.getElementById('adminLogoutModal'));
+            logoutModal.show();
+        });
+    }
+
+    const btnConfirmAdminLogout = document.getElementById('btnConfirmAdminLogout');
+    if (btnConfirmAdminLogout) {
+        btnConfirmAdminLogout.addEventListener('click', () => {
+            btnConfirmAdminLogout.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Çıkılıyor...';
+            btnConfirmAdminLogout.disabled = true;
+            setTimeout(() => { window.location.href = 'login.html'; }, 600);
+        });
+    }
+
     startLiveClock();
     fetchPersonnel();
     fetchFlights(); 

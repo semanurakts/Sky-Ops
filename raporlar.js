@@ -4,6 +4,27 @@ let allFlights = [];
 let allPersonnel = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
+    
+    // 🌟 1. ADIM: ÇIKIŞ BUTONUNU AKTİF ET (Veriler yüklenmeden önce hazır olsun)
+    const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+    if (adminLogoutBtn) {
+        adminLogoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const logoutModal = new bootstrap.Modal(document.getElementById('adminLogoutModal'));
+            logoutModal.show();
+        });
+    }
+
+    const btnConfirmAdminLogout = document.getElementById('btnConfirmAdminLogout');
+    if (btnConfirmAdminLogout) {
+        btnConfirmAdminLogout.addEventListener('click', () => {
+            btnConfirmAdminLogout.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Çıkılıyor...';
+            btnConfirmAdminLogout.disabled = true;
+            setTimeout(() => { window.location.href = 'login.html'; }, 600);
+        });
+    }
+
+    // 🌟 2. ADIM: SAYFA VERİLERİNİ YÜKLE (Senin mevcut kodların)
     await fetchReportData();
     document.getElementById('downloadPdfBtn').addEventListener('click', downloadPDF);
 });

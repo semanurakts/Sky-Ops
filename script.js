@@ -8,16 +8,43 @@ let currentDashboardPage = 1;
 const dashboardRowsPerPage = 10; // Dashboard için 10 idealdir, çok yer kaplamasın
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Canlı saat eklentisi
     setInterval(() => {
         const clock = document.getElementById('liveClock');
         if(clock) clock.textContent = new Date().toLocaleTimeString('tr-TR');
     }, 1000);
     
+    // 🌟 2. ADMİN ÇIKIŞ YAPMA İŞLEMİ 🌟
+    const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+    if (adminLogoutBtn) {
+        adminLogoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Modalı göster
+            const logoutModal = new bootstrap.Modal(document.getElementById('adminLogoutModal'));
+            logoutModal.show();
+        });
+    }
+
+    // Modal içindeki onay butonunu dinle
+    const btnConfirmAdminLogout = document.getElementById('btnConfirmAdminLogout');
+    if (btnConfirmAdminLogout) {
+        btnConfirmAdminLogout.addEventListener('click', () => {
+            btnConfirmAdminLogout.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Çıkılıyor...';
+            btnConfirmAdminLogout.disabled = true;
+            
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 600); // Küçük bir animasyon gecikmesi
+        });
+    }
+
+    // 3. Verileri ilk kez yükle
     await refreshDashboard();
     
-    // Her 30 saniyede bir verileri tazele
+    // 4. Her 30 saniyede bir verileri tazele
     setInterval(refreshDashboard, 30000);
     
+    // 5. Grafik filtresini dinle
     document.getElementById('chartFilter')?.addEventListener('change', () => {
         initOrUpdateChart();
     });

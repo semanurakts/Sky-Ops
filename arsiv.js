@@ -7,17 +7,38 @@ const rowsPerPage = 15;
 let searchTerm = "";
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // --- Canlı Saat ---
+    
+    // --- 🌟 EKLENEN KISIM: ÇIKIŞ YAPMA İŞLEMİ (ŞIK MODAL İLE) 🌟 ---
+    const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+    if (adminLogoutBtn) {
+        adminLogoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const logoutModal = new bootstrap.Modal(document.getElementById('adminLogoutModal'));
+            logoutModal.show();
+        });
+    }
+
+    const btnConfirmAdminLogout = document.getElementById('btnConfirmAdminLogout');
+    if (btnConfirmAdminLogout) {
+        btnConfirmAdminLogout.addEventListener('click', () => {
+            btnConfirmAdminLogout.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Çıkılıyor...';
+            btnConfirmAdminLogout.disabled = true;
+            setTimeout(() => { window.location.href = 'login.html'; }, 600);
+        });
+    }
+
+    // --- Senin Mevcut Kodların ---
+    // Canlı Saat
     setInterval(() => {
         const clock = document.getElementById('liveClock');
         if(clock) clock.textContent = new Date().toLocaleTimeString('tr-TR');
     }, 1000);
 
-    // --- Verileri Yükle ---
+    // Verileri Yükle
     await loadPersonnelData();
     await fetchArchiveFlights();
 
-    // --- Arama Kutusu (Gerçek Zamanlı Filtreleme) ---
+    // Arama Kutusu (Gerçek Zamanlı Filtreleme)
     document.getElementById('archiveSearchInput')?.addEventListener('input', (e) => {
         searchTerm = e.target.value.toLowerCase();
         currentPage = 1;

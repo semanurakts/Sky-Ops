@@ -14,7 +14,7 @@
             height: 100%;
             margin: 0;
             font-family: 'Inter', sans-serif;
-            overflow: hidden; /* Scroll'u engelle */
+            overflow: hidden; 
             background-color: #0f172a;
         }
 
@@ -22,10 +22,7 @@
         .bg-image {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            /* Yöntem A: Tarayıcı editörden bağımsız klasörü bulsun */
             background-image: url('images/bulten.jpeg') !important; 
-            /* !important kuralı, o siyah rengin üstüne binmesini engeller */
-            
             background-position: center center;
             background-repeat: no-repeat;
             background-size: cover;
@@ -38,7 +35,6 @@
             100% { transform: scale(1.15); }
         }
 
-        /* Arka planı biraz koyulaştırıp yazıları okunur kılmak için overlay */
         .bg-overlay {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -53,6 +49,8 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
+            position: relative;
+            z-index: 2;
         }
 
         .glass-card {
@@ -70,7 +68,6 @@
             overflow: hidden;
         }
 
-        /* Dekoratif Işık Yansımaları */
         .glass-card::before {
             content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
             background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
@@ -194,16 +191,29 @@
         }
         .register-text a:hover { text-decoration: underline; }
 
-        .login-container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    
-    position: relative;
-    z-index: 2; /* 🔥 EN KRİTİK SATIR */
-}
+        /* 🌟 ÖZEL BİLDİRİM (TOAST) STİLLERİ 🌟 */
+        .skyops-toast {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            z-index: 9999;
+            transform: translateX(150%);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .skyops-toast.show { transform: translateX(0); }
+        .skyops-toast.success { background-color: #10b981; border-left: 5px solid #059669; }
+        .skyops-toast.error { background-color: #ef4444; border-left: 5px solid #b91c1c; }
+        .skyops-toast i { font-size: 1.5rem; }
+
     </style>
 </head>
 <body>
@@ -220,13 +230,13 @@
 
             <div class="role-toggle" id="roleToggle">
                 <div class="toggle-slider" id="toggleSlider"></div>
-                <div class="role-btn active" id="btnPassenger" onclick="switchRole('passenger')">Yolcu Girişi</div>
-                <div class="role-btn" id="btnEmployee" onclick="switchRole('employee')">Personel Girişi</div>
+                <div class="role-btn active" id="btnPassenger">Yolcu Girişi</div>
+                <div class="role-btn" id="btnEmployee">Personel Girişi</div>
             </div>
 
             <div id="passengerForm" class="form-section active">
                 <h5 class="fw-bold mb-4 text-center">Dünyayı Keşfetmeye Devam Et</h5>
-                <form onsubmit="handlePassengerLogin(event)">
+                <form>
                     <div class="form-floating">
                         <input type="email" class="form-control" id="passEmail" placeholder="E-posta" required>
                         <label for="passEmail"><i class="fas fa-envelope me-2"></i>E-posta Adresi</label>
@@ -236,19 +246,62 @@
                         <label for="passPassword"><i class="fas fa-lock me-2"></i>Şifre</label>
                     </div>
                     <div class="d-flex justify-content-end mb-3">
-                        <a href="#" class="forgot-link">Şifremi Unuttum</a>
+                        <a href="#" class="forgot-link" id="btnForgotPassword">Şifremi Unuttum</a>
                     </div>
                     <button type="submit" class="btn-login"><i class="fas fa-sign-in-alt me-2"></i>Giriş Yap</button>
                     
                     <div class="register-text">
-                        Hesabın yok mu? <a href="#">Hemen Kayıt Ol</a>
+                        Hesabın yok mu? <a href="#" id="btnGoRegister">Hemen Kayıt Ol</a>
+                    </div>
+                </form>
+            </div>
+
+            <div id="forgotPasswordForm" class="form-section">
+                <h5 class="fw-bold mb-3 text-center">Şifre Sıfırlama</h5>
+                <p class="text-center text-light opacity-75 mb-4" style="font-size: 0.9rem;">Kayıtlı e-posta adresinizi ve oluşturmak istediğiniz yeni şifrenizi girin.</p>
+                <form id="formForgotSubmit">
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="forgotEmail" placeholder="E-posta" required>
+                        <label for="forgotEmail"><i class="fas fa-envelope me-2"></i>E-posta Adresi</label>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input type="password" class="form-control" id="forgotNewPassword" placeholder="Yeni Şifre" required minlength="4">
+                        <label for="forgotNewPassword"><i class="fas fa-key me-2"></i>Yeni Şifre</label>
+                    </div>
+                    <button type="submit" class="btn-login" style="background: #f59e0b;"><i class="fas fa-sync-alt me-2"></i>Şifreyi Güncelle</button>
+                    
+                    <div class="register-text mt-4">
+                        Şifrenizi hatırladınız mı? <a href="#" id="btnBackToLoginFromForgot">Giriş Yap</a>
+                    </div>
+                </form>
+            </div>
+
+            <div id="registerForm" class="form-section">
+                <h5 class="fw-bold mb-4 text-center">Aramıza Katılın</h5>
+                <form id="formRegisterSubmit">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="regName" placeholder="Ad Soyad" required>
+                        <label for="regName"><i class="fas fa-user me-2"></i>Ad Soyad</label>
+                    </div>
+                    <div class="form-floating">
+                        <input type="email" class="form-control" id="regEmail" placeholder="E-posta" required>
+                        <label for="regEmail"><i class="fas fa-envelope me-2"></i>E-posta Adresi</label>
+                    </div>
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="regPassword" placeholder="Şifre" required minlength="4">
+                        <label for="regPassword"><i class="fas fa-lock me-2"></i>Şifre</label>
+                    </div>
+                    <button type="submit" class="btn-login" style="background: #8b5cf6;"><i class="fas fa-user-plus me-2"></i>Kayıt Ol</button>
+                    
+                    <div class="register-text">
+                        Zaten hesabın var mı? <a href="#" id="btnBackToLogin">Giriş Yap</a>
                     </div>
                 </form>
             </div>
 
             <div id="employeeForm" class="form-section">
                 <h5 class="fw-bold mb-4 text-center">Operasyon Kontrol Merkezi</h5>
-                <form onsubmit="handleEmployeeLogin(event)">
+                <form>
                     <div class="form-floating">
                         <input type="text" class="form-control" id="empId" placeholder="Sicil No" required>
                         <label for="empId"><i class="fas fa-id-badge me-2"></i>Sicil Numarası</label>
@@ -258,7 +311,7 @@
                         <label for="empPassword"><i class="fas fa-key me-2"></i>Sistem Şifresi</label>
                     </div>
                     <div class="d-flex justify-content-end mb-3">
-                        <a href="#" class="forgot-link">IT Destek Birimi</a>
+                        <a href="#" class="forgot-link" id="btnITSupport">IT Destek Birimi</a>
                     </div>
                     <button type="submit" class="btn-login" style="background: #10b981;"><i class="fas fa-user-shield me-2"></i>Sisteme Bağlan</button>
                     
@@ -271,42 +324,7 @@
         </div>
     </div>
 
-    <script>
-        function switchRole(role) {
-            const btnPass = document.getElementById('btnPassenger');
-            const btnEmp = document.getElementById('btnEmployee');
-            const slider = document.getElementById('toggleSlider');
-            const formPass = document.getElementById('passengerForm');
-            const formEmp = document.getElementById('employeeForm');
-
-            if (role === 'passenger') {
-                btnPass.classList.add('active');
-                btnEmp.classList.remove('active');
-                slider.style.transform = 'translateX(0)';
-                slider.style.background = '#3b82f6'; // Mavi
-                
-                formEmp.classList.remove('active');
-                setTimeout(() => formPass.classList.add('active'), 50);
-            } else {
-                btnEmp.classList.add('active');
-                btnPass.classList.remove('active');
-                slider.style.transform = 'translateX(100%)';
-                slider.style.background = '#10b981'; // Yeşil
-                
-                formPass.classList.remove('active');
-                setTimeout(() => formEmp.classList.add('active'), 50);
-            }
-        }
-
-        function handlePassengerLogin(e) {
-            e.preventDefault();
-            window.location.href = 'yolcu.html';
-        }
-
-        function handleEmployeeLogin(e) {
-            e.preventDefault();
-            window.location.href = 'index.html'; 
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="login.js"></script>
 </body>
 </html>

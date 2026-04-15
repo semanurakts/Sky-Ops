@@ -106,7 +106,7 @@
             <li><a href="arsiv.html"><i class="fas fa-archive"></i><span>Uçuş Arşivi</span></a></li>
         </ul>
         <div class="sidebar-footer">
-            <a href="#" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+            <a href="#" class="logout-btn" id="adminLogoutBtn"><i class="fas fa-sign-out-alt me-2"></i> Çıkış Yap</a>
         </div>
     </nav>
 
@@ -186,6 +186,24 @@
                 <div class="modal-body p-4 bg-light" style="border-radius: 0 0 20px 20px;">
                     <div class="row g-3" id="crewCardsContainer">
                         <div class="text-center text-muted"><i class="fas fa-spinner fa-spin me-2"></i>Ekip bilgileri yükleniyor...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="adminLogoutModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0 shadow" style="border-radius: 16px;">
+                <div class="modal-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-power-off fa-3x text-danger opacity-75"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Sistemden Çıkılıyor</h5>
+                    <p class="text-muted mb-4">Operasyon kontrol merkezinden çıkış yapmak istediğinize emin misiniz?</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <button type="button" class="btn btn-light fw-semibold px-4" data-bs-dismiss="modal">İptal</button>
+                        <button type="button" class="btn btn-danger fw-semibold px-4" id="btnConfirmAdminLogout">Çıkış Yap</button>
                     </div>
                 </div>
             </div>
