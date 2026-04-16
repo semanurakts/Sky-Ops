@@ -693,6 +693,20 @@
         "28"
       ],
       "status": "İndi"
+    },
+    {
+      "id": "35",
+      "flightNo": "XQ-2662",
+      "route": "IST > AMS",
+      "time": "23:03",
+      "date": "2026-04-16",
+      "gate": "F-01",
+      "pilot": "10",
+      "cabinCrew": [
+        "11",
+        "12"
+      ],
+      "status": "İndi"
     }
   ],
   "airlines": [
@@ -1284,7 +1298,8 @@
       "dailyFlightHours": 0,
       "fatiguePoint": 0,
       "status": "Müsait",
-      "risk": "Düşük"
+      "risk": "Düşük",
+      "currentLocation": "AMS"
     },
     {
       "id": "11",
@@ -1297,7 +1312,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "IST"
+      "currentLocation": "AMS"
     },
     {
       "id": "12",
@@ -1310,7 +1325,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "IST"
+      "currentLocation": "AMS"
     },
     {
       "id": "13",

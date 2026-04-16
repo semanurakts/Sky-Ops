@@ -166,14 +166,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- UÇUŞ ARAMA VE BİLETLEME İŞLEMLERİ ---
     await fetchInitialData();
 
+    // 🌟 YENİ: Havacılık standardı olan "Maksimum 330 Gün İleri" kuralını tanımlıyoruz
+    const maxFlightDate = new Date();
+    maxFlightDate.setDate(maxFlightDate.getDate() + 330);
+
     flatpickr("#searchDate", {
-        locale: "tr", altInput: true, altFormat: "d.m.Y", dateFormat: "Y-m-d",
-        defaultDate: "today", minDate: "today", disableMobile: "true"
+        locale: "tr", 
+        altInput: true, 
+        altFormat: "d.m.Y", 
+        dateFormat: "Y-m-d",
+        defaultDate: "today", 
+        minDate: "today",
+        maxDate: maxFlightDate, // 330 gün kısıtlaması
+        disableMobile: "true"
     });
 
     returnDatePicker = flatpickr("#returnDate", {
-        locale: "tr", altInput: true, altFormat: "d.m.Y", dateFormat: "Y-m-d",
-        minDate: "today", disableMobile: "true"
+        locale: "tr", 
+        altInput: true, 
+        altFormat: "d.m.Y", 
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        maxDate: maxFlightDate, // Dönüş de maksimum 330 gün olabilir
+        disableMobile: "true"
     });
 
     document.querySelectorAll('input[name="tripType"]').forEach(radio => {

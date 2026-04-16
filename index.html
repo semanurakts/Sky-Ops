@@ -10,84 +10,104 @@
     <link rel="stylesheet" href="style.css">
     
     <style>
-        /* YENİ: EKİP DETAY KARTLARI İÇİN STİLLER */
-        .crew-profile-card {
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            transition: all 0.2s;
-            height: 100%;
-        }
-        .crew-profile-card:hover {
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            transform: translateY(-2px);
-            border-color: #cbd5e1;
-        }
-        .crew-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin-bottom: 10px;
-            position: relative;
-        }
+        /* EKİP DETAY KARTLARI İÇİN STİLLER */
+        .crew-profile-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; text-align: center; transition: all 0.2s; height: 100%; }
+        .crew-profile-card:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.05); transform: translateY(-2px); border-color: #cbd5e1; }
+        .crew-avatar { width: 60px; height: 60px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 10px; position: relative; }
         .crew-avatar.pilot { background-color: #e0f2fe; color: #0284c7; border: 2px solid #bae6fd; }
         .crew-avatar.cabin { background-color: #f1f5f9; color: #475569; border: 2px solid #e2e8f0; }
         
-        .crew-role-badge {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 4px 8px;
-            border-radius: 20px;
-            margin-bottom: 8px;
-            display: inline-block;
-        }
+        .crew-role-badge { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 8px; border-radius: 20px; margin-bottom: 8px; display: inline-block; }
         .role-pilot { background-color: #e0f2fe; color: #0284c7; }
         .role-cabin { background-color: #f1f5f9; color: #475569; }
 
-        .crew-fatigue-bar {
-            height: 6px;
-            border-radius: 3px;
-            background-color: #f1f5f9;
-            margin-top: 10px;
-            overflow: hidden;
+        .crew-fatigue-bar { height: 6px; border-radius: 3px; background-color: #f1f5f9; margin-top: 10px; overflow: hidden; }
+
+        /* DASHBOARD SAYFALANDIRMA (PAGINATION) STİLLERİ */
+        #dashboardPaginationControls { display: flex; gap: 5px; align-items: center; list-style: none; padding: 0; margin: 0; }
+        #dashboardPaginationControls .page-item .page-link { background: transparent !important; border: none !important; color: #64748b !important; font-size: 14px; font-weight: 500; padding: 6px 12px; border-radius: 6px; transition: all 0.2s; box-shadow: none !important; }
+        #dashboardPaginationControls .page-item.active .page-link { color: #0f172a !important; background-color: #f1f5f9 !important; font-weight: 700; }
+        #dashboardPaginationControls .page-item .page-link:hover:not(.active) { background-color: #f8fafc !important; color: #334155 !important; }
+
+        /* 🌟 TABLET/MOBİL ÇIKIŞ YAPMA STİLLERİ VE HİZALAMA 🌟 */
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .sidebar-footer .logout-btn span { display: none !important; }
+            .sidebar-footer .logout-btn { justify-content: center; padding: 15px; }
+            .sidebar-footer .logout-btn i { margin: 0 !important; font-size: 22px; }
         }
 
-        /* YENİ: DASHBOARD SAYFALANDIRMA (PAGINATION) STİLLERİ */
-        #dashboardPaginationControls {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        #dashboardPaginationControls .page-item .page-link {
-            background: transparent !important;
-            border: none !important;
-            color: #64748b !important; 
-            font-size: 14px;
-            font-weight: 500;
-            padding: 6px 12px;
-            border-radius: 6px;
-            transition: all 0.2s;
-            box-shadow: none !important;
-        }
-        #dashboardPaginationControls .page-item.active .page-link {
-            color: #0f172a !important; 
-            background-color: #f1f5f9 !important;
-            font-weight: 700;
-        }
-        #dashboardPaginationControls .page-item .page-link:hover:not(.active) {
-            background-color: #f8fafc !important;
-            color: #334155 !important;
+        .mobile-logout-btn { display: none; }
+        
+        @media (max-width: 768px) {
+            .topbar {
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: flex-start !important;
+                padding: 15px 12px !important;
+            }
+            
+            .page-info { flex: 1; padding-right: 5px; }
+            .page-title { font-size: 16px !important; margin-bottom: 2px !important; }
+            .page-desc { display: block !important; font-size: 11px !important; line-height: 1.3; margin-top: 2px; }
+
+            .topbar-actions { 
+                display: grid !important; 
+                grid-template-columns: max-content max-content; 
+                justify-content: end !important; 
+                row-gap: 10px !important; 
+                column-gap: 14px !important; 
+                align-items: center; 
+                width: 100% !important; 
+                margin: 0 !important;
+                flex: 1;
+            }
+            
+            /* 1. Satır: Zil ve Saat */
+            .notification-box { 
+                grid-column: 1; grid-row: 1; 
+                justify-self: start; 
+                width: 36px !important; 
+                text-align: center !important; 
+                margin: 0 !important; 
+                font-size: 18px !important; 
+            }
+            .live-clock-box { 
+                grid-column: 2; grid-row: 1; justify-self: end; margin: 0 !important; 
+                font-size: 14px !important; 
+                padding: 6px 12px !important; 
+                display: flex !important; 
+                align-items: center;
+                height: 36px; 
+            }
+            
+            /* 2. Satır: Admin Profili ve Çıkış Butonu */
+            .user-profile { 
+                grid-column: 1; grid-row: 2; 
+                justify-self: start; 
+                margin: 0 !important; gap: 8px !important; 
+            }
+            .user-info { display: flex !important; flex-direction: column; justify-content: center; }
+            .user-info .name { font-size: 12px !important; line-height: 1; margin-bottom: 3px; }
+            .user-info .role { font-size: 9px !important; line-height: 1; }
+            
+            .avatar { width: 36px !important; height: 36px !important; font-size: 16px !important; border-radius: 10px !important; }
+
+            .mobile-logout-btn {
+                grid-column: 2; grid-row: 2; justify-self: end;
+                display: flex; align-items: center; justify-content: center;
+                background: #fef2f2; color: #ef4444; 
+                width: 36px; height: 36px; 
+                border-radius: 10px; 
+                font-size: 16px; 
+                text-decoration: none;
+                border: 1px solid #fca5a5; transition: 0.2s; margin: 0 !important;
+            }
+            .mobile-logout-btn:hover { background: #fee2e2; color: #dc2626; }
+
+            /* 🌟 ÇÖZÜM: Tablodaki "+2 Ekip" yazısının daralıp alt satıra inerek kutudan taşmasını engeller 🌟 */
+            .custom-table td, .custom-table th {
+                white-space: nowrap !important;
+            }
         }
     </style>
 </head>
@@ -106,7 +126,9 @@
             <li><a href="arsiv.html"><i class="fas fa-archive"></i><span>Uçuş Arşivi</span></a></li>
         </ul>
         <div class="sidebar-footer">
-            <a href="#" class="logout-btn" id="adminLogoutBtn"><i class="fas fa-sign-out-alt me-2"></i> Çıkış Yap</a>
+            <a href="#" class="logout-btn" id="adminLogoutBtn" title="Çıkış Yap">
+                <i class="fas fa-sign-out-alt me-2"></i> <span>Çıkış Yap</span>
+            </a>
         </div>
     </nav>
 
@@ -123,6 +145,9 @@
                     <div class="avatar">A</div>
                     <div class="user-info"><span class="name">Admin</span><span class="role">Sistem Yöneticisi</span></div>
                 </div>
+                <a href="#" class="mobile-logout-btn" data-bs-toggle="modal" data-bs-target="#adminLogoutModal" title="Çıkış Yap">
+                    <i class="fas fa-power-off"></i>
+                </a>
             </div>
         </header>
 
@@ -136,14 +161,16 @@
         <div class="row g-4 mb-4">
             <div class="col-md-8">
                 <div class="content-box h-100">
-                    <div class="box-header">
-                        <h5 class="box-title">Anlık Uçuş Trafiği</h5>
-                        <select id="chartFilter" class="form-select form-select-sm w-auto border-0 bg-light text-muted">
-                            <option value="1" selected>Son 1 Saat</option>
-                            <option value="6">Son 6 Saat</option>
+                    <div class="box-header d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="box-title mb-0">Anlık Uçuş Trafiği</h5>
+                        <select id="chartFilter" class="form-select form-select-sm w-auto border-0 bg-light text-muted fw-bold shadow-sm" style="cursor: pointer; border-radius: 8px;">
+                            <option value="today" selected>Bugün (24 Saat)</option>
+                            <option value="week">Son 7 Gün</option>
                         </select>
                     </div>
-                    <div class="chart-container"><canvas id="flightChart"></canvas></div>
+                    <div class="chart-container w-100" style="position: relative; height: 300px; padding-bottom: 20px;">
+                        <canvas id="flightChart"></canvas>
+                    </div>
                 </div>
             </div>
             <div class="col-md-4">

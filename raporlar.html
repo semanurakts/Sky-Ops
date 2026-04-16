@@ -1,229 +1,335 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Raporlar - SkyOps</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raporlar - SkyOps</title>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
 
-<style>
+    <style>
+        /* PDF AREA */
+        #pdfExportArea {
+            max-width: 1120px;
+            margin-left: auto;
+            margin-right: auto;
+            box-sizing: border-box;
+        }
 
-/* PDF AREA */
-#pdfExportArea{
-max-width:1120px;
-margin-left:auto;
-margin-right:auto;
-padding:10px;
-box-sizing:border-box;
-}
+        /* CARD */
+        .report-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            height: 100%;
+        }
 
-/* CARD */
-.report-card{
-background:white;
-border-radius:16px;
-padding:25px;
-box-shadow:0 4px 15px rgba(0,0,0,0.03);
-border:1px solid #e2e8f0;
-height:100%;
-}
+        /* HEADER */
+        .report-header {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-/* HEADER */
-.report-header{
-font-size:16px;
-font-weight:700;
-color:#1e293b;
-margin-bottom:20px;
-display:flex;
-align-items:center;
-gap:10px;
-}
+        /* FLEX ROW */
+        .pdf-row {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
 
-/* FLEX ROW */
-.pdf-row{
-display:flex;
-gap:25px;
-flex-wrap:wrap;
-}
+        .pdf-col {
+            flex: 1 1 0;
+            min-width: 0;
+        }
 
-.pdf-col{
-flex:1 1 0;
-min-width:0;
-}
+        /* CANVAS FIX */
+        canvas {
+            max-width: 100% !important;
+            height: 100% !important;
+        }
 
-/* CANVAS FIX */
-canvas{
-max-width:100% !important;
-height:100% !important;
-}
+        /* ROUTES */
+        .routes-wrapper {
+            page-break-inside: auto;
+        }
 
-/* ROUTES */
-.routes-wrapper{
-page-break-inside:auto;
-}
+        .route-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: #f8fafc;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+            page-break-inside: avoid;
+        }
 
-.route-item{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:12px 15px;
-background:#f8fafc;
-border-radius:10px;
-margin-bottom:10px;
-font-weight:600;
-color:#334155;
-border:1px solid #e2e8f0;
-flex-wrap:wrap;
-page-break-inside:avoid;
-}
+        .route-item > div {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-.route-item > div{
-display:flex;
-align-items:center;
-gap:8px;
-}
+        .route-rank {
+            width: 25px;
+            height: 25px;
+            background: #3b82f6;
+            color: white;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
 
-.route-rank{
-width:25px;
-height:25px;
-background:#3b82f6;
-color:white;
-border-radius:50%;
-display:inline-flex;
-align-items:center;
-justify-content:center;
-font-size:12px;
-}
+        .route-count {
+            background: #e0f2fe;
+            color: #0284c7;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
 
-.route-count{
-background:#e0f2fe;
-color:#0284c7;
-padding:4px 10px;
-border-radius:20px;
-font-size:12px;
-}
+        /* 🌟 STANDART ÜST BAR STİLLERİ 🌟 */
+        .topbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .topbar-actions { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+        .notification-box { position: relative; font-size: 18px; color: #64748b; cursor: pointer; display: flex; align-items: center; }
+        .badge-dot { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; border: 1px solid white; }
+        .live-clock-box { background: #f8fafc; padding: 8px 16px; border-radius: 8px; font-family: monospace; font-weight: 700; color: #334155; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 8px; }
+        .user-profile { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .avatar { width: 40px; height: 40px; background: #3b82f6; color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px;}
+        .user-info { display: flex; flex-direction: column; justify-content: center;}
+        .user-info .name { font-size: 14px; font-weight: 700; color: #1e293b; line-height: 1.2; margin-bottom: 2px;}
+        .user-info .role { font-size: 11px; color: #64748b; line-height: 1;}
+        
+        .mobile-logout-btn { display: none; }
 
-/* PRINT */
-@media print{
-body{
-background:white;
-}
+        /* PRINT */
+        @media print {
+            body { background: white; }
+            .report-card, canvas, .route-item { page-break-inside: avoid; }
+            .topbar-actions { display: none !important; }
+        }
 
-.report-card{
-page-break-inside:avoid;
-}
+        /* Masaüstü + Tablet: üst bardaki ikon/saat/profil dikey ortalansın */
+        @media (min-width: 769px) {
+            .topbar-actions {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                height: 100%;
+            }
 
-canvas{
-page-break-inside:avoid;
-}
+            .notification-box,
+            .live-clock-box,
+            .user-profile {
+                display: flex;
+                align-items: center;
+                height: 42px;
+            }
+        }
 
-.route-item{
-page-break-inside:avoid;
-}
+        /* 🌟 TABLET MODU 🌟 */
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .topbar {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 12px !important;
+            }
 
-}
-</style>
+            .topbar-actions {
+                width: 100% !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 15px !important;
+                position: relative;
+            }
+
+            #downloadPdfBtn {
+                flex-shrink: 0;
+            }
+
+            .notification-box {
+                margin-left: auto !important;
+                transform: translateY(-10px);
+            }
+
+            .live-clock-box,
+            .user-profile {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* ========================================================================= */
+        /* 🌟 TELEFON MODU (BUTON YAZIYA SIFIRLANDI, DÜZEN KORUNDU) 🌟 */
+        /* ========================================================================= */
+        @media (max-width: 768px) {
+            .topbar {
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: flex-start !important;
+                padding: 15px 12px 35px 12px !important; /* Buton için yer ayırdık */
+                position: relative !important; /* Butonun babası bu */
+            }
+            
+            .page-info { flex: 1; padding-right: 5px; }
+            .page-title { font-size: 16px !important; margin-bottom: 2px !important; }
+            .page-desc { display: block !important; font-size: 11px !important; line-height: 1.3; margin-top: 2px; }
+
+            /* Sağdaki ikon grubu (Görseldeki 2x2 düzeni aynen korur) */
+            .topbar-actions { 
+                display: grid !important; 
+                grid-template-columns: max-content max-content; 
+                justify-content: end !important; 
+                row-gap: 10px !important; 
+                column-gap: 14px !important; 
+                align-items: center; 
+                width: auto !important; 
+                margin: 0 !important;
+            }
+
+            /* 🌟 SURGICAL FIX: PDF BUTONU TAM OLARAK YAZININ ALTINDA 🌟 */
+            #downloadPdfBtn {
+                position: absolute !important;
+                top: 58px !important; /* Yazının hemen bitişine sabitledik, artık aşağıda kalmaz */
+                left: 12px !important;
+                width: max-content !important; /* BOYUTU AYNI KALDI */
+                margin: 0 !important;
+                height: 40px !important;
+                padding: 0 18px !important;
+                display: flex !important;
+                justify-content: center !important;
+                align-items: center !important;
+                order: unset !important;
+            }
+            
+            /* Diğer ikonlar (Dokunulmadı) */
+            .notification-box { grid-column: 1; grid-row: 1; justify-self: start; width: 36px !important; font-size: 18px !important; }
+            .live-clock-box { grid-column: 2; grid-row: 1; justify-self: end; font-size: 14px !important; padding: 6px 12px !important; display: flex !important; align-items: center; height: 36px; }
+            .user-profile { grid-column: 1; grid-row: 2; justify-self: start; margin: 0 !important; gap: 8px !important; }
+            .avatar { width: 36px !important; height: 36px !important; font-size: 16px !important; border-radius: 10px !important; }
+
+            .mobile-logout-btn {
+                grid-column: 2; grid-row: 2; justify-self: end;
+                display: flex; align-items: center; justify-content: center;
+                background: #fef2f2; color: #ef4444; 
+                width: 36px; height: 36px; border-radius: 10px; font-size: 16px; 
+                text-decoration: none; border: 1px solid #fca5a5; margin: 0 !important;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-<nav class="sidebar">
-<div class="sidebar-header">
-<div class="brand-logo"><i class="fas fa-plane-departure"></i> SkyOps</div>
-<div class="brand-subtitle">Operasyon Yönetimi</div>
-</div>
-
-<div class="sidebar-divider"></div>
-
-<ul class="nav-links">
-<li><a href="index.html"><i class="fas fa-th-large"></i> Genel Bakış</a></li>
-<li><a href="ucus.html"><i class="fas fa-plane"></i> Uçuş Yönetimi</a></li>
-<li><a href="personel.html"><i class="fas fa-users-cog"></i> Personel Planlama</a></li>
-<li><a href="#" class="active"><i class="fas fa-chart-pie"></i> Raporlar</a></li>
-<li><a href="arsiv.html"><i class="fas fa-archive"></i><span>Uçuş Arşivi</span></a></li>
-</ul>
-<div class="sidebar-footer">
-            <a href="#" class="logout-btn" id="adminLogoutBtn"><i class="fas fa-sign-out-alt me-2"></i> Çıkış Yap</a>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="brand-logo"><i class="fas fa-plane-departure"></i> SkyOps</div>
+            <div class="brand-subtitle">Operasyon Yönetimi</div>
         </div>
-</nav>
+        <div class="sidebar-divider"></div>
+        <ul class="nav-links">
+            <li><a href="index.html"><i class="fas fa-th-large"></i><span>Genel Bakış</span></a></li>
+            <li><a href="ucus.html"><i class="fas fa-plane"></i><span>Uçuş Yönetimi</span></a></li>
+            <li><a href="personel.html"><i class="fas fa-users-cog"></i><span>Personel Planlama</span></a></li>
+            <li><a href="#" class="active"><i class="fas fa-chart-pie"></i><span>Raporlar</span></a></li>
+            <li><a href="arsiv.html"><i class="fas fa-archive"></i><span>Uçuş Arşivi</span></a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <a href="#" class="logout-btn" id="adminLogoutBtn" title="Çıkış Yap">
+                <i class="fas fa-sign-out-alt me-2"></i><span>Çıkış Yap</span>
+            </a>
+        </div>
+    </nav>
 
-<main class="main-content">
+    <main class="main-content">
+        <header class="topbar">
+            <div class="page-info">
+                <h1 class="page-title">İstatistik ve Raporlar</h1>
+                <p class="page-desc">Operasyonel verilerin analizi ve dönemsel özetler.</p>
+            </div>
+            
+            <div class="topbar-actions">
+                <button id="downloadPdfBtn" class="btn btn-danger text-white rounded-pill px-4 fw-bold shadow-sm d-flex align-items-center justify-content-center" style="height: 42px;">
+                    <i class="fas fa-file-pdf me-2"></i> PDF Olarak İndir
+                </button>
+                
+                <div class="notification-box"><i class="fas fa-bell"></i><span class="badge-dot"></span></div>
+                
+                <div class="live-clock-box"><i class="fas fa-clock text-primary"></i><span id="liveClock">--:--:--</span></div>
+                
+                <div class="user-profile">
+                    <div class="avatar">A</div>
+                    <div class="user-info">
+                        <span class="name">Admin</span>
+                        <span class="role">Sistem Yöneticisi</span>
+                    </div>
+                </div>
 
-<header class="topbar">
-<div>
-<h1 class="page-title">İstatistik ve Raporlar</h1>
-<p class="page-desc">Operasyonel verilerin analizi ve dönemsel özetler.</p>
-</div>
+                <a href="#" class="mobile-logout-btn" data-bs-toggle="modal" data-bs-target="#adminLogoutModal" title="Çıkış Yap">
+                    <i class="fas fa-power-off"></i>
+                </a>
+            </div>
+        </header>
 
-<button id="downloadPdfBtn"
-class="btn btn-danger text-white rounded-pill px-4 fw-bold shadow-sm">
-<i class="fas fa-file-pdf"></i> PDF Olarak İndir
-</button>
+        <div id="pdfExportArea">
+            <div class="pdf-row mb-4">
+                <div class="pdf-col">
+                    <div class="report-card">
+                        <div class="report-header">
+                            <i class="fas fa-chart-pie text-primary"></i>
+                            Uçuş Performans Analizi
+                        </div>
+                        <div style="height:220px; position: relative;">
+                            <canvas id="flightPerformanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
 
-</header>
+                <div class="pdf-col">
+                    <div class="report-card">
+                        <div class="report-header">
+                            <i class="fas fa-battery-half text-warning"></i>
+                            Personel Yorgunluk Dağılımı
+                        </div>
+                        <div style="height:220px; position: relative;">
+                            <canvas id="fatigueDistributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-<div id="pdfExportArea">
-
-<div class="pdf-row mb-4">
-
-<div class="pdf-col">
-<div class="report-card">
-
-<div class="report-header">
-<i class="fas fa-chart-pie text-primary"></i>
-Uçuş Performans Analizi
-</div>
-
-<div style="height:220px">
-<canvas id="flightPerformanceChart"></canvas>
-</div>
-
-</div>
-</div>
-
-<div class="pdf-col">
-<div class="report-card">
-
-<div class="report-header">
-<i class="fas fa-battery-half text-warning"></i>
-Personel Yorgunluk Dağılımı
-</div>
-
-<div style="height:220px">
-<canvas id="fatigueDistributionChart"></canvas>
-</div>
-
-</div>
-</div>
-
-</div>
-
-<div class="report-card">
-
-<div class="report-header">
-<i class="fas fa-route text-success"></i>
-En Çok Uçulan İlk 5 Rota
-</div>
-
-<div class="routes-wrapper">
-
-<div id="topRoutesList" class="mt-3">
-
-<div class="text-center text-muted py-4">
-<i class="fas fa-spinner fa-spin me-2"></i>
-Rotalar analiz ediliyor...
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</main>
+            <div class="report-card">
+                <div class="report-header">
+                    <i class="fas fa-route text-success"></i>
+                    En Çok Uçulan İlk 5 Rota
+                </div>
+                <div class="routes-wrapper">
+                    <div id="topRoutesList" class="mt-3">
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-spinner fa-spin me-2"></i>
+                            Rotalar analiz ediliyor...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <div class="modal fade" id="adminLogoutModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm">
@@ -243,11 +349,10 @@ Rotalar analiz ediliyor...
         </div>
     </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-
-<script src="raporlar.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <script src="raporlar.js"></script>
 </body>
 </html>

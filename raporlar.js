@@ -5,7 +5,21 @@ let allPersonnel = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
     
-    // 🌟 1. ADIM: ÇIKIŞ BUTONUNU AKTİF ET (Veriler yüklenmeden önce hazır olsun)
+    // 🌟 YENİ EKLENEN: CANLI SAAT MOTORU 🌟
+    function updateClock() {
+        const clockElement = document.getElementById('liveClock');
+        if (clockElement) {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            clockElement.textContent = `${hours}:${minutes}:${seconds}`;
+        }
+    }
+    setInterval(updateClock, 1000);
+    updateClock(); // Sayfa açılır açılmaz saati göster
+
+    // 1. ADIM: ÇIKIŞ BUTONUNU AKTİF ET
     const adminLogoutBtn = document.getElementById('adminLogoutBtn');
     if (adminLogoutBtn) {
         adminLogoutBtn.addEventListener('click', (e) => {
@@ -24,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // 🌟 2. ADIM: SAYFA VERİLERİNİ YÜKLE (Senin mevcut kodların)
+    // 2. ADIM: SAYFA VERİLERİNİ YÜKLE
     await fetchReportData();
     document.getElementById('downloadPdfBtn').addEventListener('click', downloadPDF);
 });
@@ -164,7 +178,6 @@ function renderTopRoutes() {
 // ==========================================
 // 4. PDF İNDİRME MOTORU (YATAY VE ZORUNLU GENİŞLİK ÇÖZÜMÜ)
 // ==========================================
-
 function getLocalCurrentDateTime() {
     const now = new Date();
     const year = now.getFullYear();
@@ -176,57 +189,37 @@ function getLocalCurrentDateTime() {
 }
 
 function downloadPDF(){
+    const btn = document.getElementById("downloadPdfBtn");
+    const originalText = btn.innerHTML;
 
-const btn=document.getElementById("downloadPdfBtn")
-const originalText=btn.innerHTML
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Hazırlanıyor';
+    btn.disabled = true;
 
-btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Hazırlanıyor'
-btn.disabled=true
+    setTimeout(() => {
+        const element = document.getElementById("pdfExportArea");
 
-setTimeout(()=>{
+        const originalWidth = element.style.width;
+        const originalMaxWidth = element.style.maxWidth;
 
-const element=document.getElementById("pdfExportArea")
+        element.style.width = "1060px";
+        element.style.maxWidth = "1060px";
+        element.style.margin = "0 auto";
 
-const originalWidth=element.style.width
-const originalMaxWidth=element.style.maxWidth
+        const opt = {
+            margin: 0.4,
+            filename: `SkyOps_Rapor_${getLocalCurrentDateTime()}.pdf`,
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { scale: 2.5, useCORS: true, scrollY: 0 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+            pagebreak: { mode: ['avoid-all', 'css'] }
+        };
 
-element.style.width="1060px"
-element.style.maxWidth="1060px"
-element.style.margin="0 auto"
-
-const opt={
-margin:0.4,
-filename:`SkyOps_Rapor_${getLocalCurrentDateTime()}.pdf`,
-image:{type:'jpeg',quality:1},
-
-html2canvas:{
-scale:2.5,
-useCORS:true,
-scrollY:0
-},
-
-jsPDF:{
-unit:'mm',
-format:'a4',
-orientation:'landscape'
-},
-
-pagebreak:{
-mode:['avoid-all','css']
-}
-}
-
-html2pdf().set(opt).from(element).save().then(()=>{
-
-element.style.width=originalWidth
-element.style.maxWidth=originalMaxWidth
-
-btn.innerHTML=originalText
-btn.disabled=false
-
-})
-
-},500)
-
+        html2pdf().set(opt).from(element).save().then(() => {
+            element.style.width = originalWidth;
+            element.style.maxWidth = originalMaxWidth;
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
+    }, 500);
 }
 

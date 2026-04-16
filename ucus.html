@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uçuş Yönetimi</title>
+    <title>Uçuş Yönetimi - SkyOps</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="style.css">
 
     <style>
@@ -22,107 +22,29 @@
         .kpi-card:hover { transform: translateY(-5px); }
 
         /* EN SADE KURUMSAL PAGINATION STİLİ */
-        #paginationControls {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        #paginationControls .page-item .page-link {
-            background: transparent !important;
-            border: none !important;
-            color: #64748b !important; 
-            font-size: 14px;
-            font-weight: 500;
-            padding: 6px 12px;
-            border-radius: 6px;
-            transition: all 0.2s;
-            box-shadow: none !important;
-        }
-
-        #paginationControls .page-item.active .page-link {
-            color: #0f172a !important; 
-            background-color: #f1f5f9 !important;
-            font-weight: 700;
-        }
-
-        #paginationControls .page-item .page-link:hover:not(.active) {
-            background-color: #f8fafc !important;
-            color: #334155 !important;
-        }
+        #paginationControls { display: flex; gap: 5px; align-items: center; list-style: none; padding: 0; margin: 0; }
+        #paginationControls .page-item .page-link { background: transparent !important; border: none !important; color: #64748b !important; font-size: 14px; font-weight: 500; padding: 6px 12px; border-radius: 6px; transition: all 0.2s; box-shadow: none !important; }
+        #paginationControls .page-item.active .page-link { color: #0f172a !important; background-color: #f1f5f9 !important; font-weight: 700; }
+        #paginationControls .page-item .page-link:hover:not(.active) { background-color: #f8fafc !important; color: #334155 !important; }
 
         /* --- ÖZEL SAAT VE LİSTE TASARIMI --- */
-        .time-column {
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
+        .time-column { overflow-y: auto; display: flex; flex-direction: column; gap: 4px; scrollbar-width: none; -ms-overflow-style: none; }
         .time-column::-webkit-scrollbar { display: none; }
         
-        .time-box {
-            aspect-ratio: 1 / 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #f1f5f9;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #64748b;
-            cursor: pointer;
-            transition: all 0.15s;
-            min-height: 40px;
-        }
+        .time-box { aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; border: 1px solid #f1f5f9; border-radius: 8px; font-size: 14px; font-weight: 500; color: #64748b; cursor: pointer; transition: all 0.15s; min-height: 40px; }
         .time-box:hover { background-color: #f8fafc; color: #2563eb; border-color: #2563eb; }
         .time-box.selected { background-color: #2563eb; color: white; border-color: #2563eb; }
         .time-box.disabled { opacity: 0.15; cursor: not-allowed; pointer-events: none; background: #f8fafc; }
 
         /* --- KABİN EKİBİ SEÇİM STİLLERİ --- */
-        .crew-item {
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
-            margin-bottom: 5px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid transparent;
-            background: #f8fafc;
-            font-size: 14px;
-            color: #475569;
-        }
+        .crew-item { display: flex; align-items: center; padding: 10px 15px; margin-bottom: 5px; border-radius: 10px; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; background: #f8fafc; font-size: 14px; color: #475569; }
         .crew-item:hover { background: #f1f5f9; }
-        .crew-item.active { 
-            background: #e0f2fe; 
-            border-color: #0ea5e9; 
-            color: #0369a1;
-            font-weight: 600;
-        }
+        .crew-item.active { background: #e0f2fe; border-color: #0ea5e9; color: #0369a1; font-weight: 600; }
 
         /* Filtre Butonları Özel Stili */
-        .filter-btn {
-            color: #64748b !important;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            background: transparent;
-        }
-
-        .btn-check:checked + .filter-btn {
-            background-color: #475569 !important;
-            color: white !important;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .filter-btn:hover:not(.btn-check:checked + .filter-btn) {
-            background-color: #f1f5f9;
-            color: #1e293b !important;
-        }
+        .filter-btn { color: #64748b !important; font-weight: 500; transition: all 0.2s ease; background: transparent; }
+        .btn-check:checked + .filter-btn { background-color: #475569 !important; color: white !important; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .filter-btn:hover:not(.btn-check:checked + .filter-btn) { background-color: #f1f5f9; color: #1e293b !important; }
 
         .bg-info-subtle { background-color: #e0f2fe !important; }
         .text-info-dark { color: #0369a1 !important; }
@@ -130,21 +52,92 @@
 
         /* 🌟 MODERN AÇILIR LİSTE (AUTOCOMPLETE) STİLLERİ 🌟 */
         .autocomplete-wrapper { position: relative; }
-        .custom-dropdown {
-            position: absolute; top: 100%; left: 0; right: 0; background: white;
-            border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15); max-height: 200px; overflow-y: auto;
-            z-index: 1060; list-style: none; padding: 0; margin: 0; display: none;
-        }
-        .custom-dropdown li {
-            padding: 10px 15px; cursor: pointer; border-bottom: 1px solid #f8fafc;
-            color: #475569; font-size: 0.9rem; transition: all 0.2s ease;
-            display: flex; align-items: center;
-        }
+        .custom-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); max-height: 200px; overflow-y: auto; z-index: 1060; list-style: none; padding: 0; margin: 0; display: none; }
+        .custom-dropdown li { padding: 10px 15px; cursor: pointer; border-bottom: 1px solid #f8fafc; color: #475569; font-size: 0.9rem; transition: all 0.2s ease; display: flex; align-items: center; }
         .custom-dropdown li:hover { background-color: #f1f5f9; color: #2563eb; padding-left: 20px; }
         .custom-dropdown::-webkit-scrollbar { width: 6px; }
         .custom-dropdown::-webkit-scrollbar-track { background: #f8fafc; }
         .custom-dropdown::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* 🌟 TABLET/MOBİL ÇIKIŞ YAPMA STİLLERİ VE HİZALAMA 🌟 */
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .sidebar-footer .logout-btn span { display: none !important; }
+            .sidebar-footer .logout-btn { justify-content: center; padding: 15px; }
+            .sidebar-footer .logout-btn i { margin: 0 !important; font-size: 22px; }
+        }
+
+        .mobile-logout-btn { display: none; }
+        
+        @media (max-width: 768px) {
+            .topbar {
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: flex-start !important;
+                padding: 15px 12px !important;
+            }
+            
+            .page-info { flex: 1; padding-right: 5px; }
+            .page-title { font-size: 16px !important; margin-bottom: 2px !important; }
+            .page-desc { display: block !important; font-size: 11px !important; line-height: 1.3; margin-top: 2px; }
+
+            .topbar-actions { 
+                display: grid !important; 
+                grid-template-columns: max-content max-content; 
+                justify-content: end !important; 
+                row-gap: 10px !important; 
+                column-gap: 14px !important; 
+                align-items: center; 
+                width: 100% !important; 
+                margin: 0 !important;
+                flex: 1;
+            }
+            
+            /* 1. Satır: Zil ve Saat */
+            .notification-box { 
+                grid-column: 1; grid-row: 1; 
+                justify-self: start; 
+                width: 36px !important; 
+                text-align: center !important; 
+                margin: 0 !important; 
+                font-size: 18px !important; 
+            }
+            .live-clock-box { 
+                grid-column: 2; grid-row: 1; justify-self: end; margin: 0 !important; 
+                font-size: 14px !important; 
+                padding: 6px 12px !important; 
+                display: flex !important; 
+                align-items: center;
+                height: 36px; 
+            }
+            
+            /* 2. Satır: Admin Profili ve Çıkış Butonu */
+            .user-profile { 
+                grid-column: 1; grid-row: 2; 
+                justify-self: start; 
+                margin: 0 !important; gap: 8px !important; 
+            }
+            .user-info { display: flex !important; flex-direction: column; justify-content: center; }
+            .user-info .name { font-size: 12px !important; line-height: 1; margin-bottom: 3px; }
+            .user-info .role { font-size: 9px !important; line-height: 1; }
+            
+            .avatar { width: 36px !important; height: 36px !important; font-size: 16px !important; border-radius: 10px !important; }
+
+            .mobile-logout-btn {
+                grid-column: 2; grid-row: 2; justify-self: end;
+                display: flex; align-items: center; justify-content: center;
+                background: #fef2f2; color: #ef4444; 
+                width: 36px; height: 36px; 
+                border-radius: 10px; 
+                font-size: 16px; 
+                text-decoration: none;
+                border: 1px solid #fca5a5; transition: 0.2s; margin: 0 !important;
+            }
+            .mobile-logout-btn:hover { background: #fee2e2; color: #dc2626; }
+
+            .custom-table td, .custom-table th {
+                white-space: nowrap !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -163,7 +156,9 @@
             <li><a href="arsiv.html"><i class="fas fa-archive"></i><span>Uçuş Arşivi</span></a></li>
         </ul>
         <div class="sidebar-footer">
-            <a href="#" class="logout-btn" id="adminLogoutBtn"><i class="fas fa-sign-out-alt me-2"></i> Çıkış Yap</a>
+            <a href="#" class="logout-btn" id="adminLogoutBtn" title="Çıkış Yap">
+                <i class="fas fa-sign-out-alt me-2"></i><span>Çıkış Yap</span>
+            </a>
         </div>
     </nav>
 
@@ -183,6 +178,9 @@
                         <span class="role">Sistem Yöneticisi</span>
                     </div>
                 </div>
+                <a href="#" class="mobile-logout-btn" data-bs-toggle="modal" data-bs-target="#adminLogoutModal" title="Çıkış Yap">
+                    <i class="fas fa-power-off"></i>
+                </a>
             </div>
         </header>
 
@@ -309,19 +307,16 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label text-muted small fw-bold mb-2">Uçuş Günü</label>
-                            <div class="btn-group w-100" role="group">
-                                <input type="radio" class="btn-check" name="flightDay" id="dayToday" value="today" checked>
-                                <label class="btn btn-outline-primary shadow-sm" for="dayToday" style="border-radius: 10px 0 0 10px;">Bugün</label>
-
-                                <input type="radio" class="btn-check" name="flightDay" id="dayTomorrow" value="tomorrow">
-                                <label class="btn btn-outline-primary shadow-sm" for="dayTomorrow" style="border-radius: 0 10px 10px 0;">Yarın</label>
+                            <label class="form-label text-muted small fw-bold mb-2">Uçuş Tarihi</label>
+                            <div class="input-group border rounded bg-white" style="border-radius: 10px !important; overflow: hidden;">
+                                <span class="input-group-text bg-white border-0 text-primary"><i class="fas fa-calendar-day"></i></span>
+                                <input type="text" class="form-control border-0 fw-medium px-2" id="flightDateInput" placeholder="Tarih Seçiniz" required style="height: 45px; background: transparent; cursor: pointer;">
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label text-muted small fw-bold mb-2">Rota Planlama</label>
-<div class="border rounded d-flex align-items-stretch" style="background: #fff; overflow: visible; border-color: #dee2e6 !important; height: 100px;">
+                            <div class="border rounded d-flex align-items-stretch" style="background: #fff; overflow: visible; border-color: #dee2e6 !important; height: 100px;">
                                 
                                 <div class="d-flex flex-column flex-grow-1 h-100">
                                     <div class="autocomplete-wrapper position-relative h-50 border-bottom">
@@ -392,14 +387,14 @@
                             </div>
                         </div>
 
-<div class="mb-4">
-    <label class="form-label text-muted small fw-bold mb-2">Durum</label>
-    <div class="autocomplete-wrapper">
-        <input type="text" class="form-control" id="statusText" placeholder="Durum Seçiniz..." autocomplete="off" required style="border-radius: 10px; height: 45px; cursor: pointer;">
-        <input type="hidden" id="flightStatus">
-        <ul class="custom-dropdown w-100 shadow-lg" id="statusDropdown"></ul>
-    </div>
-</div>
+                        <div class="mb-4">
+                            <label class="form-label text-muted small fw-bold mb-2">Durum</label>
+                            <div class="autocomplete-wrapper">
+                                <input type="text" class="form-control" id="statusText" placeholder="Durum Seçiniz..." autocomplete="off" required style="border-radius: 10px; height: 45px; cursor: pointer;">
+                                <input type="hidden" id="flightStatus">
+                                <ul class="custom-dropdown w-100 shadow-lg" id="statusDropdown"></ul>
+                            </div>
+                        </div>
 
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 12px; font-weight: 600;">Kaydı Tamamla</button>
@@ -449,6 +444,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/tr.js"></script>
     <script src="ucus.js"></script>
 </body>
 </html>

@@ -329,62 +329,112 @@ function getBadgeClass(status) {
     }
 }
 
+// YENİ — eksik olan fonksiyonu ekle:
+const getTodayDate = () => getLocalYYYYMMDD(new Date());
+
+// 🌟 YENİ: ÇİZGİSEL (LINE AREA) GRAFİK & 24 SAAT / 7 GÜN FİLTRESİ 🌟
 function initOrUpdateChart() {
     const ctx = document.getElementById('flightChart');
-    if (!ctx || !allFlights.length) return;
+    if (!ctx) return;
+    
+    // Açılır liste yazılarını JS ile güvene alalım
     const filterEl = document.getElementById('chartFilter');
-    const hoursToShow = filterEl ? parseInt(filterEl.value) : 1; 
-    const now = new Date();
+    if (filterEl && filterEl.options.length > 0) {
+        filterEl.options[0].text = "Bugün (24 Saat)";
+        if(filterEl.options.length > 1) filterEl.options[1].text = "Son 7 Gün";
+    }
+
+    const filterMode = filterEl ? filterEl.value : 'today'; 
+    const todayStr = getTodayDate();
+    
     let labels = [];
     let dataPoints = [];
 
-    if (hoursToShow === 1) {
-        for (let i = 50; i >= 0; i -= 10) {
-            let d = new Date(now.getTime() - i * 60000);
-            let timeStr = d.getHours().toString().padStart(2, '0') + ":" + d.getMinutes().toString().padStart(2, '0');
-            labels.push(timeStr);
-            const count = allFlights.filter(f => {
-                const [fH, fM] = f.time.split(':').map(Number);
-                const flightTotalMins = fH * 60 + fM;
-                const targetTotalMins = d.getHours() * 60 + d.getMinutes();
-                return flightTotalMins > (targetTotalMins - 10) && flightTotalMins <= targetTotalMins;
+    if (filterMode === 'today' || filterMode === '1') {
+        // --- BUGÜNÜN 24 SAATLİK DİLİMİ ---
+        const todaysFlights = allFlights.filter(f => f.date === todayStr);
+        
+        for (let i = 0; i < 24; i += 2) { 
+            let hourStr = i.toString().padStart(2, '0');
+            labels.push(hourStr + ":00");
+            
+            const count = todaysFlights.filter(f => {
+                if (!f.time) return false;
+                const flightHour = parseInt(f.time.split(':')[0]);
+                return flightHour >= i && flightHour < i + 2;
             }).length;
+            
             dataPoints.push(count);
         }
     } else {
-        const currentHour = now.getHours();
-        for (let i = 5; i >= 0; i--) {
-            let h = (currentHour - i + 24) % 24;
-            let hourStr = h.toString().padStart(2, '0');
-            labels.push(hourStr + ":00");
-            const count = allFlights.filter(f => f.time.startsWith(hourStr)).length;
+        // --- SON 7 GÜNÜN TRENDİ (Geçmiş 7 gün dolu grafik verir) ---
+        for (let i = 6; i >= 0; i--) {
+            let d = new Date();
+            d.setDate(d.getDate() - i);
+            let dateStr = getLocalYYYYMMDD(d);
+            
+            labels.push(`${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}`);
+            
+            const count = allFlights.filter(f => f.date === dateStr).length;
             dataPoints.push(count);
         }
     }
 
-    if (myFlightChart) { myFlightChart.destroy(); }
+    if (myFlightChart) { 
+        myFlightChart.destroy(); 
+    }
 
+    // Çizgi ve Dolgu (Area Line) Grafiği
     myFlightChart = new Chart(ctx, {
-        type: 'line',
+        type: 'line', 
         data: {
             labels: labels,
             datasets: [{
                 label: 'Uçuş Sayısı',
                 data: dataPoints,
-                borderColor: '#3b82f6',
-                tension: 0.4,
-                fill: true,
-                backgroundColor: 'rgba(59, 130, 246, 0.1)'
+                borderColor: '#3b82f6', // SkyOps mavi çizgisi
+                backgroundColor: 'rgba(59, 130, 246, 0.15)', // Çizginin altındaki şeffaf mavi dolgu
+                borderWidth: 2,
+                pointBackgroundColor: '#ffffff',
+                pointBorderColor: '#3b82f6',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                fill: true, // Altını doldurur
+                tension: 0.4 // Dalgalı ve yumuşak çizgi efekti
             }]
         },
         options: { 
             responsive: true, 
             maintainAspectRatio: false, 
-            animation: { duration: 600 },
-            plugins: { legend: { display: false } },
+            animation: { duration: 800, easing: 'easeOutQuart' },
+            layout: {
+                padding: { top: 10, bottom: 10 }
+            },
+            plugins: { 
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                    padding: 10,
+                    titleFont: { size: 13 },
+                    bodyFont: { size: 14, weight: 'bold' },
+                    displayColors: false
+                }
+            },
             scales: { 
-                y: { beginAtZero: true, ticks: { stepSize: 1 } },
-                x: { grid: { display: false } }
+                y: { 
+                    beginAtZero: true, 
+                    ticks: { 
+                        stepSize: 1, 
+                        color: '#64748b',
+                        precision: 0 // Sadece tam sayılar
+                    },
+                    grid: { color: '#e2e8f0', drawBorder: false }
+                },
+                x: { 
+                    ticks: { color: '#64748b', font: { size: 11, weight: '500' } },
+                    grid: { display: false, drawBorder: false } 
+                }
             }
         }
     });
