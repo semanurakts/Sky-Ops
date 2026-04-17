@@ -114,6 +114,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const activeName = foundUser ? foundUser.name : "Test Kullanıcısı";
             localStorage.setItem('skyOpsActiveUser', activeName);
 
+            // 🌟 YENİ: YOLCU KİMLİĞİ VE ROLÜNÜ KAYDET 🌟
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userRole', 'passenger');
+
             const btn = passFormEl.querySelector('button');
             btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Giriş Yapılıyor...';
             setTimeout(() => window.location.href = 'yolcu.html', 800);
@@ -194,6 +198,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const empPassword = document.getElementById('empPassword').value.trim();
 
         if (false) {
+            // 🌟 YENİ: ADMİN KİMLİĞİ VE ROLÜNÜ KAYDET 🌟
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userRole', 'admin');
+
             const btn = empFormEl.querySelector('button');
             btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Bağlanıyor...';
             setTimeout(() => window.location.href = 'index.html', 800);

@@ -118,7 +118,16 @@ function renderArchiveTable() {
 
         return `
             <tr>
-                <td class="text-muted fw-medium"><i class="far fa-calendar-alt me-2"></i>${formattedDate}</td>
+                <td>
+                    <div class="d-flex flex-column">
+                        <div class="text-muted mb-1" style="font-size: 0.75rem; font-weight: 500;">
+                            <i class="far fa-calendar-alt me-1"></i>${formattedDate}
+                        </div>
+                        <div class="fw-bold text-secondary font-monospace" style="font-size: 0.95rem;">
+                            ${flight.time}
+                        </div>
+                    </div>
+                </td>
                 <td class="fw-bold text-secondary font-monospace">${flight.flightNo}</td>
                 <td class="text-secondary">${flight.route}</td>
                 <td class="text-secondary"><i class="fas fa-user-tie me-2"></i>${pilotName}</td>
