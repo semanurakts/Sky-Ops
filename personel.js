@@ -422,7 +422,7 @@ function resetFormToDefault() {
 }
 
 async function deletePersonnel(id) {
-    showConfirmModal("Siliniyor", "Emin misiniz?", async () => {
+    showConfirmModal("Personel Siliniyor", "Seçilen personel sistemden silinecek. Onaylıyor musunuz?", async () => {
         await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
         await fetchPersonnel();
     }, true, "Sil");

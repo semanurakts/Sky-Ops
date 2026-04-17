@@ -219,17 +219,14 @@
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
                 <div class="d-flex align-items-center gap-2 flex-grow-1">
                     <div class="d-inline-flex bg-light p-1" style="border-radius: 25px; border: 1px solid #e2e8f0; flex-shrink: 0;">
-                        <input type="radio" class="btn-check" name="dateFilter" id="filterAll" value="all" checked>
-                        <label class="btn btn-sm px-3 rounded-pill filter-btn" for="filterAll">Hepsi</label>
+                        <input type="radio" class="btn-check" name="opFilter" id="filterAll" value="all" checked>
+                        <label class="btn btn-sm px-3 rounded-pill filter-btn" for="filterAll">Tümü</label>
 
-                        <input type="radio" class="btn-check" name="dateFilter" id="filterToday" value="today">
-                        <label class="btn btn-sm px-3 rounded-pill filter-btn" for="filterToday">Bugün</label>
+                        <input type="radio" class="btn-check" name="opFilter" id="filterActive" value="active">
+                        <label class="btn btn-sm px-3 rounded-pill filter-btn" for="filterActive">Aktif / Yaklaşan</label>
 
-                        <input type="radio" class="btn-check" name="dateFilter" id="filterTomorrow" value="tomorrow">
-                        <label class="btn btn-sm px-3 rounded-pill filter-btn" for="filterTomorrow">Yarın</label>
-                        
-                        <input type="radio" class="btn-check" name="dateFilter" id="filterPast" value="past">
-                        <label class="btn btn-sm px-3 rounded-pill filter-btn" for="filterPast">Yakın Geçmiş</label>
+                        <input type="radio" class="btn-check" name="opFilter" id="filterCompleted" value="completed">
+                        <label class="btn btn-sm px-3 rounded-pill filter-btn" for="filterCompleted">Tamamlanan</label>
                     </div>
 
                     <div class="search-box" style="width: 220px;">
@@ -259,7 +256,7 @@
                         <tr>
                             <th class="border-0">Uçuş No</th>
                             <th class="border-0">Rota</th>
-                            <th class="border-0">Saat</th>
+                            <th class="border-0">Tarih / Saat</th>
                             <th class="border-0">Kapı</th>
                             <th class="border-0">Durum</th>
                             <th class="border-0">Pilot</th>
@@ -416,7 +413,7 @@
                     <p class="text-muted mb-4" id="confirmModalBody">Bu işlem geri alınamaz ve tüm veriler senkronize edilecektir.</p>
                     
                     <div class="modal-footer border-0 d-flex gap-2 justify-content-center pb-0">
-                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Vazgeç</button>
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">İptal</button>
                         <button type="button" class="btn btn-primary rounded-pill px-4" id="confirmBtnAction">Onayla</button>
                     </div>
                 </div>

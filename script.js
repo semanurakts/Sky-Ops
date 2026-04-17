@@ -1,6 +1,6 @@
 const API_BASE_URL = 'http://localhost:3000';
 let myFlightChart = null;
-let allFlights = [];
+let allFlights = [];  
 let allPersonnel = [];
 
 // 🌟 DASHBOARD SAYFALANDIRMA DEĞİŞKENLERİ 🌟
@@ -189,11 +189,27 @@ function renderRecentFlightsTable() {
 
         const cabinCrewCount = f.cabinCrew ? f.cabinCrew.length : 0;
         
+        // 🌟 TARİHİ FORMATLIYORUZ (YYYY-MM-DD -> DD.MM.YYYY) 🌟
+        let formattedDate = "";
+        if (f.date) {
+            const [y, m, d] = f.date.split('-');
+            formattedDate = `${d}.${m}.${y}`;
+        }
+
         return `
             <tr>
                 <td class="fw-bold text-dark font-monospace">${f.flightNo}</td>
                 <td>${f.route}</td>
-                <td>${f.time}</td>
+                <td>
+                    <div class="d-flex flex-column">
+                        <div class="text-muted mb-1" style="font-size: 0.75rem; font-weight: 500;">
+                            <i class="far fa-calendar-alt me-1"></i>${formattedDate}
+                        </div>
+                        <div class="fw-bold text-dark font-monospace" style="font-size: 0.95rem;">
+                            ${f.time}
+                        </div>
+                    </div>
+                </td>
                 <td><span class="badge bg-light text-dark border">${f.gate}</span></td>
                 <td><span class="badge ${getBadgeClass(f.status)} px-3 py-2 rounded-pill">${f.status}</span></td>
                 <td>
