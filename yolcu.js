@@ -247,7 +247,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     const expiryDateInput = document.getElementById('expiryDateInput');
     if (expiryDateInput) {
         expiryDateInput.addEventListener('input', function (e) {
-            let value = e.target.value.replace(/\D/g, '');
+            let value = e.target.value.replace(/\D/g, ''); // Sadece rakamlar
+            
+            if (value.length > 0) {
+                // 🌟 AY KONTROLÜ (01-12) 🌟
+                let month = value.substring(0, 2);
+                if (month.length === 1 && parseInt(month) > 1) {
+                    month = '0' + month; // 2-9 arası girilirse başına 0 ekle
+                } else if (month.length === 2) {
+                    if (parseInt(month) === 0) month = '01'; // 00 girilirse 01 yap
+                    else if (parseInt(month) > 12) month = '12'; // 12'den büyükse 12 yap
+                }
+                value = month + value.substring(2);
+            }
+
+            // Araya / işareti koyma
             if (value.length >= 3) {
                 e.target.value = value.substring(0, 2) + '/' + value.substring(2, 4);
             } else {

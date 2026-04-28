@@ -735,6 +735,20 @@
         "27"
       ],
       "status": "İndi"
+    },
+    {
+      "id": "38",
+      "flightNo": "TK-5625",
+      "route": "IST > FRA",
+      "time": "10:09",
+      "date": "2026-05-30",
+      "gate": "L-03",
+      "pilot": "8",
+      "cabinCrew": [
+        "28",
+        "29"
+      ],
+      "status": "Zamanında"
     }
   ],
   "airlines": [
