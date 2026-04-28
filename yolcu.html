@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SkyOps - Uçak Bileti Al</title>
     <script>
-        if (localStorage.getItem("isLoggedIn") !== "true" || localStorage.getItem("userRole") !== "passenger") {
+        if (sessionStorage.getItem("isLoggedIn") !== "true" || sessionStorage.getItem("userRole") !== "passenger") {
             window.location.replace("login.html");
         }
     </script>

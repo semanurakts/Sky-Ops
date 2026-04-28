@@ -734,7 +734,7 @@
         "19",
         "27"
       ],
-      "status": "Zamanında"
+      "status": "İndi"
     }
   ],
   "airlines": [
@@ -1209,7 +1209,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "IST"
+      "currentLocation": "NCE"
     },
     {
       "id": "2",
@@ -1219,11 +1219,11 @@
       "lastUpdate": "2026-04-14",
       "flightHours": 0,
       "dailyFlightHours": 2,
-      "fatiguePoint": 15,
+      "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
       "currentLocation": "NCE",
-      "lastDecayTime": "2026-04-17T15:04:30.332Z"
+      "lastDecayTime": null
     },
     {
       "id": "3",
@@ -1445,7 +1445,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "IST"
+      "currentLocation": "NCE"
     },
     {
       "id": "20",
@@ -1455,11 +1455,11 @@
       "lastUpdate": "2026-04-14",
       "flightHours": 0,
       "dailyFlightHours": 2,
-      "fatiguePoint": 15,
+      "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
       "currentLocation": "NCE",
-      "lastDecayTime": "2026-04-17T15:04:30.350Z"
+      "lastDecayTime": null
     },
     {
       "id": "21",
@@ -1469,11 +1469,11 @@
       "lastUpdate": "2026-04-14",
       "flightHours": 0,
       "dailyFlightHours": 2,
-      "fatiguePoint": 15,
+      "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
       "currentLocation": "NCE",
-      "lastDecayTime": "2026-04-17T15:04:30.363Z"
+      "lastDecayTime": null
     },
     {
       "id": "22",
@@ -1551,7 +1551,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "IST",
+      "currentLocation": "NCE",
       "lastDecayTime": null
     },
     {

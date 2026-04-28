@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if(clock) clock.textContent = new Date().toLocaleTimeString('tr-TR');
     }, 1000);
     
-    // 🌟 2. ADMİN ÇIKIŞ YAPMA İŞLEMİ 🌟
+// 🌟 2. ADMİN ÇIKIŞ YAPMA İŞLEMİ 🌟
     const adminLogoutBtn = document.getElementById('adminLogoutBtn');
     if (adminLogoutBtn) {
         adminLogoutBtn.addEventListener('click', (e) => {
@@ -32,8 +32,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             btnConfirmAdminLogout.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Çıkılıyor...';
             btnConfirmAdminLogout.disabled = true;
             
+            // 🚨 GÜVENLİK: ÇIKIŞ YAPARKEN OTURUM VERİLERİNİ KESİNLİKLE SİL 🚨
+            sessionStorage.removeItem("isLoggedIn");
+            sessionStorage.removeItem("userRole");
+            sessionStorage.removeItem("skyOpsActiveUser"); // Yolcu tarafını da temizler (İsteğe bağlı)
+            
             setTimeout(() => {
-                window.location.href = 'login.html';
+                window.location.replace('login.html'); // .replace() kullan ki geri tuşuyla dönülmesin
             }, 600); // Küçük bir animasyon gecikmesi
         });
     }

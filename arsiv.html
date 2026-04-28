@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Uçuş Arşivi - SkyOps</title>
     <script>
-        if (localStorage.getItem("isLoggedIn") !== "true" || localStorage.getItem("userRole") !== "admin") {
+        if (sessionStorage.getItem("isLoggedIn") !== "true" || sessionStorage.getItem("userRole") !== "admin") {
             window.location.replace("login.html");
         }
     </script>

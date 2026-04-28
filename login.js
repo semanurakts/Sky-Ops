@@ -112,11 +112,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (foundUser || (false)) {
             const activeName = foundUser ? foundUser.name : "Test Kullanıcısı";
-            localStorage.setItem('skyOpsActiveUser', activeName);
+            sessionStorage.setItem('skyOpsActiveUser', activeName);
 
             // 🌟 YENİ: YOLCU KİMLİĞİ VE ROLÜNÜ KAYDET 🌟
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('userRole', 'passenger');
+            sessionStorage.setItem('isLoggedIn', 'true');
+            sessionStorage.setItem('userRole', 'passenger');
 
             const btn = passFormEl.querySelector('button');
             btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Giriş Yapılıyor...';
@@ -199,8 +199,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (false) {
             // 🌟 YENİ: ADMİN KİMLİĞİ VE ROLÜNÜ KAYDET 🌟
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('userRole', 'admin');
+            sessionStorage.setItem('isLoggedIn', 'true');
+            sessionStorage.setItem('userRole', 'admin');
 
             const btn = empFormEl.querySelector('button');
             btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Bağlanıyor...';
