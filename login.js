@@ -1,4 +1,75 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+    // --- 🌍 ÇEVİRİ SÖZLÜĞÜ VE DİL MOTORU ---
+    const translations = {
+        tr: {
+            title: "SkyOps - Giriş Portalı", passengerLogin: "Yolcu Girişi", staffLogin: "Personel Girişi",
+            exploreWorld: "Dünyayı Keşfetmeye Devam Et", emailPlaceholder: "E-posta", emailLabel: "E-posta Adresi",
+            passwordPlaceholder: "Şifre", passwordLabel: "Şifre", forgotPasswordLink: "Şifremi Unuttum",
+            loginBtn: "Giriş Yap", noAccount: "Hesabın yok mu?", registerNowLink: "Hemen Kayıt Ol",
+            resetTitle: "Şifre Sıfırlama", resetDesc: "Kayıtlı e-posta adresinizi ve oluşturmak istediğiniz yeni şifrenizi girin.",
+            newPasswordPlaceholder: "Yeni Şifre", newPasswordLabel: "Yeni Şifre", updatePasswordBtn: "Şifreyi Güncelle",
+            rememberPassword: "Şifrenizi hatırladınız mı?", joinUs: "Aramıza Katılın", fullNamePlaceholder: "Ad Soyad",
+            fullNameLabel: "Ad Soyad", registerBtn: "Kayıt Ol", alreadyHaveAccount: "Zaten hesabın var mı?",
+            opsCenter: "Operasyon Kontrol Merkezi", badgePlaceholder: "Sicil No", badgeLabel: "Sicil Numarası",
+            systemPasswordPlaceholder: "Şifre", systemPasswordLabel: "Sistem Şifresi", itSupportLink: "IT Destek Birimi",
+            connectSystemBtn: "Sisteme Bağlan", unauthorizedWarning: "Yetkisiz erişim denemeleri kayıt altına alınmaktadır.",
+            // Bildirim Mesajları (Toast)
+            msgLoggingIn: "Giriş Yapılıyor...", msgConnecting: "Bağlanıyor...",
+            msgAuthError: "E-posta veya şifre hatalı! Hesabınız yoksa kayıt olun.",
+            msgEmailInUse: "Bu e-posta adresi zaten kullanımda!", msgRegisterSuccess: "Üyelik başarıyla oluşturuldu! Hoş geldin ",
+            msgPasswordUpdated: "Şifreniz başarıyla güncellendi!", msgEmailNotFound: "Bu e-posta adresi sistemde bulunamadı!",
+            msgStaffError: "Yetkisiz erişim! Sicil No veya şifre hatalı.",
+            msgITSupportAlert: "Sistem erişimi ve şifre işlemleri için lütfen '444 0 911' numaralı IT Destek Hattı'nı arayınız."
+        },
+        en: {
+            title: "SkyOps - Login Portal", passengerLogin: "Passenger Login", staffLogin: "Staff Login",
+            exploreWorld: "Continue Exploring the World", emailPlaceholder: "Email", emailLabel: "Email Address",
+            passwordPlaceholder: "Password", passwordLabel: "Password", forgotPasswordLink: "Forgot Password?",
+            loginBtn: "Log In", noAccount: "Don't have an account?", registerNowLink: "Sign Up Now",
+            resetTitle: "Password Reset", resetDesc: "Enter your registered email address and the new password.",
+            newPasswordPlaceholder: "New Password", newPasswordLabel: "New Password", updatePasswordBtn: "Update Password",
+            rememberPassword: "Remember your password?", joinUs: "Join Us", fullNamePlaceholder: "Full Name",
+            fullNameLabel: "Full Name", registerBtn: "Sign Up", alreadyHaveAccount: "Already have an account?",
+            opsCenter: "Operations Control Center", badgePlaceholder: "Staff ID", badgeLabel: "Staff ID Number",
+            systemPasswordPlaceholder: "Password", systemPasswordLabel: "System Password", itSupportLink: "IT Support Unit",
+            connectSystemBtn: "Connect to System", unauthorizedWarning: "Unauthorized access attempts are being logged.",
+            // Bildirim Mesajları (Toast)
+            msgLoggingIn: "Logging in...", msgConnecting: "Connecting...",
+            msgAuthError: "Incorrect email or password! Please register if you don't have an account.",
+            msgEmailInUse: "This email address is already in use!", msgRegisterSuccess: "Account successfully created! Welcome ",
+            msgPasswordUpdated: "Your password has been successfully updated!", msgEmailNotFound: "This email address could not be found!",
+            msgStaffError: "Unauthorized access! Staff ID or password incorrect.",
+            msgITSupportAlert: "For system access and password procedures, please call the IT Support Hotline at '444 0 911'."
+        }
+    };
+
+    let currentLang = localStorage.getItem('skyOpsLang') || 'tr';
+    function updateLanguage(lang) {
+        currentLang = lang;
+        localStorage.setItem('skyOpsLang', lang);
+
+        document.getElementById('btnLangTR').classList.toggle('active', lang === 'tr');
+        document.getElementById('btnLangEN').classList.toggle('active', lang === 'en');
+
+        const titleEl = document.querySelector('[data-i18n="title"]');
+        if (titleEl) document.title = translations[lang]["title"];
+
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (key !== 'title' && translations[lang][key]) el.innerText = translations[lang][key];
+        });
+
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            if (translations[lang][key]) el.setAttribute('placeholder', translations[lang][key]);
+        });
+    }
+
+    document.getElementById('btnLangTR').addEventListener('click', () => updateLanguage('tr'));
+    document.getElementById('btnLangEN').addEventListener('click', () => updateLanguage('en'));
+    updateLanguage(currentLang);
+    // ----------------------------------------------
     
     // 🌟 ŞIK BİLDİRİM (TOAST) FONKSİYONU 🌟
     function showNotification(message, type = 'success') {
@@ -214,7 +285,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnITSupport) {
         btnITSupport.addEventListener('click', (e) => {
             e.preventDefault();
-            showNotification("Sistem erişimi ve şifre işlemleri için lütfen '444 0 911' numaralı IT Destek Hattı'nı arayınız.", "success");
+            // currentLang değişkeni 'tr' ise Türkçe, 'en' ise İngilizce metni Toast olarak çıkarır:
+            showNotification(translations[currentLang].msgITSupportAlert, "success");
         });
     }
 

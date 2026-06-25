@@ -1,6 +1,70 @@
 const API_BASE_URL = 'http://localhost:3000';
 
 document.addEventListener('DOMContentLoaded', async () => {
+    
+    // --- 🌟 DİNAMİK YOLCU İSMİ VE MODAL İŞLEMLERİ 🌟 ---
+    const users = JSON.parse(localStorage.getItem('skyOpsUsers')) || [];
+    const activeUserName = sessionStorage.getItem('skyOpsActiveUser') || localStorage.getItem('skyOpsActiveUser');
+    const activeUserData = users.find(u => u.name === activeUserName) || users[users.length - 1];
+
+    if(activeUserData && activeUserData.name) {
+        document.getElementById('navPassengerName').innerText = activeUserData.name.split(' ')[0]; 
+    }
+
+    // 1. Çıkış Yapma İşlemi
+    const btnLogout = document.getElementById('btnLogout');
+    if (btnLogout) {
+        btnLogout.addEventListener('click', (e) => {
+            e.preventDefault();
+            new bootstrap.Modal(document.getElementById('logoutConfirmModal')).show();
+        });
+    }
+
+    const btnConfirmLogout = document.getElementById('btnConfirmLogout');
+    if (btnConfirmLogout) {
+        btnConfirmLogout.addEventListener('click', () => {
+            btnConfirmLogout.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Çıkılıyor...';
+            setTimeout(() => {
+                sessionStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('skyOpsActiveUser');
+                window.location.href = 'login.html';
+            }, 600);
+        });
+    }
+
+    // 2. Profil ve Ayarlar Modallarını Açma
+    document.getElementById('btnProfileEdit')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (activeUserData) {
+            document.getElementById('profileEditName').value = activeUserData.name;
+            document.getElementById('profileEditEmail').value = activeUserData.email;
+        }
+        new bootstrap.Modal(document.getElementById('passengerProfileModal')).show();
+    });
+
+    document.getElementById('btnUserSettings')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        new bootstrap.Modal(document.getElementById('passengerSettingsModal')).show();
+    });
+
+    // 3. Ayarları Tarayıcıya Kaydetme Mantığı
+    const set_email = document.getElementById('set_emailNotify');
+    const set_sms = document.getElementById('set_smsNotify');
+    const set_curr = document.getElementById('set_currency');
+
+    const savedSettings = JSON.parse(localStorage.getItem('skyOpsSettings')) || { email: true, sms: false, currency: 'TRY' };
+    if(set_email) set_email.checked = savedSettings.email;
+    if(set_sms) set_sms.checked = savedSettings.sms;
+    if(set_curr) set_curr.value = savedSettings.currency;
+
+    const saveSettings = () => {
+        localStorage.setItem('skyOpsSettings', JSON.stringify({
+            email: set_email.checked, sms: set_sms.checked, currency: set_curr.value
+        }));
+    };
+    [set_email, set_sms, set_curr].forEach(el => el?.addEventListener('change', saveSettings));
+
+    // Biletleri Ekrana Çiz
     await renderTickets();
 });
 

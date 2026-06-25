@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkyOps - Giriş Portalı</title>
+    <title data-i18n="title">SkyOps - Giriş Portalı</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
@@ -214,12 +214,52 @@
         .skyops-toast.error { background-color: #ef4444; border-left: 5px solid #b91c1c; }
         .skyops-toast i { font-size: 1.5rem; }
 
+        /* --- DİL DEĞİŞTİRİCİ (LANGUAGE TOGGLE) --- */
+        .lang-toggle {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            z-index: 10; /* Arkaplanın üstünde durması için */
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .lang-toggle button {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 2px 5px;
+        }
+
+        .lang-toggle button.active {
+            color: #ffffff;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+
+        .lang-toggle button:hover:not(.active) {
+            color: #3b82f6;
+        }
+
     </style>
 </head>
 <body>
 
     <div class="bg-image"></div>
     <div class="bg-overlay"></div>
+    <div class="lang-toggle">
+    <button id="btnLangTR" class="active">TR</button>
+    <button id="btnLangEN">EN</button>
+</div>
 
     <div class="login-container">
         <div class="glass-card">
@@ -230,93 +270,93 @@
 
             <div class="role-toggle" id="roleToggle">
                 <div class="toggle-slider" id="toggleSlider"></div>
-                <div class="role-btn active" id="btnPassenger">Yolcu Girişi</div>
-                <div class="role-btn" id="btnEmployee">Personel Girişi</div>
+                <div class="role-btn active" id="btnPassenger" data-i18n="passengerLogin">Yolcu Girişi</div>
+                <div class="role-btn" id="btnEmployee" data-i18n="staffLogin">Personel Girişi</div>
             </div>
 
             <div id="passengerForm" class="form-section active">
-                <h5 class="fw-bold mb-4 text-center">Dünyayı Keşfetmeye Devam Et</h5>
+                <h5 class="fw-bold mb-4 text-center" data-i18n="exploreWorld">Dünyayı Keşfetmeye Devam Et</h5>
                 <form>
                     <div class="form-floating">
-                        <input type="email" class="form-control" id="passEmail" placeholder="E-posta" required>
-                        <label for="passEmail"><i class="fas fa-envelope me-2"></i>E-posta Adresi</label>
+                        <input type="email" class="form-control" id="passEmail" placeholder="E-posta" data-i18n-placeholder="emailPlaceholder" required>
+                        <label for="passEmail"><i class="fas fa-envelope me-2"></i><span data-i18n="emailLabel">E-posta Adresi</span></label>
                     </div>
                     <div class="form-floating">
-                        <input type="password" class="form-control" id="passPassword" placeholder="Şifre" required>
-                        <label for="passPassword"><i class="fas fa-lock me-2"></i>Şifre</label>
+                        <input type="password" class="form-control" id="passPassword" placeholder="Şifre" data-i18n-placeholder="passwordPlaceholder" required>
+                        <label for="passPassword"><i class="fas fa-lock me-2"></i><span data-i18n="passwordLabel">Şifre</span></label>
                     </div>
                     <div class="d-flex justify-content-end mb-3">
-                        <a href="#" class="forgot-link" id="btnForgotPassword">Şifremi Unuttum</a>
+                        <a href="#" class="forgot-link" id="btnForgotPassword" data-i18n="forgotPasswordLink">Şifremi Unuttum</a>
                     </div>
-                    <button type="submit" class="btn-login"><i class="fas fa-sign-in-alt me-2"></i>Giriş Yap</button>
+                    <button type="submit" class="btn-login"><i class="fas fa-sign-in-alt me-2"></i><span data-i18n="loginBtn">Giriş Yap</span></button>
                     
                     <div class="register-text">
-                        Hesabın yok mu? <a href="#" id="btnGoRegister">Hemen Kayıt Ol</a>
+                        Hesabın yok mu? <a href="#" id="btnGoRegister" data-i18n="registerNowLink">Hemen Kayıt Ol</a>
                     </div>
                 </form>
             </div>
 
             <div id="forgotPasswordForm" class="form-section">
-                <h5 class="fw-bold mb-3 text-center">Şifre Sıfırlama</h5>
-                <p class="text-center text-light opacity-75 mb-4" style="font-size: 0.9rem;">Kayıtlı e-posta adresinizi ve oluşturmak istediğiniz yeni şifrenizi girin.</p>
+                <h5 class="fw-bold mb-3 text-center" data-i18n="resetTitle">Şifre Sıfırlama</h5>
+                <p class="text-center text-light opacity-75 mb-4" style="font-size: 0.9rem;" data-i18n="resetDesc">Kayıtlı e-posta adresinizi ve oluşturmak istediğiniz yeni şifrenizi girin.</p>
                 <form id="formForgotSubmit">
                     <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="forgotEmail" placeholder="E-posta" required>
-                        <label for="forgotEmail"><i class="fas fa-envelope me-2"></i>E-posta Adresi</label>
+                        <input type="email" class="form-control" id="forgotEmail" placeholder="E-posta" data-i18n-placeholder="emailPlaceholder" required>
+                        <label for="forgotEmail"><i class="fas fa-envelope me-2"></i><span data-i18n="emailLabel">E-posta Adresi</span></label>
                     </div>
                     <div class="form-floating mb-4">
-                        <input type="password" class="form-control" id="forgotNewPassword" placeholder="Yeni Şifre" required minlength="4">
-                        <label for="forgotNewPassword"><i class="fas fa-key me-2"></i>Yeni Şifre</label>
+                        <input type="password" class="form-control" id="forgotNewPassword" placeholder="Yeni Şifre" data-i18n-placeholder="newPasswordPlaceholder" required minlength="4">
+                        <label for="forgotNewPassword"><i class="fas fa-key me-2"></i><span data-i18n="newPasswordLabel">Yeni Şifre</span></label>
                     </div>
-                    <button type="submit" class="btn-login" style="background: #f59e0b;"><i class="fas fa-sync-alt me-2"></i>Şifreyi Güncelle</button>
+                    <button type="submit" class="btn-login" style="background: #f59e0b;"><i class="fas fa-sync-alt me-2"></i><span data-i18n="updatePasswordBtn">Şifreyi Güncelle</span></button>
                     
                     <div class="register-text mt-4">
-                        Şifrenizi hatırladınız mı? <a href="#" id="btnBackToLoginFromForgot">Giriş Yap</a>
+                        <span data-i18n="rememberPassword">Şifrenizi hatırladınız mı?</span> <a href="#" id="btnBackToLoginFromForgot" data-i18n="loginBtn">Giriş Yap</a>
                     </div>
                 </form>
             </div>
 
             <div id="registerForm" class="form-section">
-                <h5 class="fw-bold mb-4 text-center">Aramıza Katılın</h5>
+                <h5 class="fw-bold mb-4 text-center" data-i18n="joinUs">Aramıza Katılın</h5>
                 <form id="formRegisterSubmit">
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="regName" placeholder="Ad Soyad" required>
-                        <label for="regName"><i class="fas fa-user me-2"></i>Ad Soyad</label>
+                        <input type="text" class="form-control" id="regName" placeholder="Ad Soyad" data-i18n-placeholder="fullNamePlaceholder" required>
+                        <label for="regName"><i class="fas fa-user me-2"></i><span data-i18n="fullNameLabel">Ad Soyad</span></label>
                     </div>
                     <div class="form-floating">
-                        <input type="email" class="form-control" id="regEmail" placeholder="E-posta" required>
-                        <label for="regEmail"><i class="fas fa-envelope me-2"></i>E-posta Adresi</label>
+                        <input type="email" class="form-control" id="regEmail" placeholder="E-posta" data-i18n-placeholder="emailPlaceholder" required>
+                        <label for="regEmail"><i class="fas fa-envelope me-2"></i><span data-i18n="emailLabel">E-posta Adresi</span></label>
                     </div>
                     <div class="form-floating">
-                        <input type="password" class="form-control" id="regPassword" placeholder="Şifre" required minlength="4">
-                        <label for="regPassword"><i class="fas fa-lock me-2"></i>Şifre</label>
+                        <input type="password" class="form-control" id="regPassword" placeholder="Şifre" data-i18n-placeholder="passwordPlaceholder" required minlength="4">
+                        <label for="regPassword"><i class="fas fa-lock me-2"></i><span data-i18n="passwordLabel">Şifre</span></label>
                     </div>
-                    <button type="submit" class="btn-login" style="background: #8b5cf6;"><i class="fas fa-user-plus me-2"></i>Kayıt Ol</button>
-                    
+                    <button type="submit" class="btn-login" style="background: #8b5cf6;"><i class="fas fa-user-plus me-2"></i><span data-i18n="registerBtn">Kayıt Ol</span></button>
+    
                     <div class="register-text">
-                        Zaten hesabın var mı? <a href="#" id="btnBackToLogin">Giriş Yap</a>
+                        <span data-i18n="alreadyHaveAccount">Zaten hesabın var mı?</span> <a href="#" id="btnBackToLogin" data-i18n="loginBtn">Giriş Yap</a>
                     </div>
                 </form>
             </div>
 
             <div id="employeeForm" class="form-section">
-                <h5 class="fw-bold mb-4 text-center">Operasyon Kontrol Merkezi</h5>
+                <h5 class="fw-bold mb-4 text-center" data-i18n="opsCenter">Operasyon Kontrol Merkezi</h5>
                 <form>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="empId" placeholder="Sicil No" required>
-                        <label for="empId"><i class="fas fa-id-badge me-2"></i>Sicil Numarası</label>
+                        <input type="text" class="form-control" id="empId" placeholder="Sicil No" data-i18n-placeholder="badgePlaceholder" required>
+                        <label for="empId"><i class="fas fa-id-badge me-2"></i><span data-i18n="badgeLabel">Sicil Numarası</span></label>
                     </div>
                     <div class="form-floating">
-                        <input type="password" class="form-control" id="empPassword" placeholder="Şifre" required>
-                        <label for="empPassword"><i class="fas fa-key me-2"></i>Sistem Şifresi</label>
+                        <input type="password" class="form-control" id="empPassword" placeholder="Şifre" data-i18n-placeholder="systemPasswordPlaceholder" required>
+                        <label for="empPassword"><i class="fas fa-key me-2"></i><span data-i18n="systemPasswordLabel">Sistem Şifresi</span></label>
                     </div>
                     <div class="d-flex justify-content-end mb-3">
-                        <a href="#" class="forgot-link" id="btnITSupport">IT Destek Birimi</a>
+                        <a href="#" class="forgot-link" id="btnITSupport" data-i18n="itSupportLink">IT Destek Birimi</a>
                     </div>
-                    <button type="submit" class="btn-login" style="background: #10b981;"><i class="fas fa-user-shield me-2"></i>Sisteme Bağlan</button>
-                    
+                    <button type="submit" class="btn-login" style="background: #10b981;"><i class="fas fa-user-shield me-2"></i><span data-i18n="connectSystemBtn">Sisteme Bağlan</span></button>
+    
                     <div class="register-text text-warning small mt-4">
-                        <i class="fas fa-exclamation-triangle me-1"></i> Yetkisiz erişim denemeleri kayıt altına alınmaktadır.
+                        <i class="fas fa-exclamation-triangle me-1"></i> <span data-i18n="unauthorizedWarning">Yetkisiz erişim denemeleri kayıt altına alınmaktadır.</span>
                     </div>
                 </form>
             </div>

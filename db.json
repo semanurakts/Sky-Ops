@@ -748,7 +748,7 @@
         "28",
         "29"
       ],
-      "status": "Zamanında"
+      "status": "İndi"
     }
   ],
   "airlines": [
@@ -1315,7 +1315,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "IST",
+      "currentLocation": "FRA",
       "lastDecayTime": null
     },
     {
@@ -1579,7 +1579,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "IST",
+      "currentLocation": "FRA",
       "lastDecayTime": null
     },
     {
@@ -1593,7 +1593,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "IST"
+      "currentLocation": "FRA"
     },
     {
       "id": "30",
