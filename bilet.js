@@ -1,6 +1,107 @@
 const API_BASE_URL = 'http://localhost:3000';
 
-document.addEventListener('DOMContentLoaded', async () => {
+// --- 🌍 ÇEVİRİ SÖZLÜĞÜ (BİLETLERİM SAYFASI) ---
+const translations = {
+    tr: {
+        newTicket: "Yeni Bilet Al", 
+        clearMemory: "Hafızayı Temizle", 
+        myAccount: "Hesabım",
+        editProfile: "Profili Düzenle", 
+        settings: "Ayarlar", 
+        logout: "Çıkış Yap",
+        myTicketsHeader: "Kayıtlı Biletlerim", 
+        noTicketTitle: "Henüz Biletiniz Yok",
+        noTicketDesc: "Satın aldığınız biletler burada görüntülenecektir.", 
+        searchFlight: "Uçuş Ara",
+        outbound: "GİDİŞ UÇUŞU", 
+        return: "DÖNÜŞ UÇUŞU", 
+        print: "Yazdır",
+        passengerName: "Yolcu Adı",
+        flightNo: "Uçuş No", 
+        cabinClass: "Kabin Sınıfı", 
+        boardingTime: "Biniş Saati", 
+        gate: "Kapı", 
+        seat: "Koltuk", 
+        seatStub: "KOLTUK",
+        loadingTickets: "Biletleriniz hazırlanıyor...",
+        profileTitle: "Profil Bilgilerim",
+        fullNameLabel: "Ad Soyad",
+        emailLabel: "E-posta Adresi (Giriş ID)",
+        emailWarning: "* Güvenlik gereği E-posta adresi değiştirilemez.",
+        newPasswordLabel: "Yeni Şifre Belirle (İsteğe Bağlı)",
+        newPasswordPlaceholder: "Değiştirmek istemiyorsanız boş bırakın",
+        saveChanges: "Değişiklikleri Kaydet",
+        settingsTitle: "Sistem Ayarları",
+        emailNotifications: "E-posta Bildirimleri",
+        smsNotifications: "SMS Bilgilendirmesi",
+        currencyLabel: "Para Birimi"
+    },
+    en: {
+        newTicket: "New Ticket", 
+        clearMemory: "Clear Memory", 
+        myAccount: "My Account",
+        editProfile: "Edit Profile", 
+        settings: "Settings", 
+        logout: "Log Out",
+        myTicketsHeader: "My Saved Tickets", 
+        noTicketTitle: "No Tickets Yet",
+        noTicketDesc: "Your purchased tickets will appear here.", 
+        searchFlight: "Search Flights",
+        outbound: "OUTBOUND FLIGHT", 
+        return: "RETURN FLIGHT", 
+        print: "Print", 
+        passengerName: "Passenger Name",
+        flightNo: "Flight No", 
+        cabinClass: "Cabin Class", 
+        boardingTime: "Boarding Time", 
+        gate: "Gate", 
+        seat: "Seat", 
+        seatStub: "SEAT",
+        loadingTickets: "Your tickets are being prepared...",
+        profileTitle: "Profile Information",
+        fullNameLabel: "Full Name",
+        emailLabel: "Email Address (Login ID)",
+        emailWarning: "* For security reasons, the email address cannot be changed.",
+        newPasswordLabel: "Set New Password (Optional)",
+        newPasswordPlaceholder: "Leave blank if you do not want to change",
+        saveChanges: "Save Changes",
+        settingsTitle: "System Settings",
+        emailNotifications: "Email Notifications",
+        smsNotifications: "SMS Notifications",
+        currencyLabel: "Currency"
+    }
+};
+
+function updateLanguage(lang) {
+    window.currentLang = lang;
+    localStorage.setItem('skyOpsLang', lang);
+    const btnTR = document.getElementById('btnLangTR');
+    const btnEN = document.getElementById('btnLangEN');
+    if(btnTR && btnEN) {
+        btnTR.classList.toggle('active', lang === 'tr');
+        btnEN.classList.toggle('active', lang === 'en');
+    }
+    
+    // Normal metinleri çevir
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang][key]) el.innerHTML = translations[lang][key];
+    });
+
+    // Input içindeki silik yazıları (placeholder) çevir
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (translations[lang][key]) el.setAttribute('placeholder', translations[lang][key]);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', async () => { 
+    // Sayfa açıldığında varsayılan dili ayarla
+    window.currentLang = localStorage.getItem('skyOpsLang') || 'tr';
+    
+    document.getElementById('btnLangTR')?.addEventListener('click', () => updateLanguage('tr'));
+    document.getElementById('btnLangEN')?.addEventListener('click', () => updateLanguage('en'));
+    updateLanguage(window.currentLang);
     
     // --- 🌟 DİNAMİK YOLCU İSMİ VE MODAL İŞLEMLERİ 🌟 ---
     const users = JSON.parse(localStorage.getItem('skyOpsUsers')) || [];
@@ -73,17 +174,18 @@ async function renderTickets() {
     const tickets = JSON.parse(localStorage.getItem('skyOpsTickets')) || [];
 
     if (tickets.length === 0) {
+        // BURASI DÜZELTİLDİ: Sadece bu görseldeki kısmı dil değişkenine bağladık
         container.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-ticket-alt fa-5x text-light mb-4"></i>
-                <h3 class="fw-bold">Henüz Biletiniz Yok</h3>
-                <p class="text-muted">Satın aldığınız biletler burada görüntülenecektir.</p>
-                <a href="yolcu.html" class="btn btn-primary btn-print mt-3 shadow-sm">Uçuş Ara</a>
+                <h3 class="fw-bold" data-i18n="noTicketTitle">${translations[window.currentLang].noTicketTitle}</h3>
+                <p class="text-muted" data-i18n="noTicketDesc">${translations[window.currentLang].noTicketDesc}</p>
+                <a href="yolcu.html" class="btn btn-primary btn-print mt-3 shadow-sm" data-i18n="searchFlight">${translations[window.currentLang].searchFlight}</a>
             </div>`;
         return;
     }
 
-    // Verileri API'den çekelim (İsimleri eşleştirmek için)
+    // Verileri API'den çekelim
     const [flightsRes, airportsRes] = await Promise.all([
         fetch(`${API_BASE_URL}/flights`),
         fetch(`${API_BASE_URL}/airports`)
@@ -95,10 +197,8 @@ async function renderTickets() {
 
     // En yeni bilet en üstte görünsün
     tickets.reverse().forEach(ticket => {
-        // Gidiş Bileti Kartı
         container.innerHTML += createPassHtml(ticket, 'outbound', allFlights, allAirports);
         
-        // Eğer gidiş-dönüş ise Dönüş Bileti Kartı
         if (ticket.isRoundTrip && ticket.returnFlightId) {
             container.innerHTML += createPassHtml(ticket, 'return', allFlights, allAirports);
         }
@@ -195,18 +295,9 @@ function clearTickets() {
     }
 }
 
-// Spesifik bileti yazdırma fonksiyonu
 function printTicket(buttonElement) {
-    // Tıklanan butonun içinde bulunduğu ana bilet kartını (.boarding-pass) bul
     const ticketCard = buttonElement.closest('.boarding-pass');
-    
-    // Yazdırılacak bilete özel sınıfı ekle
     ticketCard.classList.add('print-section');
-    
-    // Tarayıcının yazdırma penceresini aç
     window.print();
-    
-    // Yazdırma işlemi bittikten (veya iptal edildikten) sonra sınıfı kaldır
-    // Böylece sayfa normal görünümüne geri döner
     ticketCard.classList.remove('print-section');
 }

@@ -90,6 +90,17 @@
             .print-section .btn-light {
                 display: none !important;
             }
+
+            /* Dil butonlarının aktif halini belirginleştir */
+#btnLangTR.active, #btnLangEN.active {
+    background-color: #3b82f6 !important;
+    color: #ffffff !important;
+}
+#btnLangTR, #btnLangEN {
+    border: none;
+    background: transparent;
+    color: #64748b;
+}
         }
 
     </style>
@@ -97,30 +108,34 @@
 <body>
 
 <nav class="navbar bg-white shadow-sm py-3">
-        <div class="container d-flex justify-content-between align-items-center">
-            <a class="navbar-brand fs-4 fw-bolder text-dark" href="yolcu.html"><i class="fas fa-plane me-2 text-primary"></i>SkyOps</a>
+    <div class="container d-flex justify-content-between align-items-center">
+        <a class="navbar-brand fs-4 fw-bolder text-dark" href="yolcu.html"><i class="fas fa-plane me-2 text-primary"></i>SkyOps</a>
+        
+        <div class="d-flex align-items-center gap-2">
+            <a href="yolcu.html" class="btn btn-light rounded-pill fw-semibold px-3" data-i18n="newTicket">Yeni Bilet Al</a>
+            <button class="btn btn-outline-danger rounded-pill fw-semibold px-3" onclick="clearTickets()" data-i18n="clearMemory">Hafızayı Temizle</button>
             
-            <div class="d-flex align-items-center">
-                <a href="yolcu.html" class="btn btn-light rounded-pill fw-semibold px-3 me-2">Yeni Bilet Al</a>
-                <button class="btn btn-outline-danger rounded-pill fw-semibold px-3 me-3" onclick="clearTickets()">Hafızayı Temizle</button>
-                
-                <div class="dropdown">
-                    <button class="btn btn-light rounded-pill dropdown-toggle fw-bold border shadow-sm px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user-circle text-primary me-1 fs-5 align-middle"></i> 
-                        <span id="navPassengerName">Yolcu</span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2" style="border-radius: 12px;">
-                        <li><h6 class="dropdown-header text-muted">Hesabım</h6></li>
-                        <li><a class="dropdown-item fw-medium py-2" href="#" id="btnProfileEdit"><i class="fas fa-user-edit me-2 text-secondary"></i>Profili Düzenle</a></li>
-                        <li><a class="dropdown-item fw-medium py-2" href="#" id="btnUserSettings"><i class="fas fa-cog me-2 text-secondary"></i>Ayarlar</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item fw-bold text-danger py-2" href="#" id="btnLogout"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
-                    </ul>
-                </div>
+            <div class="dropdown">
+                <button class="btn btn-light rounded-pill dropdown-toggle fw-bold border shadow-sm px-3" type="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-user-circle text-primary me-1 fs-5 align-middle"></i> 
+                    <span id="navPassengerName">Yolcu</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2" style="border-radius: 12px;">
+                    <li><h6 class="dropdown-header text-muted" data-i18n="myAccount">Hesabım</h6></li>
+                    <li><a class="dropdown-item fw-medium py-2" href="#" id="btnProfileEdit"><i class="fas fa-user-edit me-2 text-secondary"></i><span data-i18n="editProfile">Profili Düzenle</span></a></li>
+                    <li><a class="dropdown-item fw-medium py-2" href="#" id="btnUserSettings"><i class="fas fa-cog me-2 text-secondary"></i><span data-i18n="settings">Ayarlar</span></a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item fw-bold text-danger py-2" href="#" id="btnLogout"><i class="fas fa-sign-out-alt me-2"></i><span data-i18n="logout">Çıkış Yap</span></a></li>
+                </ul>
             </div>
-            
+
+            <div class="d-flex bg-white border rounded-pill shadow-sm p-1">
+                <button id="btnLangTR" class="btn btn-sm rounded-pill px-2 fw-bold active" style="font-size: 0.8rem;">TR</button>
+                <button id="btnLangEN" class="btn btn-sm rounded-pill px-2 fw-bold" style="font-size: 0.8rem;">EN</button>
+            </div>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <div class="container">
         <div id="ticketContainer">
@@ -149,31 +164,31 @@
         </div>
     </div>
 
-    <div class="modal fade" id="passengerProfileModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="passengerProfileModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
                 <div class="modal-header border-0 bg-white pb-0 mt-2 px-4">
                     <h4 class="modal-title fw-bold text-dark d-flex align-items-center">
-                        <i class="fas fa-user-edit text-primary me-2"></i> Profil Bilgilerim
+                        <i class="fas fa-user-edit text-primary me-2"></i> <span data-i18n="profileTitle">Profil Bilgilerim</span>
                     </h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
                 </div>
                 <div class="modal-body p-4 pt-3">
                     <form id="passengerProfileForm">
                         <div class="mb-3">
-                            <label class="form-label text-secondary small fw-bold mb-1">Ad Soyad</label>
+                            <label class="form-label text-secondary small fw-bold mb-1" data-i18n="fullNameLabel">Ad Soyad</label>
                             <input type="text" class="form-control form-control-lg border-1 bg-light" id="profileEditName" required style="border-radius: 10px; font-size: 15px;">
                         </div>
                         <div class="mb-2">
-                            <label class="form-label text-secondary small fw-bold mb-1">E-posta Adresi (Giriş ID)</label>
+                            <label class="form-label text-secondary small fw-bold mb-1" data-i18n="emailLabel">E-posta Adresi (Giriş ID)</label>
                             <input type="email" class="form-control form-control-lg border-1 bg-light" id="profileEditEmail" disabled style="border-radius: 10px; font-size: 15px;">
-                            <small class="text-danger mt-1 d-block" style="font-size: 12px;">* Güvenlik gereği E-posta adresi değiştirilemez.</small>
+                            <small class="text-danger mt-1 d-block" style="font-size: 12px;" data-i18n="emailWarning">* Güvenlik gereği E-posta adresi değiştirilemez.</small>
                         </div>
                         <div class="mb-4 mt-3">
-                            <label class="form-label text-secondary small fw-bold mb-1">Yeni Şifre Belirle (İsteğe Bağlı)</label>
-                            <input type="password" class="form-control form-control-lg border-1 bg-light" id="profileEditPassword" placeholder="Değiştirmek istemiyorsanız boş bırakın" style="border-radius: 10px; font-size: 15px;">
+                            <label class="form-label text-secondary small fw-bold mb-1" data-i18n="newPasswordLabel">Yeni Şifre Belirle (İsteğe Bağlı)</label>
+                            <input type="password" class="form-control form-control-lg border-1 bg-light" id="profileEditPassword" data-i18n-placeholder="newPasswordPlaceholder" placeholder="Değiştirmek istemiyorsanız boş bırakın" style="border-radius: 10px; font-size: 15px;">
                         </div>
-                        <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm" style="border-radius: 10px; font-size: 16px;">Değişiklikleri Kaydet</button>
+                        <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm" style="border-radius: 10px; font-size: 16px;" data-i18n="saveChanges">Değişiklikleri Kaydet</button>
                     </form>
                 </div>
             </div>
@@ -185,27 +200,27 @@
             <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
                 <div class="modal-header border-0 bg-white pb-0 mt-2 px-4">
                     <h4 class="modal-title fw-bold text-dark d-flex align-items-center">
-                        <i class="fas fa-cog text-secondary me-2"></i> Sistem Ayarları
+                        <i class="fas fa-cog text-secondary me-2"></i> <span data-i18n="settingsTitle">Sistem Ayarları</span>
                     </h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
                 </div>
                 <div class="modal-body p-4 pt-3">
                     <div class="form-check form-switch d-flex justify-content-between align-items-center mb-3 px-0">
-                        <label class="form-check-label text-dark" for="set_emailNotify" style="font-size: 15px;">E-posta Bildirimleri</label>
+                        <label class="form-check-label text-dark" for="set_emailNotify" style="font-size: 15px;" data-i18n="emailNotifications">E-posta Bildirimleri</label>
                         <input class="form-check-input ms-0 fs-5 shadow-none" type="checkbox" role="switch" id="set_emailNotify" style="cursor: pointer;">
                     </div>
                     
                     <hr class="text-muted opacity-25 my-3" style="margin-left: -1.5rem; margin-right: -1.5rem;">
                     
                     <div class="form-check form-switch d-flex justify-content-between align-items-center mb-3 px-0">
-                        <label class="form-check-label text-dark" for="set_smsNotify" style="font-size: 15px;">SMS Bilgilendirmesi</label>
+                        <label class="form-check-label text-dark" for="set_smsNotify" style="font-size: 15px;" data-i18n="smsNotifications">SMS Bilgilendirmesi</label>
                         <input class="form-check-input ms-0 fs-5 shadow-none" type="checkbox" role="switch" id="set_smsNotify" style="cursor: pointer;">
                     </div>
                     
                     <hr class="text-muted opacity-25 my-3" style="margin-left: -1.5rem; margin-right: -1.5rem;">
                     
                     <div class="d-flex justify-content-between align-items-center mt-2">
-                        <span class="text-dark" style="font-size: 15px;">Para Birimi</span>
+                        <span class="text-dark" style="font-size: 15px;" data-i18n="currencyLabel">Para Birimi</span>
                         <select class="form-select w-auto border-0 text-primary fw-bold shadow-none p-0 pe-4" id="set_currency" style="cursor: pointer; font-size: 15px; background-color: transparent;">
                             <option value="TRY">TRY (₺)</option>
                             <option value="USD">USD ($)</option>
