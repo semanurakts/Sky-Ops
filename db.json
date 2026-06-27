@@ -749,6 +749,20 @@
         "29"
       ],
       "status": "İndi"
+    },
+    {
+      "id": "39",
+      "flightNo": "TK-1222",
+      "route": "IST > CDG",
+      "time": "03:10",
+      "date": "2026-06-28",
+      "gate": "D-09",
+      "pilot": "9",
+      "cabinCrew": [
+        "11",
+        "12"
+      ],
+      "status": "Zamanında"
     }
   ],
   "airlines": [

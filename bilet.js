@@ -34,7 +34,12 @@ const translations = {
         settingsTitle: "Sistem Ayarları",
         emailNotifications: "E-posta Bildirimleri",
         smsNotifications: "SMS Bilgilendirmesi",
-        currencyLabel: "Para Birimi"
+        currencyLabel: "Para Birimi",
+        
+        // YENİ EKLENENLER (ÇIKIŞ MODALI İÇİN)
+        logoutTitle: "Çıkış Yapılıyor",
+        logoutDesc: "Hesabınızdan çıkış yapmak istediğinize emin misiniz?",
+        cancel: "İptal"
     },
     en: {
         newTicket: "New Ticket", 
@@ -68,7 +73,12 @@ const translations = {
         settingsTitle: "System Settings",
         emailNotifications: "Email Notifications",
         smsNotifications: "SMS Notifications",
-        currencyLabel: "Currency"
+        currencyLabel: "Currency",
+        
+        // YENİ EKLENENLER (ÇIKIŞ MODALI İÇİN)
+        logoutTitle: "Logging Out",
+        logoutDesc: "Are you sure you want to log out of your account?",
+        cancel: "Cancel"
     }
 };
 

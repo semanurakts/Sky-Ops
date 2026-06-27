@@ -153,15 +153,15 @@
         </div>
         <div class="sidebar-divider"></div>
         <ul class="nav-links">
-            <li><a href="index.html"><i class="fas fa-th-large"></i><span>Genel Bakış</span></a></li>
-            <li><a href="#" class="active"><i class="fas fa-plane"></i><span>Uçuş Yönetimi</span></a></li>
-            <li><a href="personel.html"><i class="fas fa-users-cog"></i><span>Personel Planlama</span></a></li>
-            <li><a href="raporlar.html"><i class="fas fa-chart-pie"></i><span>Raporlar</span></a></li>
-            <li><a href="arsiv.html"><i class="fas fa-archive"></i><span>Uçuş Arşivi</span></a></li>
+            <li><a href="index.html"><i class="fas fa-th-large"></i><span data-i18n="menuOverview">Genel Bakış</span></a></li>
+            <li><a href="#" class="active"><i class="fas fa-plane"></i><span data-i18n="menuFlight">Uçuş Yönetimi</span></a></li>
+            <li><a href="personel.html"><i class="fas fa-users-cog"></i><span data-i18n="menuCrew">Personel Planlama</span></a></li>
+            <li><a href="raporlar.html"><i class="fas fa-chart-pie"></i><span data-i18n="menuReports">Raporlar</span></a></li>
+            <li><a href="arsiv.html"><i class="fas fa-archive"></i><span data-i18n="menuArchive">Uçuş Arşivi</span></a></li>
         </ul>
         <div class="sidebar-footer">
             <a href="#" class="logout-btn" id="adminLogoutBtn" title="Çıkış Yap">
-                <i class="fas fa-sign-out-alt me-2"></i><span>Çıkış Yap</span>
+                <i class="fas fa-sign-out-alt me-2"></i><span data-i18n="logoutText">Çıkış Yap</span>
             </a>
         </div>
     </nav>
@@ -169,8 +169,8 @@
     <main class="main-content">
         <header class="topbar">
             <div class="page-info">
-                <h1 class="page-title">Uçuş Yönetimi</h1>
-                <p class="page-desc">Aktif ve yakın geçmiş uçuşların listelenmesi ve operasyon takibi.</p>
+                <h1 class="page-title" data-i18n="pageTitleFlight">Uçuş Yönetimi</h1>
+                <p class="page-desc" data-i18n="pageDescFlight">Aktif ve yakın geçmiş uçuşların listelenmesi ve operasyon takibi.</p>
             </div>
             <div class="topbar-actions">
                 <div class="notification-box"><i class="fas fa-bell"></i><span class="badge-dot"></span></div>
@@ -179,9 +179,15 @@
                     <div class="avatar">A</div>
                     <div class="user-info">
                         <span class="name">Admin</span>
-                        <span class="role">Sistem Yöneticisi</span>
+                        <span class="role" data-i18n="adminRole">Sistem Yöneticisi</span>
                     </div>
                 </div>
+                
+                <div class="d-flex bg-white border rounded-pill shadow-sm p-1 ms-2">
+                    <button id="btnLangTR" class="btn btn-sm rounded-pill px-2 fw-bold active" style="font-size: 0.8rem;">TR</button>
+                    <button id="btnLangEN" class="btn btn-sm rounded-pill px-2 fw-bold" style="font-size: 0.8rem;">EN</button>
+                </div>
+
                 <a href="#" class="mobile-logout-btn" data-bs-toggle="modal" data-bs-target="#adminLogoutModal" title="Çıkış Yap">
                     <i class="fas fa-power-off"></i>
                 </a>
@@ -192,7 +198,7 @@
             <div class="col-md-4">
                 <div class="kpi-card border-blue" style="background: white; padding: 20px; border-radius: 16px; border-left: 5px solid #2563eb; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
                     <div>
-                        <span class="text-muted small fw-bold text-uppercase">Toplam Aktif Uçuş</span>
+                        <span class="text-muted small fw-bold text-uppercase" data-i18n="kpiTotalActive">Toplam Aktif Uçuş</span>
                         <h2 class="mb-0 fw-bold text-primary" id="totalFlightsCount">0</h2>
                     </div>
                     <div class="bg-primary bg-opacity-10 p-3 rounded-circle text-primary"><i class="fas fa-plane-departure fa-lg"></i></div>
@@ -201,7 +207,7 @@
             <div class="col-md-4">
                 <div class="kpi-card border-green" style="background: white; padding: 20px; border-radius: 16px; border-left: 5px solid #10b981; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
                     <div>
-                        <span class="text-muted small fw-bold text-uppercase">Zamanında</span>
+                        <span class="text-muted small fw-bold text-uppercase" data-i18n="kpiOnTime">Zamanında</span>
                         <h2 class="mb-0 fw-bold text-success" id="onTimeFlightsCount">0</h2>
                     </div>
                     <div class="bg-success bg-opacity-10 p-3 rounded-circle text-success"><i class="fas fa-check-circle fa-lg"></i></div>
@@ -210,7 +216,7 @@
             <div class="col-md-4">
                 <div class="kpi-card border-red" style="background: white; padding: 20px; border-radius: 16px; border-left: 5px solid #ef4444; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
                     <div>
-                        <span class="text-muted small fw-bold text-uppercase">İptal / Gecikme</span>
+                        <span class="text-muted small fw-bold text-uppercase" data-i18n="kpiCancelledDelayed">İptal / Gecikme</span>
                         <h2 class="mb-0 fw-bold text-danger" id="delayedFlightsCount">0</h2>
                     </div>
                     <div class="bg-danger bg-opacity-10 p-3 rounded-circle text-danger"><i class="fas fa-exclamation-triangle fa-lg"></i></div>
@@ -224,24 +230,25 @@
                 <div class="d-flex align-items-center gap-2 flex-grow-1">
                     <div class="d-inline-flex bg-light p-1" style="border-radius: 25px; border: 1px solid #e2e8f0; flex-shrink: 0;">
                         <input type="radio" class="btn-check" name="opFilter" id="filterAll" value="all" checked>
-                        <label class="btn btn-sm px-3 rounded-pill filter-btn" for="filterAll">Tümü</label>
+                        <label class="btn btn-sm px-3 rounded-pill filter-btn" for="filterAll" data-i18n="filterAll">Tümü</label>
 
                         <input type="radio" class="btn-check" name="opFilter" id="filterActive" value="active">
-                        <label class="btn btn-sm px-3 rounded-pill filter-btn" for="filterActive">Aktif / Yaklaşan</label>
+                        <label class="btn btn-sm px-3 rounded-pill filter-btn" for="filterActive" data-i18n="filterActive">Aktif / Yaklaşan</label>
 
                         <input type="radio" class="btn-check" name="opFilter" id="filterCompleted" value="completed">
-                        <label class="btn btn-sm px-3 rounded-pill filter-btn" for="filterCompleted">Tamamlanan</label>
+                        <label class="btn btn-sm px-3 rounded-pill filter-btn" for="filterCompleted" data-i18n="filterCompleted">Tamamlanan</label>
                     </div>
 
                     <div class="search-box" style="width: 220px;">
                         <i class="fas fa-search"></i>
-                        <input type="text" class="form-control form-control-sm border-light-subtle" id="globalSearchInput" placeholder="Uçuş no ara..." style="background: #f8fafc;">
+                        <input type="text" class="form-control form-control-sm border-light-subtle" id="globalSearchInput" placeholder="Uçuş no ara..." data-i18n-placeholder="searchPlaceholder" style="background: #f8fafc;">
                     </div>
 
                     <select class="form-select form-select-sm w-auto border-light-subtle rounded-pill text-muted" id="statusFilterSelect" style="background: #f8fafc;">
                         <option selected>Tüm Durumlar</option>
                         <option value="Zamanında">Zamanında</option>
                         <option value="Gecikmeli">Gecikmeli</option>
+                        <option value="Yolcu Alımı">Yolcu Alımı</option>
                         <option value="İndi">İndi</option>
                         <option value="İptal">İptal</option>
                     </select>
@@ -249,7 +256,7 @@
 
                 <div class="d-flex align-items-center gap-2">
                     <button class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#addFlightModal" style="height: 38px;">
-                        <i class="fas fa-paper-plane me-2"></i> Uçuş Ekle
+                        <i class="fas fa-paper-plane me-2"></i> <span data-i18n="btnAddFlight">Uçuş Ekle</span>
                     </button>
                 </div>
             </div>
@@ -258,13 +265,13 @@
                 <table class="table table-hover align-middle custom-table mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="border-0">Uçuş No</th>
-                            <th class="border-0">Rota</th>
-                            <th class="border-0">Tarih / Saat</th>
-                            <th class="border-0">Kapı</th>
-                            <th class="border-0">Durum</th>
-                            <th class="border-0">Pilot</th>
-                            <th class="border-0 text-end">İşlemler</th>
+                            <th class="border-0" data-i18n="thFlightNo">Uçuş No</th>
+                            <th class="border-0" data-i18n="thRoute">Rota</th>
+                            <th class="border-0" data-i18n="thDateTime">Tarih / Saat</th>
+                            <th class="border-0" data-i18n="thGate">Kapı</th>
+                            <th class="border-0" data-i18n="thStatus">Durum</th>
+                            <th class="border-0" data-i18n="thPilot">Pilot</th>
+                            <th class="border-0 text-end" data-i18n="thAction">İşlemler</th>
                         </tr>
                     </thead>
                     <tbody id="flightManagementTableBody"></tbody>
@@ -281,14 +288,14 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
                 <div class="modal-header bg-light border-bottom-0" style="border-radius: 20px 20px 0 0;">
-                    <h5 class="modal-title fw-bold text-dark"><i class="fas fa-plane-departure me-2 text-primary"></i>Uçuş Planla</h5>
+                    <h5 class="modal-title fw-bold text-dark"><i class="fas fa-plane-departure me-2 text-primary"></i><span data-i18n="addFlightTitle">Uçuş Planla</span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
                 </div>
                 <div class="modal-body p-4">
                     <form id="addFlightForm">
                         
                         <div class="mb-3">
-                            <label class="form-label text-muted small fw-bold mb-2">Uçuş Tanımlama</label>
+                            <label class="form-label text-muted small fw-bold mb-2" data-i18n="flightDefLabel">Uçuş Tanımlama</label>
                             <div class="row g-2">
                                 <div class="col-7">
                                     <div class="form-floating autocomplete-wrapper">
@@ -308,7 +315,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label text-muted small fw-bold mb-2">Uçuş Tarihi</label>
+                            <label class="form-label text-muted small fw-bold mb-2" data-i18n="flightDateLabel">Uçuş Tarihi</label>
                             <div class="input-group border rounded bg-white" style="border-radius: 10px !important; overflow: hidden;">
                                 <span class="input-group-text bg-white border-0 text-primary"><i class="fas fa-calendar-day"></i></span>
                                 <input type="text" class="form-control border-0 fw-medium px-2" id="flightDateInput" placeholder="Tarih Seçiniz" required style="height: 45px; background: transparent; cursor: pointer;">
@@ -316,7 +323,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label text-muted small fw-bold mb-2">Rota Planlama</label>
+                            <label class="form-label text-muted small fw-bold mb-2" data-i18n="routePlanLabel">Rota Planlama</label>
                             <div class="border rounded d-flex align-items-stretch" style="background: #fff; overflow: visible; border-color: #dee2e6 !important; height: 100px;">
                                 
                                 <div class="d-flex flex-column flex-grow-1 h-100">
@@ -341,7 +348,7 @@
 
                         <div class="row g-2 mb-3">
                             <div class="col-7">
-                                <label class="form-label text-muted small fw-bold mb-2">Uçuş Saati</label>
+                                <label class="form-label text-muted small fw-bold mb-2" data-i18n="flightTimeLabel">Uçuş Saati</label>
                                 <div class="dropdown" id="customTimePicker">
                                     <div class="form-control d-flex align-items-center justify-content-between shadow-sm w-100" 
                                          id="flightTimeDisplay" data-bs-toggle="dropdown" data-bs-auto-close="outside"
@@ -361,13 +368,13 @@
                                 <input type="hidden" id="flightTime" required>
                             </div>
                             <div class="col-5">
-                                <label class="form-label text-muted small fw-bold mb-2">Kapı No</label>
+                                <label class="form-label text-muted small fw-bold mb-2" data-i18n="gateNoLabel">Kapı No</label>
                                 <input type="text" class="form-control" id="gate" placeholder="A-01" required style="border-radius: 10px; height: 45px;">
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label small fw-bold text-muted mb-2">Sorumlu Pilot</label>
+                            <label class="form-label small fw-bold text-muted mb-2" data-i18n="pilotLabel">Sorumlu Pilot</label>
                             <div class="autocomplete-wrapper">
                                 <input type="text" class="form-control" id="pilotText" placeholder="Sorumlu Pilot" autocomplete="off" required style="border-radius: 10px; height: 45px;">
                                 <input type="hidden" id="pilotInput">
@@ -376,7 +383,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label small fw-bold text-muted mb-2">Kabin Ekibi (Min: 2 - Max: 8)</label>
+                            <label class="form-label small fw-bold text-muted mb-2" data-i18n="cabinCrewLabel">Kabin Ekibi (Min: 2 - Max: 8)</label>
                             <div class="form-control p-0 overflow-hidden" style="border-radius: 12px; border: 1px solid #dee2e6;">
                                 <div id="cabinCrewList" class="time-column" style="height: 150px; overflow-y: auto; padding: 8px;"></div>
                             </div>
@@ -389,7 +396,7 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label text-muted small fw-bold mb-2">Durum</label>
+                            <label class="form-label text-muted small fw-bold mb-2" data-i18n="statusLabel">Durum</label>
                             <div class="autocomplete-wrapper">
                                 <input type="text" class="form-control" id="statusText" placeholder="Durum Seçiniz..." autocomplete="off" required style="border-radius: 10px; height: 45px; cursor: pointer;">
                                 <input type="hidden" id="flightStatus">
@@ -398,7 +405,7 @@
                         </div>
 
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 12px; font-weight: 600;">Kaydı Tamamla</button>
+                            <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 12px; font-weight: 600;" data-i18n="btnCompleteReg">Kaydı Tamamla</button>
                         </div>
                     </form>
                 </div>
@@ -413,12 +420,12 @@
                     <div class="mb-3 text-danger">
                         <i class="fas fa-exclamation-triangle fa-3x"></i>
                     </div>
-                    <h5 class="fw-bold mb-2" id="confirmModalTitle">Emin misiniz?</h5>
-                    <p class="text-muted mb-4" id="confirmModalBody">Bu işlem geri alınamaz ve tüm veriler senkronize edilecektir.</p>
+                    <h5 class="fw-bold mb-2" id="confirmModalTitle" data-i18n="confirmModalTitle">Emin misiniz?</h5>
+                    <p class="text-muted mb-4" id="confirmModalBody" data-i18n="confirmModalBody">Bu işlem geri alınamaz ve tüm veriler senkronize edilecektir.</p>
                     
                     <div class="modal-footer border-0 d-flex gap-2 justify-content-center pb-0">
-                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">İptal</button>
-                        <button type="button" class="btn btn-primary rounded-pill px-4" id="confirmBtnAction">Onayla</button>
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-i18n="cancel">İptal</button>
+                        <button type="button" class="btn btn-primary rounded-pill px-4" id="confirmBtnAction" data-i18n="confirm">Onayla</button>
                     </div>
                 </div>
             </div>
@@ -432,11 +439,11 @@
                     <div class="mb-3">
                         <i class="fas fa-power-off fa-3x text-danger opacity-75"></i>
                     </div>
-                    <h5 class="fw-bold mb-2">Sistemden Çıkılıyor</h5>
-                    <p class="text-muted mb-4">Operasyon kontrol merkezinden çıkış yapmak istediğinize emin misiniz?</p>
+                    <h5 class="fw-bold mb-2" data-i18n="logoutTitle">Sistemden Çıkılıyor</h5>
+                    <p class="text-muted mb-4" data-i18n="logoutDesc">Operasyon kontrol merkezinden çıkış yapmak istediğinize emin misiniz?</p>
                     <div class="d-flex justify-content-center gap-2">
-                        <button type="button" class="btn btn-light fw-semibold px-4" data-bs-dismiss="modal">İptal</button>
-                        <button type="button" class="btn btn-danger fw-semibold px-4" id="btnConfirmAdminLogout">Çıkış Yap</button>
+                        <button type="button" class="btn btn-light fw-semibold px-4" data-bs-dismiss="modal" data-i18n="cancel">İptal</button>
+                        <button type="button" class="btn btn-danger fw-semibold px-4" id="btnConfirmAdminLogout" data-i18n="logoutText">Çıkış Yap</button>
                     </div>
                 </div>
             </div>

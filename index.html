@@ -124,15 +124,15 @@
         </div>
         <div class="sidebar-divider"></div>
         <ul class="nav-links">
-            <li><a href="#" class="active"><i class="fas fa-th-large"></i> <span>Genel Bakış</span></a></li>
-            <li><a href="ucus.html"><i class="fas fa-plane"></i> <span>Uçuş Yönetimi</span></a></li>
-            <li><a href="personel.html"><i class="fas fa-users-cog"></i> <span>Personel Planlama</span></a></li>
-            <li><a href="raporlar.html"><i class="fas fa-chart-pie"></i> <span>Raporlar</span></a></li>
-            <li><a href="arsiv.html"><i class="fas fa-archive"></i><span>Uçuş Arşivi</span></a></li>
+            <li><a href="#" class="active"><i class="fas fa-th-large"></i> <span data-i18n="menuOverview">Genel Bakış</span></a></li>
+            <li><a href="ucus.html"><i class="fas fa-plane"></i> <span data-i18n="menuFlight">Uçuş Yönetimi</span></a></li>
+            <li><a href="personel.html"><i class="fas fa-users-cog"></i> <span data-i18n="menuCrew">Personel Planlama</span></a></li>
+            <li><a href="raporlar.html"><i class="fas fa-chart-pie"></i> <span data-i18n="menuReports">Raporlar</span></a></li>
+            <li><a href="arsiv.html"><i class="fas fa-archive"></i><span data-i18n="menuArchive">Uçuş Arşivi</span></a></li>
         </ul>
         <div class="sidebar-footer">
             <a href="#" class="logout-btn" id="adminLogoutBtn" title="Çıkış Yap">
-                <i class="fas fa-sign-out-alt me-2"></i> <span>Çıkış Yap</span>
+                <i class="fas fa-sign-out-alt me-2"></i> <span data-i18n="logoutText">Çıkış Yap</span>
             </a>
         </div>
     </nav>
@@ -140,16 +140,22 @@
     <main class="main-content">
         <header class="topbar">
             <div class="page-info">
-                <h1 class="page-title">Dashboard / Genel Bakış</h1>
-                <p class="page-desc">Havaalanı operasyon durumu ve anlık veriler.</p>
+                <h1 class="page-title" data-i18n="pageTitle">Dashboard / Genel Bakış</h1>
+                <p class="page-desc" data-i18n="pageDesc">Havaalanı operasyon durumu ve anlık veriler.</p>
             </div>
             <div class="topbar-actions">
                 <div class="notification-box"><i class="fas fa-bell"></i><span class="badge-dot"></span></div>
                 <div class="live-clock-box"><i class="fas fa-clock text-primary"></i> <span id="liveClock">--:--:--</span></div>
                 <div class="user-profile">
                     <div class="avatar">A</div>
-                    <div class="user-info"><span class="name">Admin</span><span class="role">Sistem Yöneticisi</span></div>
+                    <div class="user-info"><span class="name">Admin</span><span class="role" data-i18n="adminRole">Sistem Yöneticisi</span></div>
                 </div>
+
+                <div class="d-flex bg-white border rounded-pill shadow-sm p-1 ms-2">
+                    <button id="btnLangTR" class="btn btn-sm rounded-pill px-2 fw-bold active" style="font-size: 0.8rem;">TR</button>
+                    <button id="btnLangEN" class="btn btn-sm rounded-pill px-2 fw-bold" style="font-size: 0.8rem;">EN</button>
+                </div>
+
                 <a href="#" class="mobile-logout-btn" data-bs-toggle="modal" data-bs-target="#adminLogoutModal" title="Çıkış Yap">
                     <i class="fas fa-power-off"></i>
                 </a>
@@ -157,20 +163,20 @@
         </header>
 
         <div class="row g-4 mb-4">
-            <div class="col-md-3"><div class="kpi-card border-blue"><div class="kpi-content"><span class="kpi-label">Toplam Uçuş</span><h2 class="kpi-value text-blue">0</h2></div><div class="kpi-icon bg-blue-light text-blue"><i class="fas fa-plane"></i></div></div></div>
-            <div class="col-md-3"><div class="kpi-card border-red"><div class="kpi-content"><span class="kpi-label">Gecikmeler</span><h2 class="kpi-value text-red">0</h2></div><div class="kpi-icon bg-red-light text-red"><i class="fas fa-exclamation-triangle"></i></div></div></div>
-            <div class="col-md-3"><div class="kpi-card border-yellow"><div class="kpi-content"><span class="kpi-label">Riskli Personel</span><h2 class="kpi-value text-yellow">0</h2></div><div class="kpi-icon bg-yellow-light text-yellow"><i class="fas fa-user-clock"></i></div></div></div>
-            <div class="col-md-3"><div class="kpi-card border-green"><div class="kpi-content"><span class="kpi-label">Kapı Doluluk</span><h2 class="kpi-value text-green">%0</h2></div><div class="kpi-icon bg-green-light text-green"><i class="fas fa-door-open"></i></div></div></div>
+            <div class="col-md-3"><div class="kpi-card border-blue"><div class="kpi-content"><span class="kpi-label" data-i18n="kpiTotal">Toplam Uçuş</span><h2 class="kpi-value text-blue">0</h2></div><div class="kpi-icon bg-blue-light text-blue"><i class="fas fa-plane"></i></div></div></div>
+            <div class="col-md-3"><div class="kpi-card border-red"><div class="kpi-content"><span class="kpi-label" data-i18n="kpiDelays">Gecikmeler</span><h2 class="kpi-value text-red">0</h2></div><div class="kpi-icon bg-red-light text-red"><i class="fas fa-exclamation-triangle"></i></div></div></div>
+            <div class="col-md-3"><div class="kpi-card border-yellow"><div class="kpi-content"><span class="kpi-label" data-i18n="kpiRisky">Riskli Personel</span><h2 class="kpi-value text-yellow">0</h2></div><div class="kpi-icon bg-yellow-light text-yellow"><i class="fas fa-user-clock"></i></div></div></div>
+            <div class="col-md-3"><div class="kpi-card border-green"><div class="kpi-content"><span class="kpi-label" data-i18n="kpiGate">Kapı Doluluk</span><h2 class="kpi-value text-green">%0</h2></div><div class="kpi-icon bg-green-light text-green"><i class="fas fa-door-open"></i></div></div></div>
         </div>
 
         <div class="row g-4 mb-4">
             <div class="col-md-8">
                 <div class="content-box h-100">
                     <div class="box-header d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="box-title mb-0">Anlık Uçuş Trafiği</h5>
+                        <h5 class="box-title mb-0" data-i18n="chartTitle">Anlık Uçuş Trafiği</h5>
                         <select id="chartFilter" class="form-select form-select-sm w-auto border-0 bg-light text-muted fw-bold shadow-sm" style="cursor: pointer; border-radius: 8px;">
-                            <option value="today" selected>Bugün (24 Saat)</option>
-                            <option value="week">Son 7 Gün</option>
+                            <option value="today" selected data-i18n="chartToday">Bugün (24 Saat)</option>
+                            <option value="week" data-i18n="chartWeek">Son 7 Gün</option>
                         </select>
                     </div>
                     <div class="chart-container w-100" style="position: relative; height: 300px; padding-bottom: 20px;">
@@ -180,21 +186,29 @@
             </div>
             <div class="col-md-4">
                 <div class="content-box h-100 d-flex flex-column align-items-center justify-content-center text-center">
-                    <h5 class="box-title mb-4">Tahmini Yoğunluk Skoru</h5>
+                    <h5 class="box-title mb-4" data-i18n="densityTitle">Tahmini Yoğunluk Skoru</h5>
                     <div class="gauge"><div class="gauge-body"><div class="gauge-fill"></div><div class="gauge-cover"></div></div></div>
                     <div class="score-text"><span class="val">0.0</span><span class="total">/10</span></div>
-                    <div class="badge bg-warning bg-opacity-25 text-warning mt-2 px-3 py-2 rounded-pill border border-warning"><i class="fas fa-exclamation-circle me-1"></i> AI Operasyonel Analiz</div>
+                    <div class="badge bg-warning bg-opacity-25 text-warning mt-2 px-3 py-2 rounded-pill border border-warning"><i class="fas fa-exclamation-circle me-1"></i> <span data-i18n="aiAnalysis">AI Operasyonel Analiz</span></div>
                     <p id="aiAlertMessage" class="text-muted small mt-3 px-3">Veriler analiz ediliyor...</p>
                 </div>
             </div>
         </div>
 
         <div class="content-box">
-            <div class="box-header mb-3"><h5 class="box-title mb-0">Canlı Uçuş Listesi</h5></div>
+            <div class="box-header mb-3"><h5 class="box-title mb-0" data-i18n="tableTitle">Canlı Uçuş Listesi</h5></div>
             <div class="table-responsive">
                 <table class="table table-hover align-middle custom-table">
                     <thead class="table-light">
-                        <tr><th>Uçuş No</th><th>Rota</th><th>Tarih / Saat</th><th>Kapı</th><th>Durum</th><th>Görevli Ekip</th><th>İncele</th></tr>
+                        <tr>
+                            <th data-i18n="thFlightNo">Uçuş No</th>
+                            <th data-i18n="thRoute">Rota</th>
+                            <th data-i18n="thDateTime">Tarih / Saat</th>
+                            <th data-i18n="thGate">Kapı</th>
+                            <th data-i18n="thStatus">Durum</th>
+                            <th data-i18n="thCrew">Görevli Ekip</th>
+                            <th data-i18n="thAction">İncele</th>
+                        </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
@@ -210,14 +224,14 @@
             <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.15);">
                 <div class="modal-header border-0 bg-light" style="border-radius: 20px 20px 0 0; padding: 20px 25px;">
                     <div>
-                        <h5 class="modal-title fw-bold text-dark mb-1"><i class="fas fa-users me-2 text-primary"></i>Ekip Detayları</h5>
+                        <h5 class="modal-title fw-bold text-dark mb-1"><i class="fas fa-users me-2 text-primary"></i><span data-i18n="crewDetailsTitle">Ekip Detayları</span></h5>
                         <p class="mb-0 text-muted small" id="crewModalFlightInfo">Uçuş: -- | Rota: --</p>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
                 </div>
                 <div class="modal-body p-4 bg-light" style="border-radius: 0 0 20px 20px;">
                     <div class="row g-3" id="crewCardsContainer">
-                        <div class="text-center text-muted"><i class="fas fa-spinner fa-spin me-2"></i>Ekip bilgileri yükleniyor...</div>
+                        <div class="text-center text-muted"><i class="fas fa-spinner fa-spin me-2"></i><span data-i18n="loadingCrew">Ekip bilgileri yükleniyor...</span></div>
                     </div>
                 </div>
             </div>
@@ -231,11 +245,11 @@
                     <div class="mb-3">
                         <i class="fas fa-power-off fa-3x text-danger opacity-75"></i>
                     </div>
-                    <h5 class="fw-bold mb-2">Sistemden Çıkılıyor</h5>
-                    <p class="text-muted mb-4">Operasyon kontrol merkezinden çıkış yapmak istediğinize emin misiniz?</p>
+                    <h5 class="fw-bold mb-2" data-i18n="logoutTitle">Sistemden Çıkılıyor</h5>
+                    <p class="text-muted mb-4" data-i18n="logoutDesc">Operasyon kontrol merkezinden çıkış yapmak istediğinize emin misiniz?</p>
                     <div class="d-flex justify-content-center gap-2">
-                        <button type="button" class="btn btn-light fw-semibold px-4" data-bs-dismiss="modal">İptal</button>
-                        <button type="button" class="btn btn-danger fw-semibold px-4" id="btnConfirmAdminLogout">Çıkış Yap</button>
+                        <button type="button" class="btn btn-light fw-semibold px-4" data-bs-dismiss="modal" data-i18n="cancel">İptal</button>
+                        <button type="button" class="btn btn-danger fw-semibold px-4" id="btnConfirmAdminLogout" data-i18n="logoutText">Çıkış Yap</button>
                     </div>
                 </div>
             </div>
