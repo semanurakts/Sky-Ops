@@ -762,6 +762,26 @@
         "11",
         "12"
       ],
+      "status": "İndi"
+    },
+    {
+      "id": "40",
+      "flightNo": "QR-5555",
+      "route": "NCE > SAW",
+      "time": "21:05",
+      "date": "2026-06-28",
+      "gate": "B-02",
+      "pilot": "1",
+      "cabinCrew": [
+        "11",
+        "12",
+        "13",
+        "14",
+        "19",
+        "20",
+        "21",
+        "27"
+      ],
       "status": "Zamanında"
     }
   ],
@@ -1343,7 +1363,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "IST"
+      "currentLocation": "CDG"
     },
     {
       "id": "10",
@@ -1369,7 +1389,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "AMS"
+      "currentLocation": "CDG"
     },
     {
       "id": "12",
@@ -1382,7 +1402,7 @@
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "AMS"
+      "currentLocation": "CDG"
     },
     {
       "id": "13",
