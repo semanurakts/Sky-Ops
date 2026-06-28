@@ -188,15 +188,14 @@
                 flex-direction: row !important;
                 justify-content: space-between !important;
                 align-items: flex-start !important;
-                padding: 15px 12px 35px 12px !important; /* Buton için yer ayırdık */
-                position: relative !important; /* Butonun babası bu */
+                padding: 15px 12px 35px 12px !important; 
+                position: relative !important; 
             }
             
             .page-info { flex: 1; padding-right: 5px; }
             .page-title { font-size: 16px !important; margin-bottom: 2px !important; }
             .page-desc { display: block !important; font-size: 11px !important; line-height: 1.3; margin-top: 2px; }
 
-            /* Sağdaki ikon grubu (Görseldeki 2x2 düzeni aynen korur) */
             .topbar-actions { 
                 display: grid !important; 
                 grid-template-columns: max-content max-content; 
@@ -211,9 +210,9 @@
             /* 🌟 SURGICAL FIX: PDF BUTONU TAM OLARAK YAZININ ALTINDA 🌟 */
             #downloadPdfBtn {
                 position: absolute !important;
-                top: 58px !important; /* Yazının hemen bitişine sabitledik, artık aşağıda kalmaz */
+                top: 58px !important; 
                 left: 12px !important;
-                width: max-content !important; /* BOYUTU AYNI KALDI */
+                width: max-content !important; 
                 margin: 0 !important;
                 height: 40px !important;
                 padding: 0 18px !important;
@@ -223,7 +222,6 @@
                 order: unset !important;
             }
             
-            /* Diğer ikonlar (Dokunulmadı) */
             .notification-box { grid-column: 1; grid-row: 1; justify-self: start; width: 36px !important; font-size: 18px !important; }
             .live-clock-box { grid-column: 2; grid-row: 1; justify-self: end; font-size: 14px !important; padding: 6px 12px !important; display: flex !important; align-items: center; height: 36px; }
             .user-profile { grid-column: 1; grid-row: 2; justify-self: start; margin: 0 !important; gap: 8px !important; }
@@ -248,15 +246,15 @@
         </div>
         <div class="sidebar-divider"></div>
         <ul class="nav-links">
-            <li><a href="index.html"><i class="fas fa-th-large"></i><span>Genel Bakış</span></a></li>
-            <li><a href="ucus.html"><i class="fas fa-plane"></i><span>Uçuş Yönetimi</span></a></li>
-            <li><a href="personel.html"><i class="fas fa-users-cog"></i><span>Personel Planlama</span></a></li>
-            <li><a href="#" class="active"><i class="fas fa-chart-pie"></i><span>Raporlar</span></a></li>
-            <li><a href="arsiv.html"><i class="fas fa-archive"></i><span>Uçuş Arşivi</span></a></li>
+            <li><a href="index.html"><i class="fas fa-th-large"></i><span data-i18n="menuOverview">Genel Bakış</span></a></li>
+            <li><a href="ucus.html"><i class="fas fa-plane"></i><span data-i18n="menuFlight">Uçuş Yönetimi</span></a></li>
+            <li><a href="personel.html"><i class="fas fa-users-cog"></i><span data-i18n="menuCrew">Personel Planlama</span></a></li>
+            <li><a href="#" class="active"><i class="fas fa-chart-pie"></i><span data-i18n="menuReports">Raporlar</span></a></li>
+            <li><a href="arsiv.html"><i class="fas fa-archive"></i><span data-i18n="menuArchive">Uçuş Arşivi</span></a></li>
         </ul>
         <div class="sidebar-footer">
             <a href="#" class="logout-btn" id="adminLogoutBtn" title="Çıkış Yap">
-                <i class="fas fa-sign-out-alt me-2"></i><span>Çıkış Yap</span>
+                <i class="fas fa-sign-out-alt me-2"></i><span data-i18n="logoutText">Çıkış Yap</span>
             </a>
         </div>
     </nav>
@@ -264,13 +262,13 @@
     <main class="main-content">
         <header class="topbar">
             <div class="page-info">
-                <h1 class="page-title">İstatistik ve Raporlar</h1>
-                <p class="page-desc">Operasyonel verilerin analizi ve dönemsel özetler.</p>
+                <h1 class="page-title" data-i18n="pageTitleReports">İstatistik ve Raporlar</h1>
+                <p class="page-desc" data-i18n="pageDescReports">Operasyonel verilerin analizi ve dönemsel özetler.</p>
             </div>
             
             <div class="topbar-actions">
                 <button id="downloadPdfBtn" class="btn btn-danger text-white rounded-pill px-4 fw-bold shadow-sm d-flex align-items-center justify-content-center" style="height: 42px;">
-                    <i class="fas fa-file-pdf me-2"></i> PDF Olarak İndir
+                    <i class="fas fa-file-pdf me-2"></i> <span data-i18n="btnPdf">PDF Olarak İndir</span>
                 </button>
                 
                 <div class="notification-box"><i class="fas fa-bell"></i><span class="badge-dot"></span></div>
@@ -281,8 +279,13 @@
                     <div class="avatar">A</div>
                     <div class="user-info">
                         <span class="name">Admin</span>
-                        <span class="role">Sistem Yöneticisi</span>
+                        <span class="role" data-i18n="adminRole">Sistem Yöneticisi</span>
                     </div>
+                </div>
+
+                <div class="d-flex bg-white border rounded-pill shadow-sm p-1 ms-2">
+                    <button id="btnLangTR" class="btn btn-sm rounded-pill px-2 fw-bold active" style="font-size: 0.8rem;">TR</button>
+                    <button id="btnLangEN" class="btn btn-sm rounded-pill px-2 fw-bold" style="font-size: 0.8rem;">EN</button>
                 </div>
 
                 <a href="#" class="mobile-logout-btn" data-bs-toggle="modal" data-bs-target="#adminLogoutModal" title="Çıkış Yap">
@@ -297,7 +300,7 @@
                     <div class="report-card">
                         <div class="report-header">
                             <i class="fas fa-chart-pie text-primary"></i>
-                            Uçuş Performans Analizi
+                            <span data-i18n="flightPerfAnal">Uçuş Performans Analizi</span>
                         </div>
                         <div style="height:220px; position: relative;">
                             <canvas id="flightPerformanceChart"></canvas>
@@ -309,7 +312,7 @@
                     <div class="report-card">
                         <div class="report-header">
                             <i class="fas fa-battery-half text-warning"></i>
-                            Personel Yorgunluk Dağılımı
+                            <span data-i18n="personnelFatigueDist">Personel Yorgunluk Dağılımı</span>
                         </div>
                         <div style="height:220px; position: relative;">
                             <canvas id="fatigueDistributionChart"></canvas>
@@ -321,13 +324,13 @@
             <div class="report-card">
                 <div class="report-header">
                     <i class="fas fa-route text-success"></i>
-                    En Çok Uçulan İlk 5 Rota
+                    <span data-i18n="top5Routes">En Çok Uçulan İlk 5 Rota</span>
                 </div>
                 <div class="routes-wrapper">
                     <div id="topRoutesList" class="mt-3">
                         <div class="text-center text-muted py-4">
                             <i class="fas fa-spinner fa-spin me-2"></i>
-                            Rotalar analiz ediliyor...
+                            <span data-i18n="analyzingRoutes">Rotalar analiz ediliyor...</span>
                         </div>
                     </div>
                 </div>
@@ -342,11 +345,11 @@
                     <div class="mb-3">
                         <i class="fas fa-power-off fa-3x text-danger opacity-75"></i>
                     </div>
-                    <h5 class="fw-bold mb-2">Sistemden Çıkılıyor</h5>
-                    <p class="text-muted mb-4">Operasyon kontrol merkezinden çıkış yapmak istediğinize emin misiniz?</p>
+                    <h5 class="fw-bold mb-2" data-i18n="logoutTitle">Sistemden Çıkılıyor</h5>
+                    <p class="text-muted mb-4" data-i18n="logoutDesc">Operasyon kontrol merkezinden çıkış yapmak istediğinize emin misiniz?</p>
                     <div class="d-flex justify-content-center gap-2">
-                        <button type="button" class="btn btn-light fw-semibold px-4" data-bs-dismiss="modal">İptal</button>
-                        <button type="button" class="btn btn-danger fw-semibold px-4" id="btnConfirmAdminLogout">Çıkış Yap</button>
+                        <button type="button" class="btn btn-light fw-semibold px-4" data-bs-dismiss="modal" data-i18n="cancel">İptal</button>
+                        <button type="button" class="btn btn-danger fw-semibold px-4" id="btnConfirmAdminLogout" data-i18n="logoutText">Çıkış Yap</button>
                     </div>
                 </div>
             </div>

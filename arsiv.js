@@ -6,9 +6,65 @@ let currentPage = 1;
 const rowsPerPage = 15;
 let searchTerm = "";
 
-document.addEventListener('DOMContentLoaded', async () => {
+// 🌟 ADMİN PANELİ ÇEVİRİ SÖZLÜĞÜ 🌟
+const adminTranslations = {
+    tr: {
+        adminRole: "Sistem Yöneticisi", menuOverview: "Genel Bakış", menuFlight: "Uçuş Yönetimi",
+        menuCrew: "Personel Planlama", menuReports: "Raporlar", menuArchive: "Uçuş Arşivi",
+        logoutText: "Çıkış Yap", pageTitleArchive: "Soğuk Arşiv",
+        pageDescArchive: "30 günden eski, tamamlanmış veya iptal edilmiş tüm uçuşların salt okunur kayıtları.",
+        searchPlaceholder: "PNR, Uçuş No veya Rota ara...", recordsFound: "Kayıt Bulundu",
+        thDateTime: "Tarih / Saat", thFlightNo: "Uçuş No", thRoute: "Rota", thPilot: "Pilot", thStatus: "Durum", thRecord: "Kayıt İzi",
+        statusCompleted: "Tamamlandı", statusCancelled: "İptal",
+        logoutTitle: "Sistemden Çıkılıyor", logoutDesc: "Operasyon kontrol merkezinden çıkış yapmak istediğinize emin misiniz?", cancel: "İptal",
+        readOnly: "Salt Okunur", unknown: "Bilinmiyor"
+    },
+    en: {
+        adminRole: "System Admin", menuOverview: "Overview", menuFlight: "Flight Management",
+        menuCrew: "Crew Planning", menuReports: "Reports", menuArchive: "Flight Archive",
+        logoutText: "Log Out", pageTitleArchive: "Cold Archive",
+        pageDescArchive: "Read-only records of all completed or cancelled flights older than 30 days.",
+        searchPlaceholder: "Search PNR, Flight No or Route...", recordsFound: "Records Found",
+        thDateTime: "Date / Time", thFlightNo: "Flight No", thRoute: "Route", thPilot: "Pilot", thStatus: "Status", thRecord: "Record Trace",
+        statusCompleted: "Completed", statusCancelled: "Cancelled",
+        logoutTitle: "Logging Out", logoutDesc: "Are you sure you want to log out of the operation control center?", cancel: "Cancel",
+        readOnly: "Read-Only", unknown: "Unknown"
+    }
+};
+
+function t(key) {
+    const lang = window.currentAdminLang || 'tr';
+    return adminTranslations[lang][key] || key;
+}
+
+function updateAdminLanguage(lang) {
+    window.currentAdminLang = lang;
+    localStorage.setItem('skyOpsAdminLang', lang);
+    const btnTR = document.getElementById('btnLangTR');
+    const btnEN = document.getElementById('btnLangEN');
+    if(btnTR && btnEN) {
+        btnTR.classList.toggle('active', lang === 'tr');
+        btnEN.classList.toggle('active', lang === 'en');
+    }
     
-    // --- 🌟 EKLENEN KISIM: ÇIKIŞ YAPMA İŞLEMİ (ŞIK MODAL İLE) 🌟 ---
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (adminTranslations[lang][key]) el.innerHTML = adminTranslations[lang][key];
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (adminTranslations[lang][key]) el.setAttribute('placeholder', adminTranslations[lang][key]);
+    });
+    
+    renderArchiveTable();
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // 🌟 DİL MOTORUNU BAŞLAT 🌟
+    window.currentAdminLang = localStorage.getItem('skyOpsAdminLang') || 'tr';
+    document.getElementById('btnLangTR')?.addEventListener('click', () => updateAdminLanguage('tr'));
+    document.getElementById('btnLangEN')?.addEventListener('click', () => updateAdminLanguage('en'));
+    
     const adminLogoutBtn = document.getElementById('adminLogoutBtn');
     if (adminLogoutBtn) {
         adminLogoutBtn.addEventListener('click', (e) => {
@@ -21,32 +77,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnConfirmAdminLogout = document.getElementById('btnConfirmAdminLogout');
     if (btnConfirmAdminLogout) {
         btnConfirmAdminLogout.addEventListener('click', () => {
-            btnConfirmAdminLogout.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Çıkılıyor...';
+            btnConfirmAdminLogout.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>...';
             btnConfirmAdminLogout.disabled = true;
             setTimeout(() => { window.location.href = 'login.html'; }, 600);
         });
     }
 
-    // --- Senin Mevcut Kodların ---
-    // Canlı Saat
     setInterval(() => {
         const clock = document.getElementById('liveClock');
         if(clock) clock.textContent = new Date().toLocaleTimeString('tr-TR');
     }, 1000);
 
-    // Verileri Yükle
     await loadPersonnelData();
     await fetchArchiveFlights();
 
-    // Arama Kutusu (Gerçek Zamanlı Filtreleme)
     document.getElementById('archiveSearchInput')?.addEventListener('input', (e) => {
         searchTerm = e.target.value.toLowerCase();
         currentPage = 1;
         renderArchiveTable();
     });
+
+    // İlk dil yüklemesi
+    updateAdminLanguage(window.currentAdminLang);
 });
 
-// Tarih Formatlayıcı (Veritabanındaki gibi YYYY-MM-DD döndürür)
 const getLocalYYYYMMDD = (dateObj) => {
     const year = dateObj.getFullYear();
     const month = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -54,15 +108,12 @@ const getLocalYYYYMMDD = (dateObj) => {
     return `${year}-${month}-${day}`;
 };
 
-// 🌟 30 GÜN KURALI 🌟
-// Bu fonksiyon "Bugünden 30 gün öncesinin" tarihini bulur.
 const getArchiveThresholdDate = () => {
     const d = new Date();
     d.setDate(d.getDate() - 30);
     return getLocalYYYYMMDD(d);
 };
 
-// Pilot isimlerini yazabilmek için personelleri çekiyoruz
 async function loadPersonnelData() {
     const res = await fetch(`${API_BASE_URL}/personnel`);
     allPersonnel = await res.json();
@@ -71,16 +122,9 @@ async function loadPersonnelData() {
 async function fetchArchiveFlights() {
     const res = await fetch(`${API_BASE_URL}/flights`);
     const allFlights = await res.json();
-    
     const thresholdDate = getArchiveThresholdDate();
 
-    // 🌟 ARŞİV FİLTRESİ 🌟
-    // Sadece 30 günden ESKİ olanlar VE statüsü "İndi" veya "İptal" olanlar
-    archiveFlights = allFlights.filter(f => {
-        return f.date < thresholdDate && (f.status === "İndi" || f.status === "İptal");
-    });
-
-    // En yeni tarih en üstte olacak şekilde sırala
+    archiveFlights = allFlights.filter(f => f.date < thresholdDate && (f.status === "İndi" || f.status === "İptal"));
     archiveFlights.sort((a, b) => new Date(b.date) - new Date(a.date));
     
     document.getElementById('archiveCount').innerText = archiveFlights.length;
@@ -91,30 +135,24 @@ function renderArchiveTable() {
     const tableBody = document.getElementById('archiveTableBody');
     if (!tableBody) return;
 
-    // Arama işlemine göre süz
-    let filtered = archiveFlights.filter(f => {
-        return f.flightNo.toLowerCase().includes(searchTerm) || 
-               f.route.toLowerCase().includes(searchTerm);
-    });
+    let filtered = archiveFlights.filter(f => 
+        f.flightNo.toLowerCase().includes(searchTerm) || f.route.toLowerCase().includes(searchTerm)
+    );
 
     document.getElementById('archiveCount').innerText = filtered.length;
 
-    // Sayfalama (Pagination) için sadece ilgili satırları al
     const paginated = filtered.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
-    // Tabloyu çiz
     tableBody.innerHTML = paginated.map(flight => {
         const person = allPersonnel.find(p => String(p.id) === String(flight.pilot));
-        const pilotName = person ? person.name : "Bilinmiyor";
+        const pilotName = person ? person.name : t('unknown');
 
-        // Görüntüyü güzelleştirmek için tarihi "GG.AA.YYYY" formatına çeviriyoruz
         const [y, m, d] = flight.date.split('-');
         const formattedDate = `${d}.${m}.${y}`;
 
-        // İndi ise gri, İptal ise kırmızı yap
         let statusBadge = flight.status === "İndi" 
-            ? `<span class="badge bg-secondary px-3 py-2 rounded-pill"><i class="fas fa-check me-1"></i>Tamamlandı</span>`
-            : `<span class="badge bg-danger px-3 py-2 rounded-pill"><i class="fas fa-times me-1"></i>İptal</span>`;
+            ? `<span class="badge bg-secondary-subtle text-secondary px-3 py-2 rounded-pill"><i class="fas fa-check me-1"></i>${t('statusCompleted')}</span>`
+            : `<span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill"><i class="fas fa-times me-1"></i>${t('statusCancelled')}</span>`;
 
         return `
             <tr>
@@ -133,8 +171,8 @@ function renderArchiveTable() {
                 <td class="text-secondary"><i class="fas fa-user-tie me-2"></i>${pilotName}</td>
                 <td>${statusBadge}</td>
                 <td class="text-end">
-                    <span class="badge bg-light text-muted border" title="Değiştirilemez Arşiv Kaydı">
-                        <i class="fas fa-lock me-1"></i>Salt Okunur
+                    <span class="badge bg-light text-muted border">
+                        <i class="fas fa-lock me-1"></i>${t('readOnly')}
                     </span>
                 </td>
             </tr>`;
@@ -147,42 +185,19 @@ function renderPaginationControls(total) {
     const el = document.getElementById('paginationControls');
     const pages = Math.ceil(total / rowsPerPage);
     el.innerHTML = '';
-    
-    // Sayfa sayısı 1'den azsa sayfalama çubuğunu gizle
     if (pages <= 1) return;
-    
+
     if (currentPage > 1) {
-        el.innerHTML += `<li class="page-item"><a class="page-link pagination-arrow" href="#" onclick="changePage(${currentPage - 1}); return false;"><i class="fas fa-chevron-left"></i></a></li>`;
+        el.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${currentPage - 1}); return false;"><i class="fas fa-chevron-left"></i></a></li>`;
     }
 
-    // Maksimum 15 sayfa mantığı
-    let startPage = Math.max(1, currentPage - 7);
-    let endPage = Math.min(pages, startPage + 14);
-
-    if (endPage - startPage < 14) {
-        startPage = Math.max(1, endPage - 14);
-    }
-
-    if (startPage > 1) {
-        el.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(1); return false;">1</a></li>`;
-        if (startPage > 2) el.innerHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
+    for (let i = 1; i <= pages; i++) {
         el.innerHTML += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a></li>`;
     }
 
-    if (endPage < pages) {
-        if (endPage < pages - 1) el.innerHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-        el.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${pages}); return false;">${pages}</a></li>`;
-    }
-
     if (currentPage < pages) {
-        el.innerHTML += `<li class="page-item"><a class="page-link pagination-arrow" href="#" onclick="changePage(${currentPage + 1}); return false;"><i class="fas fa-chevron-right"></i></a></li>`;
+        el.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${currentPage + 1}); return false;"><i class="fas fa-chevron-right"></i></a></li>`;
     }
 }
 
-function changePage(page) { 
-    currentPage = page; 
-    renderArchiveTable(); 
-}
+function changePage(page) { currentPage = page; renderArchiveTable(); window.scrollTo(0, 0); }

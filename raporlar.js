@@ -2,9 +2,95 @@ const API_BASE_URL = 'http://localhost:3000';
 
 let allFlights = [];
 let allPersonnel = [];
+let chartPerformance = null;
+let chartFatigue = null;
+
+// 🌟 ADMİN PANELİ ÇEVİRİ SÖZLÜĞÜ (HİÇBİR KOD SİLİNMEDEN EKLENDİ) 🌟
+const adminTranslations = {
+    tr: {
+        adminRole: "Sistem Yöneticisi", menuOverview: "Genel Bakış", menuFlight: "Uçuş Yönetimi",
+        menuCrew: "Personel Planlama", menuReports: "Raporlar", menuArchive: "Uçuş Arşivi",
+        logoutText: "Çıkış Yap", 
+        
+        pageTitleReports: "İstatistik ve Raporlar", pageDescReports: "Operasyonel verilerin analizi ve dönemsel özetler.",
+        btnPdf: "PDF Olarak İndir",
+        
+        flightPerfAnal: "Uçuş Performans Analizi", personnelFatigueDist: "Personel Yorgunluk Dağılımı",
+        top5Routes: "En Çok Uçulan İlk 5 Rota", analyzingRoutes: "Rotalar analiz ediliyor...",
+        
+        // Modal Text
+        logoutTitle: "Sistemden Çıkılıyor", logoutDesc: "Operasyon kontrol merkezinden çıkış yapmak istediğinize emin misiniz?", cancel: "İptal",
+        
+        // Grafikler (Chart.js)
+        chartOnTime: "Zamanında / Başarılı", chartDelayed: "Gecikmeli", chartCancelled: "İptal Edilen",
+        chartRested: "Dinlenmiş (0-49)", chartWarning: "Dikkat Edilmeli (50-79)", chartCritical: "Kritik Yorgun (80-100)",
+        chartYAxisLabel: "Personel Sayısı",
+        
+        // Dinamik Ekranlar
+        routeText: "Sefer", preparingText: "Hazırlanıyor",
+        pdfExportName: "SkyOps_Rapor"
+    },
+    en: {
+        adminRole: "System Admin", menuOverview: "Overview", menuFlight: "Flight Management",
+        menuCrew: "Crew Planning", menuReports: "Reports", menuArchive: "Flight Archive",
+        logoutText: "Log Out", 
+        
+        pageTitleReports: "Statistics and Reports", pageDescReports: "Analysis of operational data and periodic summaries.",
+        btnPdf: "Download as PDF",
+        
+        flightPerfAnal: "Flight Performance Analysis", personnelFatigueDist: "Personnel Fatigue Distribution",
+        top5Routes: "Top 5 Most Flown Routes", analyzingRoutes: "Analyzing routes...",
+        
+        // Modal Text
+        logoutTitle: "Logging Out", logoutDesc: "Are you sure you want to log out of the operation control center?", cancel: "Cancel",
+        
+        // Grafikler (Chart.js)
+        chartOnTime: "On Time / Success", chartDelayed: "Delayed", chartCancelled: "Cancelled",
+        chartRested: "Rested (0-49)", chartWarning: "Warning (50-79)", chartCritical: "Critical Fatigue (80-100)",
+        chartYAxisLabel: "Number of Staff",
+        
+        // Dinamik Ekranlar
+        routeText: "Flights", preparingText: "Preparing",
+        pdfExportName: "SkyOps_Report"
+    }
+};
+
+function t(key) {
+    const lang = window.currentAdminLang || 'tr';
+    return adminTranslations[lang][key] || key;
+}
+
+function updateAdminLanguage(lang) {
+    window.currentAdminLang = lang;
+    localStorage.setItem('skyOpsAdminLang', lang);
+    
+    const btnTR = document.getElementById('btnLangTR');
+    const btnEN = document.getElementById('btnLangEN');
+    if(btnTR && btnEN) {
+        btnTR.classList.toggle('active', lang === 'tr');
+        btnEN.classList.toggle('active', lang === 'en');
+    }
+    
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (adminTranslations[lang][key]) el.innerHTML = adminTranslations[lang][key];
+    });
+
+    if (allFlights.length > 0 && allPersonnel.length > 0) {
+        renderFlightPerformanceChart();
+        renderFatigueChart();
+        renderTopRoutes();
+    }
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
     
+    // 🌟 DİL MOTORUNU BAŞLAT 🌟
+    window.currentAdminLang = localStorage.getItem('skyOpsAdminLang') || 'tr';
+    document.getElementById('btnLangTR')?.addEventListener('click', () => updateAdminLanguage('tr'));
+    document.getElementById('btnLangEN')?.addEventListener('click', () => updateAdminLanguage('en'));
+    updateAdminLanguage(window.currentAdminLang);
+
     // 🌟 YENİ EKLENEN: CANLI SAAT MOTORU 🌟
     function updateClock() {
         const clockElement = document.getElementById('liveClock');
@@ -17,7 +103,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     setInterval(updateClock, 1000);
-    updateClock(); // Sayfa açılır açılmaz saati göster
+    updateClock(); 
 
     // 1. ADIM: ÇIKIŞ BUTONUNU AKTİF ET
     const adminLogoutBtn = document.getElementById('adminLogoutBtn');
@@ -32,9 +118,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnConfirmAdminLogout = document.getElementById('btnConfirmAdminLogout');
     if (btnConfirmAdminLogout) {
         btnConfirmAdminLogout.addEventListener('click', () => {
-            btnConfirmAdminLogout.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Çıkılıyor...';
+            btnConfirmAdminLogout.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>...';
             btnConfirmAdminLogout.disabled = true;
-            setTimeout(() => { window.location.href = 'login.html'; }, 600);
+            sessionStorage.removeItem("isLoggedIn");
+            sessionStorage.removeItem("userRole");
+            setTimeout(() => { window.location.replace('login.html'); }, 600);
         });
     }
 
@@ -83,10 +171,12 @@ function renderFlightPerformanceChart() {
         }
     });
 
-    new Chart(ctx, {
+    if (chartPerformance) chartPerformance.destroy();
+
+    chartPerformance = new Chart(ctx, {
         type: 'doughnut', 
         data: {
-            labels: ['Zamanında / Başarılı', 'Gecikmeli', 'İptal Edilen'],
+            labels: [t('chartOnTime'), t('chartDelayed'), t('chartCancelled')],
             datasets: [{
                 data: [onTimeCount, delayedCount, cancelledCount],
                 backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
@@ -120,12 +210,14 @@ function renderFatigueChart() {
         else criticalCount++;
     });
 
-    new Chart(ctx, {
+    if (chartFatigue) chartFatigue.destroy();
+
+    chartFatigue = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Dinlenmiş (0-49)', 'Dikkat Edilmeli (50-79)', 'Kritik Yorgun (80-100)'],
+            labels: [t('chartRested'), t('chartWarning'), t('chartCritical')],
             datasets: [{
-                label: 'Personel Sayısı',
+                label: t('chartYAxisLabel'),
                 data: [restedCount, warningCount, criticalCount],
                 backgroundColor: ['rgba(16, 185, 129, 0.7)', 'rgba(245, 158, 11, 0.7)', 'rgba(239, 68, 68, 0.7)'],
                 borderColor: ['#10b981', '#f59e0b', '#ef4444'],
@@ -170,7 +262,7 @@ function renderTopRoutes() {
                 <span class="route-rank">${index + 1}</span>
                 <span>${item.route}</span>
             </div>
-            <span class="route-count">${item.count} Sefer</span>
+            <span class="route-count">${item.count} ${t('routeText')}</span>
         </div>
     `).join('');
 }
@@ -190,9 +282,11 @@ function getLocalCurrentDateTime() {
 
 function downloadPDF(){
     const btn = document.getElementById("downloadPdfBtn");
-    const originalText = btn.innerHTML;
-
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Hazırlanıyor';
+    
+    // Görünen metni span'dan almak daha temiz
+    const spanText = btn.querySelector('span') ? btn.querySelector('span').innerText : btn.innerText;
+    
+    btn.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i> <span>${t('preparingText')}</span>`;
     btn.disabled = true;
 
     setTimeout(() => {
@@ -207,7 +301,7 @@ function downloadPDF(){
 
         const opt = {
             margin: 0.4,
-            filename: `SkyOps_Rapor_${getLocalCurrentDateTime()}.pdf`,
+            filename: `${t('pdfExportName')}_${getLocalCurrentDateTime()}.pdf`,
             image: { type: 'jpeg', quality: 1 },
             html2canvas: { scale: 2.5, useCORS: true, scrollY: 0 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
@@ -217,7 +311,8 @@ function downloadPDF(){
         html2pdf().set(opt).from(element).save().then(() => {
             element.style.width = originalWidth;
             element.style.maxWidth = originalMaxWidth;
-            btn.innerHTML = originalText;
+            
+            btn.innerHTML = `<i class="fas fa-file-pdf me-2"></i> <span data-i18n="btnPdf">${spanText}</span>`;
             btn.disabled = false;
         });
     }, 500);

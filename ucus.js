@@ -7,7 +7,7 @@ let globalAirlines = [];
 let globalCountries = []; 
 let routeDurations = [];
 
-// 🌟 ADMİN PANELİ ÇEVİRİ SÖZLÜĞÜ 🌟
+// 🌟 ADMİN PANELİ ÇEVİRİ SÖZLÜĞÜ (HİÇBİR KOD SİLİNMEDEN EKLENDİ) 🌟
 const adminTranslations = {
     tr: {
         adminRole: "Sistem Yöneticisi", menuOverview: "Genel Bakış", menuFlight: "Uçuş Yönetimi",
@@ -22,6 +22,10 @@ const adminTranslations = {
         // Dinamik Tablo
         badgePast: "GEÇMİŞ", badgeActive: "AKTİF", badgeUpcoming: "YAKLAŞAN",
         statusOnTime: "Zamanında", statusDelayed: "Gecikmeli", statusBoarding: "Yolcu Alımı", statusLanded: "İndi", statusCancelled: "İptal",
+        
+        // GÖRSELDEKİ AÇILIR MENÜ (DROPDOWN) İÇİN DİNAMİK ANAHTARLAR
+        statusZamanında: "Zamanında", statusGecikmeli: "Gecikmeli", statusYolcuAlımı: "Yolcu Alımı", statusİndi: "İndi", statusİptal: "İptal",
+        
         unknown: "Tanımsız", btnCrewCount: "+{count} Ekip",
         
         // Modal
@@ -34,7 +38,12 @@ const adminTranslations = {
         
         // YENİ EKLENEN AÇILIR KUTU VE İPUÇLARI ÇEVİRİSİ
         airlineLabel: "Havayolu (Örn: TK)", flightNumLabel: "Sefer No",
-        phOrigin: "Kalkış (Şehir/Havalimanı)", phDest: "Varış (Şehir/Havalimanı)", phPilot: "Sorumlu Pilot"
+        phOrigin: "Kalkış (Şehir/Havalimanı)", phDest: "Varış (Şehir/Havalimanı)", phPilot: "Sorumlu Pilot",
+
+        // SİLME VE GÜNCELLEME MODALI ÇEVİRİLERİ (YENİ EKLENDİ)
+        deleteFlightTitle: "Uçuş Siliniyor", deleteFlightDesc: "Seçilen uçuş sistemden silinecek. Onaylıyor musunuz?", btnDelete: "Sil",
+        deleteAlert: "⚠️ Güvenlik İhlali: Bu uçuş zaman veya durum kilidi altında olduğu için silinemez!",
+        updateConfirmTitle: "Onay", updateConfirmDesc: "Bilgileri güncelleyip ekip konumlarını işlemek istiyor musunuz?"
     },
     en: {
         adminRole: "System Admin", menuOverview: "Overview", menuFlight: "Flight Management",
@@ -49,6 +58,10 @@ const adminTranslations = {
         // Dinamik Tablo
         badgePast: "PAST", badgeActive: "ACTIVE", badgeUpcoming: "UPCOMING",
         statusOnTime: "On Time", statusDelayed: "Delayed", statusBoarding: "Boarding", statusLanded: "Landed", statusCancelled: "Cancelled",
+        
+        // GÖRSELDEKİ AÇILIR MENÜ (DROPDOWN) İÇİN DİNAMİK ANAHTARLAR
+        statusZamanında: "On Time", statusGecikmeli: "Delayed", statusYolcuAlımı: "Boarding", statusİndi: "Landed", statusİptal: "Cancelled",
+        
         unknown: "Unknown", btnCrewCount: "+{count} Crew",
         
         // Modal
@@ -61,7 +74,12 @@ const adminTranslations = {
         
         // YENİ EKLENEN AÇILIR KUTU VE İPUÇLARI ÇEVİRİSİ
         airlineLabel: "Airline (e.g. TK)", flightNumLabel: "Flight Num",
-        phOrigin: "Origin (City/Airport)", phDest: "Destination (City/Airport)", phPilot: "Captain Pilot"
+        phOrigin: "Origin (City/Airport)", phDest: "Destination (City/Airport)", phPilot: "Captain Pilot",
+
+        // SİLME VE GÜNCELLEME MODALI ÇEVİRİLERİ (YENİ EKLENDİ)
+        deleteFlightTitle: "Deleting Flight", deleteFlightDesc: "The selected flight will be deleted from the system. Do you confirm?", btnDelete: "Delete",
+        deleteAlert: "⚠️ Security Violation: This flight cannot be deleted because it is under time or status lock!",
+        updateConfirmTitle: "Confirmation", updateConfirmDesc: "Do you want to update the information and process crew locations?"
     }
 };
 
@@ -726,7 +744,7 @@ function setupFormControls() {
         };
 
         if (isEditing) {
-            showConfirmModal("Onay", "Bilgileri güncelleyip ekip konumlarını işlemek istiyor musunuz?", handleFlightSave, null, false, t('btnUpdate'));
+            showConfirmModal(t('updateConfirmTitle'), t('updateConfirmDesc'), handleFlightSave, null, false, t('btnUpdate'));
         } else {
             await handleFlightSave();
         }
@@ -741,7 +759,6 @@ function setupModalAutocomplete(inputId, hiddenId, dropdownId, dataArray, type) 
 
     let currentFocus = -1;
 
-    // 🌟 RENDER LİSTESİNDE DİNAMİK ÇEVİRİ 🌟
     const renderList = function() {
         const lang = window.currentAdminLang || 'tr';
         const term = input.value.toLocaleLowerCase('tr-TR').trim();
@@ -1223,20 +1240,20 @@ function resetFlightForm() {
 async function deleteFlight(id) {
     const flightToDelete = allFlights.find(f => String(f.id) === String(id));
     if (isFlightLocked(flightToDelete)) {
-        alert("⚠️ Güvenlik İhlali: Bu uçuş zaman veya durum kilidi altında olduğu için silinemez!");
+        alert(t('deleteAlert'));
         return;
     }
 
     showConfirmModal(
-        "Uçuş Siliniyor", 
-        "Seçilen uçuş sistemden silinecek. Onaylıyor musunuz?", 
+        t('deleteFlightTitle'), 
+        t('deleteFlightDesc'), 
         async () => {
             await fetch(`${API_BASE_URL}/flights/${id}`, { method: 'DELETE' });
             await fetchFlights();
         },
         null,
         true,   
-        "Sil"   
+        t('btnDelete')   
     );
 }
 
