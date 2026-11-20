@@ -770,7 +770,7 @@
       "route": "NCE > SAW",
       "time": "23:53",
       "date": "2026-07-31",
-      "gate": "B-02",
+      "gate": "A-01",
       "pilot": "2",
       "cabinCrew": [
         "11",
@@ -782,7 +782,49 @@
         "21",
         "27"
       ],
-      "status": "Zamanında"
+      "status": "İndi"
+    },
+    {
+      "id": "41",
+      "flightNo": "XQ-5555",
+      "route": "SAW > ADB",
+      "time": "03:05",
+      "date": "2026-07-01",
+      "gate": "B-02",
+      "pilot": "1",
+      "cabinCrew": [
+        "11",
+        "12"
+      ],
+      "status": "İndi"
+    },
+    {
+      "id": "42",
+      "flightNo": "PC-5555",
+      "route": "SAW > MAN",
+      "time": "21:28",
+      "date": "2026-07-01",
+      "gate": "A-01",
+      "pilot": "1",
+      "cabinCrew": [
+        "13",
+        "14"
+      ],
+      "status": "İndi"
+    },
+    {
+      "id": "43",
+      "flightNo": "VF-0111",
+      "route": "SAW > CDG",
+      "time": "20:25",
+      "date": "2026-08-29",
+      "gate": "B-02",
+      "pilot": "1",
+      "cabinCrew": [
+        "21",
+        "11"
+      ],
+      "status": "İndi"
     }
   ],
   "airlines": [
@@ -1253,11 +1295,12 @@
       "genderId": "1",
       "lastUpdate": "2026-04-14",
       "flightHours": 0,
-      "dailyFlightHours": 0,
+      "dailyFlightHours": 2,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "SAW"
+      "currentLocation": "CDG",
+      "lastDecayTime": null
     },
     {
       "id": "2",
@@ -1266,16 +1309,16 @@
       "genderId": "2",
       "lastUpdate": "2026-04-14",
       "flightHours": 0,
-      "dailyFlightHours": 2,
+      "dailyFlightHours": 4,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "NCE",
+      "currentLocation": "SAW",
       "lastDecayTime": null
     },
     {
       "id": "3",
-      "name": "Pilot 03 ",
+      "name": "Pilot 03",
       "role": "Pilot",
       "genderId": "1",
       "lastUpdate": "2026-04-14",
@@ -1301,7 +1344,7 @@
     },
     {
       "id": "5",
-      "name": "Pilot 05 ",
+      "name": "Pilot 05",
       "role": "Pilot",
       "genderId": "1",
       "lastUpdate": "2026-04-14",
@@ -1314,7 +1357,7 @@
     },
     {
       "id": "6",
-      "name": "Pilot 06 ",
+      "name": "Pilot 06",
       "role": "Pilot",
       "genderId": "2",
       "lastUpdate": "2026-04-14",
@@ -1385,11 +1428,12 @@
       "genderId": "1",
       "lastUpdate": "2026-04-14",
       "flightHours": 0,
-      "dailyFlightHours": 0,
+      "dailyFlightHours": 2,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "SAW"
+      "currentLocation": "CDG",
+      "lastDecayTime": null
     },
     {
       "id": "12",
@@ -1398,11 +1442,12 @@
       "genderId": "2",
       "lastUpdate": "2026-04-14",
       "flightHours": 0,
-      "dailyFlightHours": 0,
+      "dailyFlightHours": 2,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "SAW"
+      "currentLocation": "ADB",
+      "lastDecayTime": null
     },
     {
       "id": "13",
@@ -1411,24 +1456,26 @@
       "genderId": "1",
       "lastUpdate": "2026-04-14",
       "flightHours": 0,
-      "dailyFlightHours": 0,
+      "dailyFlightHours": 4,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "SAW"
+      "currentLocation": "MAN",
+      "lastDecayTime": null
     },
     {
       "id": "14",
-      "name": "Cabin Crew 04 ",
+      "name": "Cabin Crew 04",
       "role": "Kabin Memuru",
       "genderId": "2",
       "lastUpdate": "2026-04-14",
       "flightHours": 0,
-      "dailyFlightHours": 0,
+      "dailyFlightHours": 4,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "SAW"
+      "currentLocation": "MAN",
+      "lastDecayTime": null
     },
     {
       "id": "15",
@@ -1489,11 +1536,12 @@
       "genderId": "1",
       "lastUpdate": "2026-04-14",
       "flightHours": 0,
-      "dailyFlightHours": 0,
+      "dailyFlightHours": 2,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "SAW"
+      "currentLocation": "SAW",
+      "lastDecayTime": null
     },
     {
       "id": "20",
@@ -1502,7 +1550,7 @@
       "genderId": "2",
       "lastUpdate": "2026-04-14",
       "flightHours": 0,
-      "dailyFlightHours": 2,
+      "dailyFlightHours": 4,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
@@ -1516,11 +1564,11 @@
       "genderId": "1",
       "lastUpdate": "2026-04-14",
       "flightHours": 0,
-      "dailyFlightHours": 2,
+      "dailyFlightHours": 4,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",
-      "currentLocation": "SAW",
+      "currentLocation": "CDG",
       "lastDecayTime": null
     },
     {
@@ -1595,7 +1643,7 @@
       "genderId": "1",
       "lastUpdate": "2026-04-14",
       "flightHours": 0,
-      "dailyFlightHours": 1.3,
+      "dailyFlightHours": 3.3,
       "fatiguePoint": 0,
       "status": "Müsait",
       "risk": "Düşük",

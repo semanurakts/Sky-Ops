@@ -1,36 +1,50 @@
-```text
-SKYOPS/
-├── .vscode/                 # VS Code workspace configuration settings
-├── images/                  # Static images used in the project
-│   └── bulten.jpeg          # Background image used on the login page
-├── node_modules/            # Project dependencies installed via npm
-├── .gitignore               # Directories to be excluded from Git version control
-├── .prettierignore          # Files exempted from code formatter rules
-├── arsiv.html / .js         # Cold Archive module (flights older than 30 days)
-├── bilet.html / .js         # Dynamic boarding pass page
-├── db.json                  # JSON Server main data repository
-├── index.html               # Admin portal Dashboard page
-├── login.html / .js         # User login portal (Admin & Passenger)
-├── package.json / -lock     # Dependency configurations and npm scripts
-├── personel.html / .js      # Crew planning and fatigue score module
-├── raporlar.html / .js      # Graphical analysis and PDF report generation module
-├── script.js                # Dashboard business logic (KPI, charts, synchronization)
-├── style.css                # Global CSS rules shared across all pages
-├── ucus.html / .js          # Operational flight CRUD and status update processes
-└── yolcu.html / .js         # Passenger flight search, seat selection, and ticketing interface
+# SkyOps
 
+SkyOps is an academic aviation operations management and flight tracking dashboard project.
 
+The project demonstrates flight management, personnel planning, fatigue monitoring, reporting, and passenger ticket booking workflows through a web-based interface.
 
+## Features
 
-User Action
-      ↓
-JavaScript Business Logic (Validation + Data Preparation)
-      ↓
-Fetch API → HTTP Request (GET / POST / PATCH / DELETE)
-      ↓
-JSON Server → db.json file is read/written
-      ↓
-JSON Response → Returns to JavaScript
-      ↓
-DOM Update → User interface is updated in real-time
-```
+- Flight operations dashboard
+- Flight scheduling and management
+- Personnel management
+- Crew fatigue monitoring
+- Operational reports and charts
+- Flight archive
+- Passenger flight search
+- Seat selection interface
+- Simulated ticket booking workflow
+- Turkish and English language support
+
+## Technologies
+
+- HTML5
+- CSS3
+- JavaScript
+- JSON Server
+- Bootstrap
+- Chart.js
+
+## Project Structure
+
+- `index.html` - Operations dashboard
+- `ucus.html` / `ucus.js` - Flight management
+- `personel.html` / `personel.js` - Personnel management
+- `raporlar.html` / `raporlar.js` - Reports and analytics
+- `arsiv.html` / `arsiv.js` - Flight archive
+- `login.html` / `login.js` - Login interface
+- `yolcu.html` / `yolcu.js` - Passenger portal and flight search
+- `bilet.html` / `bilet.js` - Ticket interface
+- `db.json` - Demonstration data
+
+## Installation
+
+Make sure Node.js and npm are installed.
+
+Clone the repository and open the project directory.
+
+Install dependencies:
+
+```bash
+npm install

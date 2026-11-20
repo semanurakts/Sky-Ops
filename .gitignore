@@ -1,2 +1,21 @@
-# Dependency folder is not included in version control
-node_modules
+
+# Bağımlılık klasörleri
+node_modules/
+
+# Ortam değişkenleri ve gizli bilgiler
+.env
+.env.*
+!.env.example
+
+# Günlük (log) dosyaları
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# İşletim sistemi tarafından oluşturulan dosyalar
+.DS_Store
+Thumbs.db
+
+# Yerel ve geçici dosyalar
+*.local

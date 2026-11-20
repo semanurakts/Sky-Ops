@@ -71,22 +71,35 @@ document.addEventListener('DOMContentLoaded', () => {
     updateLanguage(currentLang);
     // ----------------------------------------------
     
-    // 🌟 ŞIK BİLDİRİM (TOAST) FONKSİYONU 🌟
-    function showNotification(message, type = 'success') {
-        const toast = document.createElement('div');
-        toast.className = `skyops-toast ${type}`;
-        
-        const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
-        
-        toast.innerHTML = `<i class="fas ${icon}"></i> <div>${message}</div>`;
-        document.body.appendChild(toast);
+    
+// Güvenli bildirim gösterme fonksiyonu
+function showNotification(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `skyops-toast ${type}`;
 
-        setTimeout(() => toast.classList.add('show'), 10);
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 500); 
-        }, 3500);
-    }
+    const icon = document.createElement('i');
+    icon.className = `fas ${
+        type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'
+    }`;
+
+    const content = document.createElement('div');
+
+    // Mesajı HTML olarak değil, düz metin olarak ekle.
+    content.textContent = String(message);
+
+    toast.appendChild(icon);
+    toast.appendChild(content);
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.classList.add('show'), 10);
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+
+        setTimeout(() => toast.remove(), 500);
+    }, 3500);
+}
 
     // Elementleri Tanımla
     const btnPass = document.getElementById('btnPassenger');
@@ -170,32 +183,65 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => formEmp.classList.add('active'), 50);
     });
 
-    // --- 4. YOLCU GİRİŞ İŞLEMLERİ (LocalStorage) ---
-    const passFormEl = formPass.querySelector('form');
+
+// --- 4. YOLCU GİRİŞ İŞLEMLERİ (LocalStorage) ---
+const passFormEl = formPass.querySelector('form');
+
+if (passFormEl) {
     passFormEl.addEventListener('submit', (e) => {
-        e.preventDefault(); 
-        
+        e.preventDefault();
+
         const email = document.getElementById('passEmail').value.trim();
-        const pass = document.getElementById('passPassword').value.trim();
+        const pass = document.getElementById('passPassword').value;
 
-        const users = JSON.parse(localStorage.getItem('skyOpsUsers')) || [];
-        const foundUser = users.find(u => u.email === email && u.password === pass);
+        // Kayıtlı kullanıcıları güvenli şekilde oku.
+        let users = [];
 
-        if (foundUser || (false)) {
-            const activeName = foundUser ? foundUser.name : "Test Kullanıcısı";
-            sessionStorage.setItem('skyOpsActiveUser', activeName);
+        try {
+            const storedUsers = JSON.parse(
+                localStorage.getItem('skyOpsUsers') || '[]'
+            );
 
-            // 🌟 YENİ: YOLCU KİMLİĞİ VE ROLÜNÜ KAYDET 🌟
+            if (Array.isArray(storedUsers)) {
+                users = storedUsers;
+            }
+        } catch (error) {
+            console.error('Kullanıcı verileri okunamadı:', error);
+        }
+
+        // E-posta ve şifre eşleşmesini kontrol et.
+        const foundUser = users.find(user =>
+            typeof user.email === 'string' &&
+            typeof user.password === 'string' &&
+            user.email.toLowerCase() === email.toLowerCase() &&
+            user.password === pass
+        );
+
+        if (foundUser) {
+            sessionStorage.setItem('skyOpsActiveUser', foundUser.name);
+            sessionStorage.setItem('skyOpsActiveUserEmail', foundUser.email);
             sessionStorage.setItem('isLoggedIn', 'true');
             sessionStorage.setItem('userRole', 'passenger');
 
             const btn = passFormEl.querySelector('button');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Giriş Yapılıyor...';
-            setTimeout(() => window.location.href = 'yolcu.html', 800);
+
+            if (btn) {
+                btn.innerHTML =
+                    '<i class="fas fa-spinner fa-spin me-2"></i>Giriş Yapılıyor...';
+                btn.disabled = true;
+            }
+
+            setTimeout(() => {
+                window.location.href = 'yolcu.html';
+            }, 800);
         } else {
-            showNotification("E-posta veya şifre hatalı! Hesabınız yoksa kayıt olun.", "error");
+            showNotification(
+                translations[currentLang].msgAuthError,
+                'error'
+            );
         }
     });
+}
 
     // --- 5. YOLCU KAYIT OLMA ---
     const regFormEl = document.getElementById('formRegisterSubmit');
@@ -229,57 +275,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 6. ŞİFRE SIFIRLAMA İŞLEMİ (GERÇEK ZAMANLI MOCK) ---
-    const formForgotSubmit = document.getElementById('formForgotSubmit');
-    if (formForgotSubmit) {
-        formForgotSubmit.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const resetEmail = document.getElementById('forgotEmail').value.trim();
-            const newPassword = document.getElementById('forgotNewPassword').value.trim();
-            
-            let users = JSON.parse(localStorage.getItem('skyOpsUsers')) || [];
-            const userIndex = users.findIndex(u => u.email === resetEmail);
 
-            if (userIndex !== -1) {
-                users[userIndex].password = newPassword;
-                localStorage.setItem('skyOpsUsers', JSON.stringify(users));
-                
-                showNotification("Şifreniz başarıyla güncellendi!", "success");
-                
-                document.getElementById('forgotEmail').value = '';
-                document.getElementById('forgotNewPassword').value = '';
-                formForgot.classList.remove('active');
-                setTimeout(() => {
-                    formPass.classList.add('active');
-                    roleToggle.style.display = 'flex';
-                    document.getElementById('passEmail').value = resetEmail;
-                }, 50);
-            } else {
-                showNotification("Bu e-posta adresi sistemde bulunamadı!", "error");
-            }
-        });
-    }
+// --- 6. GÜVENLİ ŞİFRE SIFIRLAMA UYARISI ---
+const formForgotSubmit = document.getElementById('formForgotSubmit');
 
-    // --- 7. PERSONEL/ADMİN GİRİŞ İŞLEMLERİ (Sabit) ---
-    const empFormEl = formEmp.querySelector('form');
+if (formForgotSubmit) {
+    formForgotSubmit.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        // Bu demo sürümünde e-posta sahipliği doğrulaması bulunmuyor.
+        // Bu nedenle şifre değiştirme işlemi gerçekleştirilmez.
+        showNotification(
+            "Bu demo sürümünde güvenli şifre sıfırlama desteklenmemektedir.",
+            "error"
+        );
+    });
+}
+
+
+// --- 7. PERSONEL GİRİŞİ (Public Demo Sürümünde Devre Dışı) ---
+const empFormEl = formEmp.querySelector('form');
+
+if (empFormEl) {
     empFormEl.addEventListener('submit', (e) => {
         e.preventDefault();
-        
-        const empId = document.getElementById('empId').value.trim();
-        const empPassword = document.getElementById('empPassword').value.trim();
 
-        if (false) {
-            // 🌟 YENİ: ADMİN KİMLİĞİ VE ROLÜNÜ KAYDET 🌟
-            sessionStorage.setItem('isLoggedIn', 'true');
-            sessionStorage.setItem('userRole', 'admin');
+        const message = currentLang === 'en'
+            ? 'Staff login is unavailable in the public demo version.'
+            : 'Personel girişi public demo sürümünde kullanılamamaktadır.';
 
-            const btn = empFormEl.querySelector('button');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Bağlanıyor...';
-            setTimeout(() => window.location.href = 'index.html', 800);
-        } else {
-            showNotification("Yetkisiz erişim! Sicil No veya şifre hatalı.", "error");
-        }
+        showNotification(message, 'error');
     });
+}
+
 
     // --- 8. PERSONEL IT DESTEK BİRİMİ UYARISI ---
     if (btnITSupport) {
