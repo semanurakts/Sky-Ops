@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Country {
+  id   String @id @db.VarChar(10)
+  name String @db.VarChar(100)
+
+  airlines Airline[]
+  cities   City[]
+}
+
+model City {
+  id        String @id @db.VarChar(50)
+  name      String @db.VarChar(100)
+  countryId String @db.VarChar(10)
+
+  country  Country   @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  airports Airport[]
+
+  @@index([countryId])
+  @@index([name])
+}
+
+model Gender {
+  id   String  @id @db.VarChar(10)
+  name String  @unique @db.VarChar(50)
+  icon String? @db.VarChar(20)
+
+  personnel Personnel[]
+}
+
+model Airline {
+  id        String @id @db.VarChar(20)
+  code      String @unique @db.VarChar(10)
+  name      String @db.VarChar(120)
+  countryId String @db.VarChar(10)
+
+  country Country  @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  flights Flight[]
+
+  @@index([countryId])
+}
+
+model Airport {
+  id     String @id @db.VarChar(20)
+  code   String @unique @db.VarChar(10)
+  name   String @db.VarChar(150)
+  cityId String @db.VarChar(50)
+
+  city City @relation(fields: [cityId], references: [id], onDelete: Restrict)
+
+  departingFlights Flight[] @relation("FlightOrigin")
+  arrivingFlights  Flight[] @relation("FlightDestination")
+
+  routesFrom RouteDuration[] @relation("RouteOrigin")
+  routesTo   RouteDuration[] @relation("RouteDestination")
+
+  currentPersonnel Personnel[] @relation("PersonnelCurrentAirport")
+}
+
+model Personnel {
+  id       String  @id @db.VarChar(20)
+  name     String  @db.VarChar(150)
+  role     String  @db.VarChar(50)
+  genderId String? @db.VarChar(10)
+
+  lastUpdate       DateTime? @db.Date
+  flightHours      Float     @default(0)
+  dailyFlightHours Float     @default(0)
+  fatiguePoint     Float     @default(0)
+  status           String    @default("AVAILABLE") @db.VarChar(30)
+  risk             String?   @db.VarChar(30)
+
+  currentLocation  String?   @db.VarChar(10)
+  currentAirportId String?   @db.VarChar(20)
+  lastDecayTime    DateTime? @db.Timestamptz(3)
+
+  gender Gender? @relation(fields: [genderId], references: [id], onDelete: SetNull)
+
+  currentAirport Airport? @relation("PersonnelCurrentAirport", fields: [currentAirportId], references: [id], onDelete: SetNull)
+
+  pilotFlights    Flight[]               @relation("FlightPilot")
+  crewAssignments FlightCrewAssignment[]
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  @@index([genderId])
+  @@index([currentAirportId])
+  @@index([role])
+  @@index([status])
+}
+
+model Flight {
+  id       String @id @db.VarChar(20)
+  flightNo String @db.VarChar(20)
+  route    String @db.VarChar(50)
+
+  departureDate DateTime @db.Date
+  departureTime String   @db.VarChar(5)
+
+  gate   String? @db.VarChar(20)
+  status String  @default("SCHEDULED") @db.VarChar(30)
+
+  airlineId            String? @db.VarChar(20)
+  originAirportId      String? @db.VarChar(20)
+  destinationAirportId String? @db.VarChar(20)
+  pilotId              String? @db.VarChar(20)
+
+  airline Airline? @relation(fields: [airlineId], references: [id], onDelete: SetNull)
+
+  originAirport Airport? @relation("FlightOrigin", fields: [originAirportId], references: [id], onDelete: SetNull)
+
+  destinationAirport Airport? @relation("FlightDestination", fields: [destinationAirportId], references: [id], onDelete: SetNull)
+
+  pilot Personnel? @relation("FlightPilot", fields: [pilotId], references: [id], onDelete: SetNull)
+
+  crewAssignments FlightCrewAssignment[]
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  @@index([departureDate, departureTime])
+  @@index([status])
+  @@index([pilotId])
+  @@index([airlineId])
+  @@index([originAirportId, destinationAirportId])
+}
+
+model FlightCrewAssignment {
+  flightId    String   @db.VarChar(20)
+  personnelId String   @db.VarChar(20)
+  assignedAt  DateTime @default(now()) @db.Timestamptz(3)
+
+  flight Flight @relation(fields: [flightId], references: [id], onDelete: Cascade)
+
+  personnel Personnel @relation(fields: [personnelId], references: [id], onDelete: Cascade)
+
+  @@id([flightId, personnelId])
+  @@index([personnelId])
+}
+
+model RouteDuration {
+  id                   String @id @db.VarChar(20)
+  originAirportId      String @db.VarChar(20)
+  destinationAirportId String @db.VarChar(20)
+  durationMinutes      Int
+
+  originAirport Airport @relation("RouteOrigin", fields: [originAirportId], references: [id], onDelete: Restrict)
+
+  destinationAirport Airport @relation("RouteDestination", fields: [destinationAirportId], references: [id], onDelete: Restrict)
+
+  @@unique([originAirportId, destinationAirportId])
+}
