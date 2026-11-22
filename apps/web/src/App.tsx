@@ -1,7 +1,15 @@
-import LoginPage from './features/auth/LoginPage'
+
+import LoginPage from "./features/auth/LoginPage";
+import DashboardPage from "./features/dashboard/DashboardPage";
 
 function App() {
-  return <LoginPage />
+  const currentPath = window.location.pathname.replace(/\/+$/, "");
+
+  if (currentPath === "/dashboard") {
+    return <DashboardPage />;
+  }
+
+  return <LoginPage />;
 }
 
-export default App
+export default App;

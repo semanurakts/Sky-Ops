@@ -1,5 +1,8 @@
+
 import express, { type ErrorRequestHandler } from "express";
 import healthRouter from "./routes/health.routes.js";
+import dashboardRouter from "./routes/dashboard.routes.js";
+import dashboardFlightsRouter from "./routes/dashboard-flights.routes.js";
 
 const app = express();
 
@@ -8,6 +11,8 @@ app.disable("x-powered-by");
 app.use(express.json({ limit: "1mb" }));
 
 app.use("/health", healthRouter);
+app.use("/dashboard/flights", dashboardFlightsRouter);
+app.use("/dashboard", dashboardRouter);
 
 app.use((_req, res) => {
   res.status(404).json({
