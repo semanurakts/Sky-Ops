@@ -87,6 +87,7 @@ model Personnel {
 
   pilotFlights    Flight[]               @relation("FlightPilot")
   crewAssignments FlightCrewAssignment[]
+  user            User?                  @relation("PersonnelUser")
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
@@ -157,4 +158,43 @@ model RouteDuration {
   destinationAirport Airport @relation("RouteDestination", fields: [destinationAirportId], references: [id], onDelete: Restrict)
 
   @@unique([originAirportId, destinationAirportId])
+}
+
+enum UserRole {
+  ADMIN
+  STAFF
+  PASSENGER
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique @db.VarChar(254)
+  passwordHash String   @db.VarChar(255)
+  role         UserRole @default(PASSENGER)
+  isActive     Boolean  @default(true)
+
+  personnelId String?    @unique @db.VarChar(20)
+  personnel   Personnel? @relation("PersonnelUser", fields: [personnelId], references: [id], onDelete: SetNull)
+
+  sessions Session[]
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  @@index([role, isActive])
+}
+
+model Session {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @db.Uuid
+  tokenHash  String    @unique @db.VarChar(64)
+  expiresAt  DateTime  @db.Timestamptz(3)
+  createdAt  DateTime  @default(now()) @db.Timestamptz(3)
+  lastSeenAt DateTime  @default(now()) @db.Timestamptz(3)
+  revokedAt  DateTime? @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt])
+  @@index([expiresAt])
 }
