@@ -11,7 +11,9 @@
     "test:integration": "tsx --test src/routes/auth.routes.test.ts",
     "test:authorization": "tsx --test src/middleware/require-role.middleware.test.ts",
     "admin:create": "tsx src/scripts/create-admin.ts",
-    "admin:verify": "tsx src/scripts/verify-admin-login.ts"
+    "admin:verify": "tsx src/scripts/verify-admin-login.ts",
+    "test:dashboard-auth": "tsx --test src/routes/dashboard.authorization.test.ts",
+    "test:admin-users": "tsx --test src/routes/admin-users.routes.test.ts"
   },
   "keywords": [],
   "author": "",

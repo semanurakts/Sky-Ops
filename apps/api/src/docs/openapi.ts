@@ -13,15 +13,19 @@ const openApiDocument = {
       description: "Current SkyOps API host",
     },
   ],
-  tags: [
-    { name: "Health", description: "API and database health checks" },
-    { name: "Authentication", description: "Login, logout and current user" },
-    {
-      name: "Dashboard",
-      description:
-        "Operations dashboard data. These routes are not yet protected by authentication in the current implementation.",
-    },
-  ],
+tags: [
+  { name: "Health", description: "API and database health checks" },
+  { name: "Authentication", description: "Login, logout and current user" },
+  {
+    name: "Admin",
+    description: "Administrative user and personnel account management",
+  },
+  {
+    name: "Dashboard",
+    description:
+      "Operations dashboard data. Requires an authenticated ADMIN or STAFF session.",
+  },
+],
   components: {
     securitySchemes: {
       sessionCookie: {
@@ -272,6 +276,103 @@ const openApiDocument = {
         },
         required: ["id", "name", "role", "fatiguePoint", "status", "gender"],
       },
+            AdminUser: {
+        type: "object",
+        properties: {
+          id: { type: "string", format: "uuid" },
+          email: { type: "string", format: "email" },
+          role: { $ref: "#/components/schemas/UserRole" },
+          isActive: { type: "boolean" },
+          personnelId: { type: "string", nullable: true },
+          createdAt: { type: "string", format: "date-time" },
+          updatedAt: { type: "string", format: "date-time" },
+          personnel: {
+            type: "object",
+            nullable: true,
+            properties: {
+              id: { type: "string" },
+              name: { type: "string" },
+              role: { type: "string" },
+            },
+            required: ["id", "name", "role"],
+          },
+        },
+        required: [
+          "id",
+          "email",
+          "role",
+          "isActive",
+          "personnelId",
+          "createdAt",
+          "updatedAt",
+          "personnel",
+        ],
+      },
+      AdminUsersResponse: {
+        type: "object",
+        properties: {
+          users: {
+            type: "array",
+            items: { $ref: "#/components/schemas/AdminUser" },
+          },
+        },
+        required: ["users"],
+      },
+      PersonnelOption: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          name: { type: "string" },
+          role: { type: "string" },
+          status: { type: "string" },
+        },
+        required: ["id", "name", "role", "status"],
+      },
+      PersonnelOptionsResponse: {
+        type: "object",
+        properties: {
+          personnel: {
+            type: "array",
+            items: { $ref: "#/components/schemas/PersonnelOption" },
+          },
+        },
+        required: ["personnel"],
+      },
+      CreateStaffAccountRequest: {
+        type: "object",
+        properties: {
+          email: {
+            type: "string",
+            format: "email",
+            maxLength: 254,
+          },
+          password: {
+            type: "string",
+            minLength: 14,
+            maxLength: 1024,
+          },
+          personnelId: { type: "string" },
+        },
+        required: ["email", "password", "personnelId"],
+      },
+      UpdateUserRoleRequest: {
+        type: "object",
+        properties: {
+          role: {
+            type: "string",
+            enum: ["ADMIN", "STAFF", "PASSENGER"],
+          },
+          personnelId: { type: "string" },
+        },
+        required: ["role"],
+      },
+      UpdateUserStatusRequest: {
+        type: "object",
+        properties: {
+          isActive: { type: "boolean" },
+        },
+        required: ["isActive"],
+      },
       CrewResponse: {
         type: "object",
         properties: {
@@ -397,128 +498,337 @@ const openApiDocument = {
         },
       },
     },
-    "/dashboard/overview": {
+        "/admin/users": {
       get: {
-        tags: ["Dashboard"],
-        summary: "Get dashboard overview metrics",
-        description:
-          "Currently not protected by authentication. Restrict to STAFF and ADMIN before production deployment.",
+        tags: ["Admin"],
+        summary: "List user accounts",
+        description: "ADMIN access required. Password hashes are never returned.",
+        security: [{ sessionCookie: [] }],
         responses: {
           "200": {
-            description: "Dashboard overview",
+            description: "User accounts",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/AdminUsersResponse" },
+              },
+            },
+          },
+          "401": { description: "Authentication required" },
+          "403": { description: "ADMIN role required" },
+        },
+      },
+      post: {
+        tags: ["Admin"],
+        summary: "Create a staff account",
+        description:
+          "Creates a STAFF account linked to an existing unlinked Personnel record. Requires a trusted Origin.",
+        security: [{ sessionCookie: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/CreateStaffAccountRequest",
+              },
+            },
+          },
+        },
+        responses: {
+          "201": {
+            description: "Staff account created",
             content: {
               "application/json": {
                 schema: {
-                  $ref: "#/components/schemas/DashboardOverviewResponse",
+                  type: "object",
+                  properties: {
+                    user: { $ref: "#/components/schemas/AdminUser" },
+                  },
+                  required: ["user"],
                 },
               },
             },
           },
+          "400": { description: "Invalid request" },
+          "401": { description: "Authentication required" },
+          "403": { description: "ADMIN role or trusted Origin required" },
+          "404": { description: "Personnel record not found" },
+          "409": { description: "Duplicate account or personnel link" },
         },
       },
     },
-    "/dashboard/traffic": {
+    "/admin/users/personnel-options": {
       get: {
-        tags: ["Dashboard"],
-        summary: "Get flight traffic data",
-        parameters: [
-          {
-            name: "period",
-            in: "query",
-            required: false,
-            schema: {
-              type: "string",
-              enum: ["today", "week"],
-              default: "today",
-            },
-          },
-          {
-            name: "date",
-            in: "query",
-            required: false,
-            schema: {
-              type: "string",
-              format: "date",
-            },
-            description: "Date in YYYY-MM-DD format; defaults to current UTC date.",
-          },
-        ],
+        tags: ["Admin"],
+        summary: "List personnel available for account linking",
+        security: [{ sessionCookie: [] }],
         responses: {
           "200": {
-            description: "Hourly or daily traffic data",
+            description: "Unlinked personnel records",
             content: {
               "application/json": {
-                schema: { $ref: "#/components/schemas/TrafficResponse" },
+                schema: {
+                  $ref: "#/components/schemas/PersonnelOptionsResponse",
+                },
               },
             },
           },
-          "400": { description: "Invalid period or date" },
+          "401": { description: "Authentication required" },
+          "403": { description: "ADMIN role required" },
         },
       },
     },
-    "/dashboard/flights": {
-      get: {
-        tags: ["Dashboard"],
-        summary: "Get paginated flights",
+    "/admin/users/{id}/role": {
+      patch: {
+        tags: ["Admin"],
+        summary: "Update a user role",
         description:
-          "Currently not protected by authentication. Restrict to STAFF and ADMIN before production deployment.",
+          "ADMIN access required. Existing sessions are revoked when the role changes. The last active administrator cannot be demoted.",
+        security: [{ sessionCookie: [] }],
         parameters: [
           {
-            name: "page",
-            in: "query",
-            schema: { type: "integer", minimum: 1, default: 1 },
-          },
-          {
-            name: "pageSize",
-            in: "query",
-            schema: { type: "integer", minimum: 1, maximum: 50, default: 10 },
-          },
-          {
-            name: "includeArchived",
-            in: "query",
-            schema: { type: "boolean", default: false },
-          },
-        ],
-        responses: {
-          "200": {
-            description: "Paginated flight list",
-            content: {
-              "application/json": {
-                schema: { $ref: "#/components/schemas/FlightListResponse" },
-              },
-            },
-          },
-          "400": { description: "Invalid pagination parameters" },
-        },
-      },
-    },
-    "/dashboard/flights/{flightId}/crew": {
-      get: {
-        tags: ["Dashboard"],
-        summary: "Get crew details for a flight",
-        description:
-          "Currently not protected by authentication. Restrict to STAFF and ADMIN before production deployment.",
-        parameters: [
-          {
-            name: "flightId",
+            name: "id",
             in: "path",
             required: true,
-            schema: { type: "string" },
+            schema: { type: "string", format: "uuid" },
           },
         ],
-        responses: {
-          "200": {
-            description: "Flight and crew details",
-            content: {
-              "application/json": {
-                schema: { $ref: "#/components/schemas/CrewResponse" },
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/UpdateUserRoleRequest",
               },
             },
           },
-          "404": { description: "Flight not found" },
+        },
+        responses: {
+          "200": {
+            description: "User role updated",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    user: { $ref: "#/components/schemas/AdminUser" },
+                  },
+                  required: ["user"],
+                },
+              },
+            },
+          },
+          "400": { description: "Invalid role or personnel assignment" },
+          "401": { description: "Authentication required" },
+          "403": { description: "ADMIN role required or self-demotion blocked" },
+          "404": { description: "User or personnel not found" },
+          "409": { description: "Last administrator or personnel conflict" },
         },
       },
     },
+    "/admin/users/{id}/status": {
+      patch: {
+        tags: ["Admin"],
+        summary: "Activate or deactivate a user account",
+        description:
+          "ADMIN access required. Deactivation revokes active sessions. The last active administrator cannot be deactivated.",
+        security: [{ sessionCookie: [] }],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            schema: { type: "string", format: "uuid" },
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/UpdateUserStatusRequest",
+              },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "Account status updated",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    user: { $ref: "#/components/schemas/AdminUser" },
+                  },
+                  required: ["user"],
+                },
+              },
+            },
+          },
+          "400": { description: "Invalid status value" },
+          "401": { description: "Authentication required" },
+          "403": { description: "ADMIN role required or self-deactivation blocked" },
+          "404": { description: "User not found" },
+          "409": { description: "Last active administrator cannot be deactivated" },
+        },
+      },
+    },
+    "/dashboard/overview": {
+  get: {
+    tags: ["Dashboard"],
+    summary: "Get dashboard overview metrics",
+    description:
+      "Available to authenticated ADMIN and STAFF users only.",
+    security: [{ sessionCookie: [] }],
+    responses: {
+      "200": {
+        description: "Dashboard overview",
+        content: {
+          "application/json": {
+            schema: {
+              $ref: "#/components/schemas/DashboardOverviewResponse",
+            },
+          },
+        },
+      },
+      "401": {
+        description: "Missing, expired or invalid session",
+      },
+      "403": {
+        description:
+          "Authenticated user does not have ADMIN or STAFF role",
+      },
+    },
+  },
+},
+    "/dashboard/traffic": {
+  get: {
+    tags: ["Dashboard"],
+    summary: "Get flight traffic data",
+    description:
+      "Available to authenticated ADMIN and STAFF users only.",
+    security: [{ sessionCookie: [] }],
+    parameters: [
+      {
+        name: "period",
+        in: "query",
+        required: false,
+        schema: {
+          type: "string",
+          enum: ["today", "week"],
+          default: "today",
+        },
+      },
+      {
+        name: "date",
+        in: "query",
+        required: false,
+        schema: {
+          type: "string",
+          format: "date",
+        },
+        description: "Date in YYYY-MM-DD format; defaults to current UTC date.",
+      },
+    ],
+    responses: {
+      "200": {
+        description: "Hourly or daily traffic data",
+        content: {
+          "application/json": {
+            schema: { $ref: "#/components/schemas/TrafficResponse" },
+          },
+        },
+      },
+      "400": { description: "Invalid period or date" },
+      "401": {
+        description: "Missing, expired or invalid session",
+      },
+      "403": {
+        description:
+          "Authenticated user does not have ADMIN or STAFF role",
+      },
+    },
+  },
+},
+    "/dashboard/flights": {
+  get: {
+    tags: ["Dashboard"],
+    summary: "Get paginated flights",
+    description:
+      "Available to authenticated ADMIN and STAFF users only.",
+    security: [{ sessionCookie: [] }],
+    parameters: [
+      {
+        name: "page",
+        in: "query",
+        schema: { type: "integer", minimum: 1, default: 1 },
+      },
+      {
+        name: "pageSize",
+        in: "query",
+        schema: { type: "integer", minimum: 1, maximum: 50, default: 10 },
+      },
+      {
+        name: "includeArchived",
+        in: "query",
+        schema: { type: "boolean", default: false },
+      },
+    ],
+    responses: {
+      "200": {
+        description: "Paginated flight list",
+        content: {
+          "application/json": {
+            schema: { $ref: "#/components/schemas/FlightListResponse" },
+          },
+        },
+      },
+      "400": { description: "Invalid pagination parameters" },
+      "401": {
+        description: "Missing, expired or invalid session",
+      },
+      "403": {
+        description:
+          "Authenticated user does not have ADMIN or STAFF role",
+      },
+    },
+  },
+},
+    "/dashboard/flights/{flightId}/crew": {
+  get: {
+    tags: ["Dashboard"],
+    summary: "Get crew details for a flight",
+    description:
+      "Available to authenticated ADMIN and STAFF users only.",
+    security: [{ sessionCookie: [] }],
+    parameters: [
+      {
+        name: "flightId",
+        in: "path",
+        required: true,
+        schema: { type: "string" },
+      },
+    ],
+    responses: {
+      "200": {
+        description: "Flight and crew details",
+        content: {
+          "application/json": {
+            schema: { $ref: "#/components/schemas/CrewResponse" },
+          },
+        },
+      },
+      "401": {
+        description: "Missing, expired or invalid session",
+      },
+      "403": {
+        description:
+          "Authenticated user does not have ADMIN or STAFF role",
+      },
+      "404": { description: "Flight not found" },
+    },
+  },
+},
   },
 };
 

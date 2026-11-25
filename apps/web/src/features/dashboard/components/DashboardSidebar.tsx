@@ -6,11 +6,13 @@ export type DashboardNavItem =
   | "flights"
   | "personnel"
   | "reports"
-  | "archive";
+  | "archive"
+  | "users";
 
 interface DashboardSidebarProps {
   language: DashboardLanguage;
   activeItem: DashboardNavItem;
+  canManageUsers: boolean;
   onNavigate: (item: DashboardNavItem) => void;
   onLogout: () => void;
 }
@@ -24,6 +26,7 @@ const translations = {
     reports: "Raporlar",
     archive: "Uçuş Arşivi",
     logout: "Çıkış Yap",
+    users: "Kullanıcı Yönetimi",
   },
   en: {
     subtitle: "FLIGHT OPERATIONS SYSTEM",
@@ -33,6 +36,7 @@ const translations = {
     reports: "Reports",
     archive: "Flight Archive",
     logout: "Log Out",
+    users: "User Management",
   },
 };
 
@@ -45,11 +49,13 @@ const navigation: {
   { id: "personnel", icon: "fa-solid fa-users" },
   { id: "reports", icon: "fa-solid fa-chart-pie" },
   { id: "archive", icon: "fa-solid fa-box-archive" },
+  { id: "users", icon: "fa-solid fa-user-gear" },
 ];
 
 function DashboardSidebar({
   language,
   activeItem,
+  canManageUsers,
   onNavigate,
   onLogout,
 }: DashboardSidebarProps) {
@@ -72,7 +78,9 @@ function DashboardSidebar({
 
       <nav aria-label="Main navigation">
         <ul className="dashboard-nav-links">
-          {navigation.map((item) => (
+          {navigation
+  .filter((item) => item.id !== "users" || canManageUsers)
+  .map((item) => (
             <li key={item.id}>
               <button
                 type="button"

@@ -1,6 +1,7 @@
-
+import { useAuth } from "../auth/useAuth";
 import { useCallback, useEffect, useState } from "react";
 import "./DashboardPage.css";
+import UserManagementPage from "./users/UserManagementPage";
 
 import DashboardSidebar, {
   type DashboardLanguage,
@@ -70,6 +71,9 @@ const emptyPagination: PaginationInfo = {
 };
 
 function DashboardPage() {
+  const { logout, user } = useAuth();
+
+const canManageUsers = user?.role === "ADMIN";
   const [language, setLanguage] = useState<DashboardLanguage>(() => {
     return localStorage.getItem("skyOpsAdminLang") === "en"
       ? "en"
@@ -316,6 +320,12 @@ const handleArchivedToggle = () => {
 
       return;
     }
+if (item === "users") {
+  if (!canManageUsers) return;
+
+  setActiveItem("users");
+  return;
+}
 
     setActiveItem(item);
 
@@ -327,16 +337,27 @@ const handleArchivedToggle = () => {
   };
 
   // Logout confirmation.
-  const handleLogout = () => {
-    const message =
-      language === "tr"
-        ? "Dashboard ekranından çıkmak istiyor musunuz?"
-        : "Do you want to leave the dashboard?";
+const handleLogout = async () => {
+  const message =
+    language === "tr"
+      ? "Dashboard ekranından çıkmak istiyor musunuz?"
+      : "Do you want to leave the dashboard?";
 
-    if (window.confirm(message)) {
-      window.location.assign("/");
-    }
-  };
+  if (!window.confirm(message)) {
+    return;
+  }
+
+  try {
+    await logout();
+    window.location.assign("/");
+  } catch {
+    window.alert(
+      language === "tr"
+        ? "Oturum kapatılamadı. Lütfen tekrar deneyin."
+        : "Could not sign out. Please try again.",
+    );
+  }
+};
 
   // KPI values.
   const metrics = overview?.metrics ?? {
@@ -354,11 +375,12 @@ const handleArchivedToggle = () => {
   return (
     <div className="dashboard-shell">
       <DashboardSidebar
-        language={language}
-        activeItem={activeItem}
-        onNavigate={handleNavigate}
-        onLogout={handleLogout}
-      />
+  language={language}
+  activeItem={activeItem}
+  canManageUsers={canManageUsers}
+  onNavigate={handleNavigate}
+  onLogout={handleLogout}
+/>
 
       <main className="dashboard-main-content">
         <DashboardTopbar
@@ -367,63 +389,68 @@ const handleArchivedToggle = () => {
           onLogout={handleLogout}
         />
 
-        {navigationNotice && (
-          <div className="dashboard-notice" role="status">
-            {navigationNotice}
-          </div>
+                {activeItem === "users" ? (
+          <UserManagementPage language={language} />
+        ) : (
+          <>
+            {navigationNotice && (
+              <div className="dashboard-notice" role="status">
+                {navigationNotice}
+              </div>
+            )}
+
+            {(overviewError || trafficError || flightsError) && (
+              <div className="dashboard-error-message" role="alert">
+                <i className="fa-solid fa-circle-exclamation" />
+                <span>
+                  {language === "tr"
+                    ? "Bazı Dashboard verileri yüklenemedi: "
+                    : "Some dashboard data could not be loaded: "}
+
+                  {[overviewError, trafficError, flightsError]
+                    .filter(Boolean)
+                    .join(" | ")}
+                </span>
+              </div>
+            )}
+
+            {/* KPI Cards */}
+            <DashboardKpis
+              metrics={metrics}
+              language={language}
+            />
+
+            {/* Traffic Chart and Density Gauge */}
+            <div className="dashboard-analytics-grid">
+              <FlightTrafficChart
+                traffic={trafficLoading ? null : traffic}
+                period={period}
+                onPeriodChange={setPeriod}
+                language={language}
+              />
+
+              <DensityGauge
+                score={metrics.densityScore}
+                maxScore={metrics.densityMax}
+                language={language}
+              />
+            </div>
+
+            {/* Paginated Flight Table */}
+            <div id="dashboard-flights">
+              <RecentFlightsTable
+                flights={flights}
+                pagination={pagination}
+                language={language}
+                loading={flightsLoading}
+                showArchived={showArchived}
+                onPageChange={setPage}
+                onCrewSelect={handleCrewSelect}
+                onArchivedToggle={handleArchivedToggle}
+              />
+            </div>
+          </>
         )}
-
-        {(overviewError || trafficError || flightsError) && (
-          <div className="dashboard-error-message" role="alert">
-            <i className="fa-solid fa-circle-exclamation" />
-
-            <span>
-              {language === "tr"
-                ? "Bazı Dashboard verileri yüklenemedi: "
-                : "Some dashboard data could not be loaded: "}
-
-              {[overviewError, trafficError, flightsError]
-                .filter(Boolean)
-                .join(" | ")}
-            </span>
-          </div>
-        )}
-
-        {/* KPI Cards */}
-        <DashboardKpis
-          metrics={metrics}
-          language={language}
-        />
-
-        {/* Traffic Chart and Density Gauge */}
-        <div className="dashboard-analytics-grid">
-          <FlightTrafficChart
-            traffic={trafficLoading ? null : traffic}
-            period={period}
-            onPeriodChange={setPeriod}
-            language={language}
-          />
-
-          <DensityGauge
-            score={metrics.densityScore}
-            maxScore={metrics.densityMax}
-            language={language}
-          />
-        </div>
-
-        {/* Paginated Flight Table */}
-        <div id="dashboard-flights">
-          <RecentFlightsTable
-            flights={flights}
-            pagination={pagination}
-            language={language}
-            loading={flightsLoading}
-            showArchived={showArchived}
-            onPageChange={setPage}
-            onCrewSelect={handleCrewSelect}
-            onArchivedToggle={handleArchivedToggle}
-          />
-        </div>
       </main>
 
       {/* Crew Detail Modal */}

@@ -12,6 +12,7 @@ import openApiDocument from "./docs/openapi.js";
 
 import healthRouter from "./routes/health.routes.js";
 import authRouter from "./routes/auth.routes.js";
+import adminUsersRouter from "./routes/admin-users.routes.js";
 import dashboardRouter from "./routes/dashboard.routes.js";
 import dashboardFlightsRouter from "./routes/dashboard-flights.routes.js";
 
@@ -74,11 +75,32 @@ app.use(
   swaggerUi.setup(openApiDocument),
 );
 
-// Existing API routes.
+// Public endpoints
 app.use("/health", healthRouter);
 app.use("/auth", authRouter);
-app.use("/dashboard/flights", dashboardFlightsRouter);
-app.use("/dashboard", dashboardRouter);
+
+// Admin user management: authenticated Admin users only.
+app.use(
+  "/admin/users",
+  requireSession,
+  requireRole("ADMIN"),
+  adminUsersRouter,
+);
+
+// Dashboard: authenticated Staff and Admin only
+app.use(
+  "/dashboard/flights",
+  requireSession,
+  requireRole("ADMIN", "STAFF"),
+  dashboardFlightsRouter,
+);
+
+app.use(
+  "/dashboard",
+  requireSession,
+  requireRole("ADMIN", "STAFF"),
+  dashboardRouter,
+);
 
 // Not found handler.
 app.use((_req, res) => {

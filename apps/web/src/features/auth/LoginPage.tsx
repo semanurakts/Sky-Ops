@@ -1,5 +1,6 @@
 import { useEffect, useState, type SubmitEvent, type MouseEvent } from 'react'
 import './LoginPage.css'
+import { useAuth } from './useAuth'
 
 type Language = 'tr' | 'en'
 type LoginRole = 'passenger' | 'employee'
@@ -116,6 +117,11 @@ function getInitialLanguage(): Language {
 }
 
 function LoginPage() {
+    const { login, logout } = useAuth()
+
+  const [staffEmail, setStaffEmail] = useState('')
+  const [staffPassword, setStaffPassword] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [language, setLanguage] = useState<Language>(getInitialLanguage)
   const [activeRole, setActiveRole] = useState<LoginRole>('passenger')
   const [activeView, setActiveView] = useState<ActiveView>('login')
@@ -185,10 +191,43 @@ function LoginPage() {
     showNotification(t('passwordResetUnavailable'), 'error')
   }
 
-  function handleStaffLogin(event: SubmitEvent<HTMLFormElement>) {
-    event.preventDefault()
-    showNotification(t('staffUnavailable'), 'error')
+async function handleStaffLogin(event: SubmitEvent<HTMLFormElement>) {
+  event.preventDefault();
+
+  if (isSubmitting) return;
+
+  setIsSubmitting(true);
+
+  try {
+    const user = await login(staffEmail.trim(), staffPassword);
+
+    if (user.role !== "ADMIN" && user.role !== "STAFF") {
+      await logout();
+
+      showNotification(
+        language === "tr"
+          ? "Bu hesap personel Dashboard erişimine sahip değil."
+          : "This account does not have staff dashboard access.",
+        "error",
+      );
+
+      return;
+    }
+
+    window.location.assign("/dashboard");
+  } catch (error) {
+    showNotification(
+      error instanceof Error
+        ? error.message
+        : language === "tr"
+          ? "Giriş başarısız."
+          : "Login failed.",
+      "error",
+    );
+  } finally {
+    setIsSubmitting(false);
   }
+}
 
   function handleITSupport(event: MouseEvent<HTMLAnchorElement>) {
     event.preventDefault()
@@ -440,17 +479,19 @@ function LoginPage() {
 
               <form onSubmit={handleStaffLogin}>
                 <div className="form-floating">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="empId"
-                    placeholder=" "
-                    autoComplete="username"
-                    required
-                  />
-                  <label htmlFor="empId">
+<input
+  type="email"
+  className="form-control"
+  id="empEmail"
+  placeholder=" "
+  autoComplete="username"
+  value={staffEmail}
+  onChange={(event) => setStaffEmail(event.target.value)}
+  required
+/>
+                  <label htmlFor="empEmail">
                     <i className="fa-solid fa-id-badge" aria-hidden="true" />
-                    <span>{t('badgeLabel')}</span>
+                    <span>{t('emailLabel')}</span>
                   </label>
                 </div>
 
@@ -461,6 +502,8 @@ function LoginPage() {
                     id="empPassword"
                     placeholder=" "
                     autoComplete="current-password"
+                    value={staffPassword}
+                    onChange={(event) => setStaffPassword(event.target.value)}
                     required
                   />
                   <label htmlFor="empPassword">
@@ -475,10 +518,18 @@ function LoginPage() {
                   </a>
                 </div>
 
-                <button type="submit" className="btn-login btn-employee">
-                  <i className="fa-solid fa-user-shield" aria-hidden="true" />
-                  <span>{t('connectSystemBtn')}</span>
-                </button>
+<button
+  type="submit"
+  className="btn-login btn-employee"
+  disabled={isSubmitting}
+>
+  <i className="fa-solid fa-user-shield" aria-hidden="true" />
+  <span>
+    {isSubmitting
+      ? (language === 'tr' ? 'Bağlanıyor...' : 'Connecting...')
+      : t('connectSystemBtn')}
+  </span>
+</button>
 
                 <div className="employee-warning">
                   <i className="fa-solid fa-triangle-exclamation" aria-hidden="true" />
