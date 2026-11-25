@@ -45,6 +45,34 @@ function hasPrismaCode(error: unknown, code: string): boolean {
   );
 }
 
+function isTransactionConflict(error: unknown): boolean {
+  if (hasPrismaCode(error, "P2034")) {
+    return true;
+  }
+
+  if (
+    typeof error !== "object" ||
+    error === null ||
+    !("cause" in error)
+  ) {
+    return false;
+  }
+
+  const cause = error.cause;
+
+  if (typeof cause !== "object" || cause === null) {
+    return false;
+  }
+
+  return (
+    ("originalCode" in cause && cause.originalCode === "40001") ||
+    ("kind" in cause &&
+      cause.kind === "TransactionWriteConflict")
+  );
+}
+
+
+
 function getSingleRouteParam(
   value: string | string[] | undefined,
 ): string | null {
@@ -206,7 +234,7 @@ router.post("/", requireTrustedOrigin, async (req, res, next) => {
       });
     }
 
-    if (hasPrismaCode(error, "P2034")) {
+    if (isTransactionConflict(error)) {
       return res.status(409).json({
         error: {
           code: "TRANSACTION_CONFLICT",
@@ -414,7 +442,7 @@ if (!userId) {
 
     return res.status(200).json({ user: result.user });
   } catch (error) {
-    if (hasPrismaCode(error, "P2034")) {
+    if (isTransactionConflict(error)) {
       return res.status(409).json({
         error: {
           code: "TRANSACTION_CONFLICT",
@@ -556,7 +584,7 @@ if (typeof isActive !== "boolean") {
 
     return res.status(200).json({ user: result.user });
   } catch (error) {
-    if (hasPrismaCode(error, "P2034")) {
+    if (isTransactionConflict(error)) {
       return res.status(409).json({
         error: {
           code: "TRANSACTION_CONFLICT",

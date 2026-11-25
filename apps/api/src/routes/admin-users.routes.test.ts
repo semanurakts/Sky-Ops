@@ -1,3 +1,4 @@
+
 import test, { before, after } from "node:test";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
@@ -99,6 +100,42 @@ async function requestAdmin(
         ? JSON.stringify(options.body)
         : undefined,
   });
+}
+
+// Verify that a concurrent operation produces one success
+// and one properly handled conflict response.
+async function assertOneSuccessAndOneConflict(
+  responses: Response[],
+  operation: string,
+): Promise<void> {
+  const statuses = responses
+    .map((response) => response.status)
+    .sort((a, b) => a - b);
+
+  assert.deepEqual(
+    statuses,
+    [200, 409],
+    `Expected one successful ${operation} request and one conflict. Received statuses: ${statuses.join(", ")}`,
+  );
+
+  const conflictResponse = responses.find(
+    (response) => response.status === 409,
+  );
+
+  assert.ok(conflictResponse);
+
+  const conflictBody = (await conflictResponse.json()) as {
+    error?: {
+      code?: string;
+    };
+  };
+
+  assert.ok(
+    ["TRANSACTION_CONFLICT", "LAST_ACTIVE_ADMIN"].includes(
+      conflictBody.error?.code ?? "",
+    ),
+    `Unexpected conflict response code: ${conflictBody.error?.code}`,
+  );
 }
 
 before(async () => {
@@ -453,4 +490,97 @@ test("Invalid account status values are rejected", async () => {
   );
 
   assert.equal(response.status, 400);
+});
+
+// --------------------------------------------------
+// Concurrent administrator protection
+// --------------------------------------------------
+
+test("Concurrent administrator role changes cannot demote every active administrator", async () => {
+  const secondAdmin = await createTestUser("ADMIN");
+
+  const responses = await Promise.all([
+    requestAdmin(`/admin/users/${secondAdmin.id}/role`, {
+      method: "PATCH",
+      cookie: adminCookie,
+      origin: trustedOrigin,
+      body: {
+        role: "PASSENGER",
+      },
+    }),
+    requestAdmin(`/admin/users/${adminId}/role`, {
+      method: "PATCH",
+      cookie: secondAdmin.cookie,
+      origin: trustedOrigin,
+      body: {
+        role: "PASSENGER",
+      },
+    }),
+  ]);
+
+  await assertOneSuccessAndOneConflict(
+    responses,
+    "administrator role change",
+  );
+
+  const activeAdminCount = await prisma.user.count({
+    where: {
+      role: "ADMIN",
+      isActive: true,
+    },
+  });
+
+  assert.equal(activeAdminCount, 1);
+});
+
+test("Concurrent administrator deactivations cannot deactivate every active administrator", async () => {
+  const survivingAdmin = await prisma.user.findFirst({
+    where: {
+      role: "ADMIN",
+      isActive: true,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  assert.ok(survivingAdmin);
+
+  const survivorSession = await createSession(survivingAdmin.id);
+  const survivorCookie = `${SESSION_COOKIE_NAME}=${survivorSession.token}`;
+
+  const secondAdmin = await createTestUser("ADMIN");
+
+  const responses = await Promise.all([
+    requestAdmin(`/admin/users/${secondAdmin.id}/status`, {
+      method: "PATCH",
+      cookie: survivorCookie,
+      origin: trustedOrigin,
+      body: {
+        isActive: false,
+      },
+    }),
+    requestAdmin(`/admin/users/${survivingAdmin.id}/status`, {
+      method: "PATCH",
+      cookie: secondAdmin.cookie,
+      origin: trustedOrigin,
+      body: {
+        isActive: false,
+      },
+    }),
+  ]);
+
+  await assertOneSuccessAndOneConflict(
+    responses,
+    "administrator deactivation",
+  );
+
+  const activeAdminCount = await prisma.user.count({
+    where: {
+      role: "ADMIN",
+      isActive: true,
+    },
+  });
+
+  assert.equal(activeAdminCount, 1);
 });
