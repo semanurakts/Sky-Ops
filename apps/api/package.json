@@ -13,7 +13,8 @@
     "admin:create": "tsx src/scripts/create-admin.ts",
     "admin:verify": "tsx src/scripts/verify-admin-login.ts",
     "test:dashboard-auth": "tsx --test src/routes/dashboard.authorization.test.ts",
-    "test:admin-users": "tsx --test src/routes/admin-users.routes.test.ts"
+    "test:admin-users": "tsx --test src/routes/admin-users.routes.test.ts",
+    "test:flights": "tsx --test src/routes/flights.routes.test.ts"
   },
   "keywords": [],
   "author": "",

@@ -2,6 +2,7 @@ import { useAuth } from "../auth/useAuth";
 import { useCallback, useEffect, useState } from "react";
 import "./DashboardPage.css";
 import UserManagementPage from "./users/UserManagementPage";
+import FlightManagementPage from "../flights/FlightManagementPage";
 
 import DashboardSidebar, {
   type DashboardLanguage,
@@ -295,18 +296,12 @@ const handleArchivedToggle = () => {
       return;
     }
 
-    if (item === "flights") {
-      setActiveItem("flights");
-      setShowArchived(false);
-      setPage(1);
-
-      document.getElementById("dashboard-flights")?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-
-      return;
-    }
+if (item === "flights") {
+  setActiveItem("flights");
+  setShowArchived(false);
+  setPage(1);
+  return;
+}
 
     if (item === "archive") {
       setActiveItem("archive");
@@ -389,10 +384,12 @@ const handleLogout = async () => {
           onLogout={handleLogout}
         />
 
-                {activeItem === "users" ? (
-          <UserManagementPage language={language} />
-        ) : (
-          <>
+{activeItem === "users" ? (
+  <UserManagementPage language={language} />
+) : activeItem === "flights" ? (
+  <FlightManagementPage language={language} />
+) : (
+  <>
             {navigationNotice && (
               <div className="dashboard-notice" role="status">
                 {navigationNotice}

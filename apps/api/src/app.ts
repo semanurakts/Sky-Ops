@@ -15,6 +15,7 @@ import authRouter from "./routes/auth.routes.js";
 import adminUsersRouter from "./routes/admin-users.routes.js";
 import dashboardRouter from "./routes/dashboard.routes.js";
 import dashboardFlightsRouter from "./routes/dashboard-flights.routes.js";
+import flightsRouter from "./routes/flights.routes.js";
 
 import { requireSession } from "./middleware/session.middleware.js";
 import { requireRole } from "./middleware/require-role.middleware.js";
@@ -85,6 +86,14 @@ app.use(
   requireSession,
   requireRole("ADMIN"),
   adminUsersRouter,
+);
+
+// Flight management: authenticated Staff and Admin only.
+app.use(
+  "/flights",
+  requireSession,
+  requireRole("ADMIN", "STAFF"),
+  flightsRouter,
 );
 
 // Dashboard: authenticated Staff and Admin only

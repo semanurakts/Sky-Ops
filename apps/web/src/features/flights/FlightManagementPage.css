@@ -1,0 +1,688 @@
+
+.flight-management {
+  width: 100%;
+  max-width: 1700px;
+  margin: 0 auto;
+  padding: 26px 30px 42px;
+  color: #172033;
+  font-family: inherit;
+}
+
+.flight-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.flight-page-header h1 {
+  margin: 0;
+  color: #14213a;
+  font-size: 25px;
+  font-weight: 750;
+  letter-spacing: -0.6px;
+}
+
+.flight-page-header p {
+  margin: 7px 0 0;
+  color: #728096;
+  font-size: 13px;
+}
+
+.flight-primary-button,
+.flight-secondary-button {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.flight-primary-button {
+  border: 1px solid #2456cb;
+  background: #2456cb;
+  color: #fff;
+}
+
+.flight-primary-button:hover:not(:disabled) {
+  background: #1945ae;
+  border-color: #1945ae;
+  transform: translateY(-1px);
+}
+
+.flight-primary-button:disabled,
+.flight-secondary-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.flight-secondary-button {
+  border: 1px solid #d9e0ea;
+  background: #fff;
+  color: #44516a;
+}
+
+.flight-secondary-button:hover:not(:disabled) {
+  background: #f5f7fb;
+}
+
+.flight-notice,
+.flight-error,
+.flight-loading {
+  margin-bottom: 16px;
+  padding: 13px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.flight-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #effaf4;
+  color: #167449;
+  border: 1px solid #c9ebd7;
+}
+
+.flight-notice button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 21px;
+  cursor: pointer;
+}
+
+.flight-error {
+  background: #fff3f1;
+  border: 1px solid #f2d0cb;
+  color: #a3382d;
+  line-height: 1.5;
+}
+
+.flight-loading {
+  background: #f0f5ff;
+  color: #365b9f;
+}
+
+.flight-management-panel {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid #e5eaf1;
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 4px 18px rgba(22, 39, 70, 0.035);
+}
+
+.flight-operation-tabs {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 64px;
+  padding: 13px 20px;
+  border-bottom: 1px solid #edf0f5;
+}
+
+.flight-operation-tabs button {
+  min-height: 36px;
+  padding: 0 15px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: #778398;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.flight-operation-tabs button:hover {
+  background: #f5f7fb;
+  color: #2d4775;
+}
+
+.flight-operation-tabs button.active {
+  background: #edf3ff;
+  border-color: #dce8ff;
+  color: #2456cb;
+}
+
+.flight-filter-grid {
+  display: grid;
+  grid-template-columns: minmax(190px, 1.7fr) minmax(140px, 0.9fr) minmax(150px, 1fr) minmax(150px, 1fr) auto;
+  align-items: end;
+  gap: 12px;
+  padding: 18px 20px;
+  border-bottom: 1px solid #edf0f5;
+}
+
+.flight-search-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.flight-search-field > i {
+  position: absolute;
+  left: 13px;
+  color: #92a0b3;
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.flight-search-field input,
+.flight-filter-grid select,
+.flight-date-filter input {
+  width: 100%;
+  height: 40px;
+  min-width: 0;
+  padding: 0 11px;
+  border: 1px solid #e1e6ef;
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+  color: #34425a;
+  font: inherit;
+  font-size: 12px;
+}
+
+.flight-search-field input {
+  padding-left: 37px;
+}
+
+.flight-search-field input:focus,
+.flight-filter-grid select:focus,
+.flight-date-filter input:focus,
+.flight-modal input:focus,
+.flight-modal select:focus {
+  border-color: #83a4ef;
+  box-shadow: 0 0 0 3px rgba(36, 86, 203, 0.09);
+}
+
+.flight-date-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #778398;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.flight-clear-button {
+  height: 40px;
+  padding: 0 11px;
+  border: 1px solid #e1e6ef;
+  border-radius: 8px;
+  background: #fff;
+  color: #637188;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.flight-clear-button:hover {
+  background: #f5f7fb;
+  color: #34425a;
+}
+
+.flight-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.flight-management-table {
+  width: 100%;
+  min-width: 1120px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.flight-management-table th {
+  height: 48px;
+  padding: 0 14px;
+  background: #f8fafd;
+  color: #7a879b;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.45px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.flight-management-table td {
+  height: 68px;
+  padding: 10px 14px;
+  border-top: 1px solid #edf0f5;
+  color: #46546a;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.flight-management-table tbody tr:hover {
+  background: #fbfcff;
+}
+
+.flight-number {
+  color: #203c71;
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.2px;
+}
+
+.flight-route-value {
+  color: #3e506d;
+  font-weight: 600;
+}
+
+.flight-date-value {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #778398;
+  font-size: 11px;
+}
+
+.flight-date-value strong {
+  color: #33445f;
+  font-size: 12px;
+}
+
+.flight-crew-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #4f6589;
+  font-weight: 650;
+}
+
+.flight-crew-count i {
+  color: #8294b3;
+}
+
+.flight-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 25px;
+  padding: 0 9px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.flight-status-badge.status-scheduled {
+  background: #eff3fa;
+  color: #536987;
+}
+
+.flight-status-badge.status-boarding {
+  background: #edf3ff;
+  color: #3264c3;
+}
+
+.flight-status-badge.status-departed {
+  background: #eaf6fc;
+  color: #1b769c;
+}
+
+.flight-status-badge.status-arrived {
+  background: #eaf8f0;
+  color: #24794f;
+}
+
+.flight-status-badge.status-delayed {
+  background: #fff6e7;
+  color: #a56a0a;
+}
+
+.flight-status-badge.status-cancelled {
+  background: #fff0ef;
+  color: #b3443c;
+}
+
+.flight-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.flight-row-actions select {
+  max-width: 125px;
+  height: 33px;
+  padding: 0 7px;
+  border: 1px solid #e0e6ef;
+  border-radius: 7px;
+  background: #fff;
+  color: #52627b;
+  font: inherit;
+  font-size: 10px;
+}
+
+.flight-row-actions select:disabled {
+  opacity: 0.55;
+}
+
+.flight-edit-button {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e0e8f7;
+  border-radius: 7px;
+  background: #f4f7fd;
+  color: #3c60a2;
+  cursor: pointer;
+}
+
+.flight-edit-button:hover:not(:disabled) {
+  background: #e8effd;
+}
+
+.flight-edit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.flight-table-message {
+  height: 120px !important;
+  color: #8793a5 !important;
+  text-align: center;
+  font-size: 13px !important;
+}
+
+.flight-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  min-height: 65px;
+  padding: 12px 20px;
+  border-top: 1px solid #edf0f5;
+  color: #7a879b;
+  font-size: 11px;
+}
+
+.flight-pagination > div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.flight-pagination button {
+  min-height: 33px;
+  padding: 0 12px;
+  border: 1px solid #e0e6ef;
+  border-radius: 7px;
+  background: #fff;
+  color: #52627b;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.flight-pagination button:hover:not(:disabled) {
+  background: #f1f5fc;
+  color: #2456cb;
+}
+
+.flight-pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.flight-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 24px;
+  background: rgba(14, 26, 47, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.flight-modal {
+  width: min(690px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 17px;
+  background: #fff;
+  box-shadow: 0 22px 70px rgba(12, 28, 55, 0.25);
+}
+
+.flight-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 23px 25px 18px;
+  border-bottom: 1px solid #edf0f5;
+}
+
+.flight-modal-header h2 {
+  margin: 0;
+  color: #1d2e4c;
+  font-size: 19px;
+  font-weight: 750;
+}
+
+.flight-modal-header p {
+  margin: 6px 0 0;
+  color: #7b879a;
+  font-size: 11px;
+}
+
+.flight-modal-header > button {
+  width: 31px;
+  height: 31px;
+  border: 1px solid #e7ebf2;
+  border-radius: 8px;
+  background: #fff;
+  color: #65738a;
+  font-size: 21px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.flight-modal form {
+  padding: 22px 25px 24px;
+}
+
+.flight-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 17px;
+}
+
+.flight-modal label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: #53627a;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.flight-modal input,
+.flight-modal select {
+  width: 100%;
+  min-width: 0;
+  min-height: 41px;
+  padding: 0 11px;
+  border: 1px solid #dfe5ee;
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+  color: #34445e;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 450;
+}
+
+.flight-modal select[multiple] {
+  min-height: 125px;
+  padding: 7px;
+}
+
+.flight-modal select[multiple] option {
+  padding: 6px 8px;
+  border-radius: 5px;
+}
+
+.flight-crew-field {
+  margin-top: 18px;
+}
+
+.flight-form-hint {
+  color: #8793a5;
+  font-size: 10px;
+  font-weight: 450;
+  line-height: 1.5;
+}
+
+.flight-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 23px;
+  padding-top: 18px;
+  border-top: 1px solid #edf0f5;
+}
+
+.flight-modal-footer button {
+  min-width: 115px;
+}
+
+@media (max-width: 1250px) {
+  .flight-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .flight-search-field {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .flight-management {
+    padding: 20px 14px 30px;
+  }
+
+  .flight-page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .flight-page-header h1 {
+    font-size: 21px;
+  }
+
+  .flight-operation-tabs {
+    overflow-x: auto;
+    padding: 11px;
+  }
+
+  .flight-operation-tabs button {
+    flex-shrink: 0;
+    padding: 0 11px;
+    font-size: 11px;
+  }
+
+  .flight-filter-grid {
+    grid-template-columns: 1fr;
+    padding: 14px;
+  }
+
+  .flight-search-field {
+    grid-column: auto;
+  }
+
+  .flight-pagination {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .flight-modal-backdrop {
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .flight-modal {
+    max-height: calc(100vh - 24px);
+    margin: auto 0;
+  }
+
+  .flight-modal-header {
+    padding: 18px 17px 15px;
+  }
+
+  .flight-modal form {
+    padding: 18px 17px;
+  }
+}
+
+@media (max-width: 520px) {
+  .flight-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .flight-modal-footer {
+    flex-direction: column-reverse;
+  }
+
+  .flight-modal-footer button {
+    width: 100%;
+  }
+}
+
+.flight-summary-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+  margin-bottom: 18px;
+}
+
+.flight-summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 16px 19px;
+  border: 1px solid #e5eaf1;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.flight-summary-card span {
+  color: #778398;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.flight-summary-card strong {
+  color: #203c71;
+  font-size: 22px;
+  font-weight: 750;
+}
+
+@media (max-width: 520px) {
+  .flight-summary-row {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+}
