@@ -74,7 +74,8 @@ const emptyPagination: PaginationInfo = {
 function DashboardPage() {
   const { logout, user } = useAuth();
 
-const canManageUsers = user?.role === "ADMIN";
+  const canManageUsers = user?.role === "ADMIN";
+
   const [language, setLanguage] = useState<DashboardLanguage>(() => {
     return localStorage.getItem("skyOpsAdminLang") === "en"
       ? "en"
@@ -121,7 +122,21 @@ const canManageUsers = user?.role === "ADMIN";
   const [crewLoading, setCrewLoading] = useState(false);
   const [crewError, setCrewError] = useState<string | null>(null);
 
+  // Other UI states
   const [navigationNotice, setNavigationNotice] = useState("");
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  // Used to trigger automatic dashboard refresh.
+  const [refreshTick, setRefreshTick] = useState(0);
+
+  // Refresh dashboard data every 30 seconds.
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setRefreshTick((current) => current + 1);
+    }, 30000);
+
+    return () => window.clearInterval(interval);
+  }, []);
 
   // Save selected language.
   useEffect(() => {
@@ -157,7 +172,7 @@ const canManageUsers = user?.role === "ADMIN";
     return () => {
       active = false;
     };
-  }, []);
+  }, [refreshTick]);
 
   // Load flight traffic.
   useEffect(() => {
@@ -196,7 +211,7 @@ const canManageUsers = user?.role === "ADMIN";
     return () => {
       active = false;
     };
-  }, [period]);
+  }, [period, refreshTick]);
 
   // Load paginated flights.
   // Archived records are included only when requested.
@@ -241,7 +256,7 @@ const canManageUsers = user?.role === "ADMIN";
     return () => {
       active = false;
     };
-  }, [page, showArchived]);
+  }, [page, showArchived, refreshTick]);
 
   // Open crew details.
   const handleCrewSelect = async (flightId: string) => {
@@ -274,10 +289,10 @@ const canManageUsers = user?.role === "ADMIN";
   }, []);
 
   // Toggle archive mode.
-const handleArchivedToggle = () => {
-  setShowArchived((current) => !current);
-  setPage(1);
-};
+  const handleArchivedToggle = () => {
+    setShowArchived((current) => !current);
+    setPage(1);
+  };
 
   // Sidebar navigation.
   const handleNavigate = (item: DashboardNavItem) => {
@@ -296,12 +311,12 @@ const handleArchivedToggle = () => {
       return;
     }
 
-if (item === "flights") {
-  setActiveItem("flights");
-  setShowArchived(false);
-  setPage(1);
-  return;
-}
+    if (item === "flights") {
+      setActiveItem("flights");
+      setShowArchived(false);
+      setPage(1);
+      return;
+    }
 
     if (item === "archive") {
       setActiveItem("archive");
@@ -315,12 +330,13 @@ if (item === "flights") {
 
       return;
     }
-if (item === "users") {
-  if (!canManageUsers) return;
 
-  setActiveItem("users");
-  return;
-}
+    if (item === "users") {
+      if (!canManageUsers) return;
+
+      setActiveItem("users");
+      return;
+    }
 
     setActiveItem(item);
 
@@ -331,28 +347,26 @@ if (item === "users") {
     );
   };
 
-  // Logout confirmation.
-const handleLogout = async () => {
-  const message =
-    language === "tr"
-      ? "Dashboard ekranından çıkmak istiyor musunuz?"
-      : "Do you want to leave the dashboard?";
+  // Open logout confirmation modal.
+  const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
 
-  if (!window.confirm(message)) {
-    return;
-  }
+  // Confirm logout.
+  const handleLogoutConfirm = async () => {
+    setShowLogoutModal(false);
 
-  try {
-    await logout();
-    window.location.assign("/");
-  } catch {
-    window.alert(
-      language === "tr"
-        ? "Oturum kapatılamadı. Lütfen tekrar deneyin."
-        : "Could not sign out. Please try again.",
-    );
-  }
-};
+    try {
+      await logout();
+      window.location.assign("/");
+    } catch {
+      window.alert(
+        language === "tr"
+          ? "Oturum kapatılamadı. Lütfen tekrar deneyin."
+          : "Could not sign out. Please try again.",
+      );
+    }
+  };
 
   // KPI values.
   const metrics = overview?.metrics ?? {
@@ -370,26 +384,27 @@ const handleLogout = async () => {
   return (
     <div className="dashboard-shell">
       <DashboardSidebar
-  language={language}
-  activeItem={activeItem}
-  canManageUsers={canManageUsers}
-  onNavigate={handleNavigate}
-  onLogout={handleLogout}
-/>
+        language={language}
+        activeItem={activeItem}
+        canManageUsers={canManageUsers}
+        onNavigate={handleNavigate}
+        onLogout={handleLogout}
+      />
 
       <main className="dashboard-main-content">
         <DashboardTopbar
+          activeItem={activeItem}
           language={language}
           onLanguageChange={setLanguage}
           onLogout={handleLogout}
         />
 
-{activeItem === "users" ? (
-  <UserManagementPage language={language} />
-) : activeItem === "flights" ? (
-  <FlightManagementPage language={language} />
-) : (
-  <>
+        {activeItem === "users" ? (
+          <UserManagementPage language={language} />
+        ) : activeItem === "flights" ? (
+          <FlightManagementPage language={language} />
+        ) : (
+          <>
             {navigationNotice && (
               <div className="dashboard-notice" role="status">
                 {navigationNotice}
@@ -429,6 +444,7 @@ const handleLogout = async () => {
               <DensityGauge
                 score={metrics.densityScore}
                 maxScore={metrics.densityMax}
+                gateOccupancyPercent={metrics.gateOccupancyPercent}
                 language={language}
               />
             </div>
@@ -450,10 +466,63 @@ const handleLogout = async () => {
         )}
       </main>
 
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div
+          className="dashboard-logout-overlay"
+          onClick={() => setShowLogoutModal(false)}
+        >
+          <div
+            className="dashboard-logout-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dashboard-logout-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="dashboard-logout-icon">
+              <i className="fa-solid fa-power-off" />
+            </div>
+
+            <h2 id="dashboard-logout-title">
+              {language === "tr"
+                ? "Sistemden Çıkılıyor"
+                : "Signing Out"}
+            </h2>
+
+            <p>
+              {language === "tr"
+                ? "Operasyon kontrol merkezinden çıkış yapmak istediğinize emin misiniz?"
+                : "Are you sure you want to sign out of the operations control center?"}
+            </p>
+
+            <div className="dashboard-logout-actions">
+              <button
+                type="button"
+                className="dashboard-logout-cancel"
+                onClick={() => setShowLogoutModal(false)}
+              >
+                {language === "tr" ? "İptal" : "Cancel"}
+              </button>
+
+              <button
+                type="button"
+                className="dashboard-logout-confirm"
+                onClick={() => void handleLogoutConfirm()}
+              >
+                {language === "tr" ? "Çıkış Yap" : "Sign Out"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Crew Detail Modal */}
       {selectedFlightId !== null && (
         <CrewDetailModal
           flight={crewDetails}
+          flightInfo={
+            flights.find((item) => item.id === selectedFlightId) ?? null
+          }
           loading={crewLoading}
           error={crewError}
           language={language}
