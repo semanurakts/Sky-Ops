@@ -1,4 +1,3 @@
-
 name: SkyOps CI
 
 on:
@@ -79,6 +78,10 @@ jobs:
       - name: Run admin user management tests
         working-directory: apps/api
         run: npm run test:admin-users
+
+      - name: Run flight management tests
+        working-directory: apps/api
+        run: npm run test:flights
 
       - name: Run backend typecheck
         working-directory: apps/api

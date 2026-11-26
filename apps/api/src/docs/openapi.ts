@@ -1,4 +1,3 @@
-
 const openApiDocument = {
   openapi: "3.0.3",
   info: {
@@ -13,19 +12,24 @@ const openApiDocument = {
       description: "Current SkyOps API host",
     },
   ],
-tags: [
-  { name: "Health", description: "API and database health checks" },
-  { name: "Authentication", description: "Login, logout and current user" },
-  {
-    name: "Admin",
-    description: "Administrative user and personnel account management",
-  },
-  {
-    name: "Dashboard",
-    description:
-      "Operations dashboard data. Requires an authenticated ADMIN or STAFF session.",
-  },
-],
+  tags: [
+    { name: "Health", description: "API and database health checks" },
+    { name: "Authentication", description: "Login, logout and current user" },
+    {
+      name: "Admin",
+      description: "Administrative user and personnel account management",
+    },
+    {
+      name: "Dashboard",
+      description:
+        "Operations dashboard data. Requires an authenticated ADMIN or STAFF session.",
+    },
+    {
+      name: "Flights",
+      description:
+        "Flight schedule management. Requires an authenticated ADMIN or STAFF session.",
+    },
+  ],
   components: {
     securitySchemes: {
       sessionCookie: {
@@ -276,7 +280,7 @@ tags: [
         },
         required: ["id", "name", "role", "fatiguePoint", "status", "gender"],
       },
-            AdminUser: {
+      AdminUser: {
         type: "object",
         properties: {
           id: { type: "string", format: "uuid" },
@@ -385,6 +389,344 @@ tags: [
           },
         },
         required: ["flightId", "flightNo", "pilot", "crew"],
+      },
+      FlightStatus: {
+        type: "string",
+        enum: [
+          "SCHEDULED",
+          "BOARDING",
+          "DEPARTED",
+          "ARRIVED",
+          "DELAYED",
+          "CANCELLED",
+        ],
+      },
+      FlightManagementRecord: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          flightNo: { type: "string" },
+          route: { type: "string" },
+          departureDate: { type: "string", format: "date" },
+          departureTime: {
+            type: "string",
+            pattern: "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+          },
+          gate: { type: "string", nullable: true },
+          status: { $ref: "#/components/schemas/FlightStatus" },
+          airlineId: { type: "string", nullable: true },
+          originAirportId: { type: "string", nullable: true },
+          destinationAirportId: { type: "string", nullable: true },
+          pilotId: { type: "string", nullable: true },
+          createdAt: { type: "string", format: "date-time" },
+          updatedAt: { type: "string", format: "date-time" },
+        },
+        required: [
+          "id",
+          "flightNo",
+          "route",
+          "departureDate",
+          "departureTime",
+          "gate",
+          "status",
+          "airlineId",
+          "originAirportId",
+          "destinationAirportId",
+          "pilotId",
+          "createdAt",
+          "updatedAt",
+        ],
+      },
+      FlightManagementListItem: {
+        allOf: [
+          { $ref: "#/components/schemas/FlightManagementRecord" },
+          {
+            type: "object",
+            properties: {
+              airlineName: { type: "string", nullable: true },
+              airlineCode: { type: "string", nullable: true },
+              originAirport: {
+                type: "object",
+                nullable: true,
+                properties: {
+                  code: { type: "string" },
+                  name: { type: "string" },
+                },
+              },
+              destinationAirport: {
+                type: "object",
+                nullable: true,
+                properties: {
+                  code: { type: "string" },
+                  name: { type: "string" },
+                },
+              },
+              pilot: {
+                type: "object",
+                nullable: true,
+                properties: {
+                  id: { type: "string" },
+                  name: { type: "string" },
+                },
+              },
+              crewCount: { type: "integer", minimum: 0 },
+            },
+            required: [
+              "airlineName",
+              "airlineCode",
+              "originAirport",
+              "destinationAirport",
+              "pilot",
+              "crewCount",
+            ],
+          },
+        ],
+      },
+      FlightManagementListResponse: {
+        type: "object",
+        properties: {
+          flights: {
+            type: "array",
+            items: {
+              $ref: "#/components/schemas/FlightManagementListItem",
+            },
+          },
+          pagination: {
+            type: "object",
+            properties: {
+              page: { type: "integer" },
+              pageSize: { type: "integer" },
+              total: { type: "integer" },
+              totalPages: { type: "integer" },
+              hasNext: { type: "boolean" },
+              hasPrevious: { type: "boolean" },
+            },
+            required: [
+              "page",
+              "pageSize",
+              "total",
+              "totalPages",
+              "hasNext",
+              "hasPrevious",
+            ],
+          },
+        },
+        required: ["flights", "pagination"],
+      },
+      FlightManagementDetails: {
+        allOf: [
+          { $ref: "#/components/schemas/FlightManagementRecord" },
+          {
+            type: "object",
+            properties: {
+              airline: {
+                type: "object",
+                nullable: true,
+                properties: {
+                  id: { type: "string" },
+                  code: { type: "string" },
+                  name: { type: "string" },
+                },
+              },
+              originAirport: {
+                type: "object",
+                nullable: true,
+                properties: {
+                  id: { type: "string" },
+                  code: { type: "string" },
+                  name: { type: "string" },
+                },
+              },
+              destinationAirport: {
+                type: "object",
+                nullable: true,
+                properties: {
+                  id: { type: "string" },
+                  code: { type: "string" },
+                  name: { type: "string" },
+                },
+              },
+              pilot: {
+                type: "object",
+                nullable: true,
+                properties: {
+                  id: { type: "string" },
+                  name: { type: "string" },
+                  role: { type: "string" },
+                },
+              },
+              crew: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    id: { type: "string" },
+                    name: { type: "string" },
+                    role: { type: "string" },
+                  },
+                  required: ["id", "name", "role"],
+                },
+              },
+            },
+            required: [
+              "airline",
+              "originAirport",
+              "destinationAirport",
+              "pilot",
+              "crew",
+            ],
+          },
+        ],
+      },
+      FlightInput: {
+        type: "object",
+        properties: {
+          airlineId: { type: "string", maxLength: 20 },
+          flightNumber: {
+            type: "string",
+            pattern: "^\\d{1,4}$",
+            example: "9876",
+          },
+          originAirportId: { type: "string", maxLength: 20 },
+          destinationAirportId: { type: "string", maxLength: 20 },
+          departureDate: { type: "string", format: "date" },
+          departureTime: {
+            type: "string",
+            pattern: "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+            example: "14:30",
+          },
+          gate: { type: "string", maxLength: 20 },
+          pilotId: { type: "string", maxLength: 20 },
+          crewIds: {
+            type: "array",
+            minItems: 2,
+            maxItems: 8,
+            uniqueItems: true,
+            items: { type: "string", maxLength: 20 },
+          },
+        },
+        required: [
+          "airlineId",
+          "flightNumber",
+          "originAirportId",
+          "destinationAirportId",
+          "departureDate",
+          "departureTime",
+          "gate",
+          "pilotId",
+          "crewIds",
+        ],
+      },
+      FlightMutationResponse: {
+        type: "object",
+        properties: {
+          flight: { $ref: "#/components/schemas/FlightManagementRecord" },
+        },
+        required: ["flight"],
+      },
+      FlightOptionsResponse: {
+        type: "object",
+        properties: {
+          airlines: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                id: { type: "string" },
+                code: { type: "string" },
+                name: { type: "string" },
+              },
+              required: ["id", "code", "name"],
+            },
+          },
+          airports: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                id: { type: "string" },
+                code: { type: "string" },
+                name: { type: "string" },
+                city: {
+                  type: "object",
+                  properties: {
+                    name: { type: "string" },
+                  },
+                  required: ["name"],
+                },
+              },
+              required: ["id", "code", "name", "city"],
+            },
+          },
+          pilots: {
+            type: "array",
+            items: { $ref: "#/components/schemas/FlightPersonnelOption" },
+          },
+          cabinCrew: {
+            type: "array",
+            items: { $ref: "#/components/schemas/FlightPersonnelOption" },
+          },
+          routeDurations: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                originAirportId: { type: "string" },
+                destinationAirportId: { type: "string" },
+                durationMinutes: { type: "integer" },
+              },
+              required: [
+                "originAirportId",
+                "destinationAirportId",
+                "durationMinutes",
+              ],
+            },
+          },
+        },
+        required: [
+          "airlines",
+          "airports",
+          "pilots",
+          "cabinCrew",
+          "routeDurations",
+        ],
+      },
+      FlightPersonnelOption: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          name: { type: "string" },
+          role: { type: "string" },
+          status: { type: "string" },
+          fatiguePoint: { type: "number" },
+          currentAirportId: { type: "string", nullable: true },
+          currentLocation: { type: "string", nullable: true },
+          currentAirport: {
+            type: "object",
+            nullable: true,
+            properties: {
+              code: { type: "string" },
+              name: { type: "string" },
+            },
+          },
+        },
+        required: [
+          "id",
+          "name",
+          "role",
+          "status",
+          "fatiguePoint",
+          "currentAirportId",
+          "currentLocation",
+          "currentAirport",
+        ],
+      },
+      UpdateFlightStatusRequest: {
+        type: "object",
+        properties: {
+          status: { $ref: "#/components/schemas/FlightStatus" },
+        },
+        required: ["status"],
       },
     },
   },
@@ -498,7 +840,7 @@ tags: [
         },
       },
     },
-        "/admin/users": {
+    "/admin/users": {
       get: {
         tags: ["Admin"],
         summary: "List user accounts",
@@ -674,161 +1016,399 @@ tags: [
       },
     },
     "/dashboard/overview": {
-  get: {
-    tags: ["Dashboard"],
-    summary: "Get dashboard overview metrics",
-    description:
-      "Available to authenticated ADMIN and STAFF users only.",
-    security: [{ sessionCookie: [] }],
-    responses: {
-      "200": {
-        description: "Dashboard overview",
-        content: {
-          "application/json": {
+      get: {
+        tags: ["Dashboard"],
+        summary: "Get dashboard overview metrics",
+        description:
+          "Available to authenticated ADMIN and STAFF users only.",
+        security: [{ sessionCookie: [] }],
+        responses: {
+          "200": {
+            description: "Dashboard overview",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/DashboardOverviewResponse",
+                },
+              },
+            },
+          },
+          "401": {
+            description: "Missing, expired or invalid session",
+          },
+          "403": {
+            description:
+              "Authenticated user does not have ADMIN or STAFF role",
+          },
+        },
+      },
+    },
+    "/dashboard/traffic": {
+      get: {
+        tags: ["Dashboard"],
+        summary: "Get flight traffic data",
+        description:
+          "Available to authenticated ADMIN and STAFF users only.",
+        security: [{ sessionCookie: [] }],
+        parameters: [
+          {
+            name: "period",
+            in: "query",
+            required: false,
             schema: {
-              $ref: "#/components/schemas/DashboardOverviewResponse",
+              type: "string",
+              enum: ["today", "week"],
+              default: "today",
+            },
+          },
+          {
+            name: "date",
+            in: "query",
+            required: false,
+            schema: {
+              type: "string",
+              format: "date",
+            },
+            description: "Date in YYYY-MM-DD format; defaults to current UTC date.",
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Hourly or daily traffic data",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/TrafficResponse" },
+              },
+            },
+          },
+          "400": { description: "Invalid period or date" },
+          "401": {
+            description: "Missing, expired or invalid session",
+          },
+          "403": {
+            description:
+              "Authenticated user does not have ADMIN or STAFF role",
+          },
+        },
+      },
+    },
+    "/dashboard/flights": {
+      get: {
+        tags: ["Dashboard"],
+        summary: "Get paginated flights",
+        description:
+          "Available to authenticated ADMIN and STAFF users only.",
+        security: [{ sessionCookie: [] }],
+        parameters: [
+          {
+            name: "page",
+            in: "query",
+            schema: { type: "integer", minimum: 1, default: 1 },
+          },
+          {
+            name: "pageSize",
+            in: "query",
+            schema: { type: "integer", minimum: 1, maximum: 50, default: 10 },
+          },
+          {
+            name: "includeArchived",
+            in: "query",
+            schema: { type: "boolean", default: false },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Paginated flight list",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/FlightListResponse" },
+              },
+            },
+          },
+          "400": { description: "Invalid pagination parameters" },
+          "401": {
+            description: "Missing, expired or invalid session",
+          },
+          "403": {
+            description:
+              "Authenticated user does not have ADMIN or STAFF role",
+          },
+        },
+      },
+    },
+    "/dashboard/flights/{flightId}/crew": {
+      get: {
+        tags: ["Dashboard"],
+        summary: "Get crew details for a flight",
+        description:
+          "Available to authenticated ADMIN and STAFF users only.",
+        security: [{ sessionCookie: [] }],
+        parameters: [
+          {
+            name: "flightId",
+            in: "path",
+            required: true,
+            schema: { type: "string" },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Flight and crew details",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/CrewResponse" },
+              },
+            },
+          },
+          "401": {
+            description: "Missing, expired or invalid session",
+          },
+          "403": {
+            description:
+              "Authenticated user does not have ADMIN or STAFF role",
+          },
+          "404": { description: "Flight not found" },
+        },
+      },
+    },
+
+    "/flights": {
+      get: {
+        tags: ["Flights"],
+        summary: "List and filter flights",
+        description:
+          "Available to authenticated ADMIN and STAFF users. Supports search, status, operation and date filters.",
+        security: [{ sessionCookie: [] }],
+        parameters: [
+          {
+            name: "page",
+            in: "query",
+            schema: { type: "integer", minimum: 1, default: 1 },
+          },
+          {
+            name: "pageSize",
+            in: "query",
+            schema: { type: "integer", minimum: 1, maximum: 50, default: 10 },
+          },
+          {
+            name: "operation",
+            in: "query",
+            schema: {
+              type: "string",
+              enum: ["all", "active", "completed"],
+              default: "all",
+            },
+          },
+          {
+            name: "search",
+            in: "query",
+            schema: { type: "string" },
+          },
+          {
+            name: "status",
+            in: "query",
+            schema: { $ref: "#/components/schemas/FlightStatus" },
+          },
+          {
+            name: "dateFrom",
+            in: "query",
+            schema: { type: "string", format: "date" },
+          },
+          {
+            name: "dateTo",
+            in: "query",
+            schema: { type: "string", format: "date" },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Paginated flight management list",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/FlightManagementListResponse",
+                },
+              },
+            },
+          },
+          "400": { description: "Invalid filter or pagination parameters" },
+          "401": { description: "Authentication required" },
+          "403": { description: "ADMIN or STAFF role required" },
+        },
+      },
+      post: {
+        tags: ["Flights"],
+        summary: "Create a flight",
+        description:
+          "Creates a scheduled flight. Requires a trusted Origin header. Validates flight number, route, gate and personnel scheduling conflicts.",
+        security: [{ sessionCookie: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/FlightInput" },
             },
           },
         },
-      },
-      "401": {
-        description: "Missing, expired or invalid session",
-      },
-      "403": {
-        description:
-          "Authenticated user does not have ADMIN or STAFF role",
-      },
-    },
-  },
-},
-    "/dashboard/traffic": {
-  get: {
-    tags: ["Dashboard"],
-    summary: "Get flight traffic data",
-    description:
-      "Available to authenticated ADMIN and STAFF users only.",
-    security: [{ sessionCookie: [] }],
-    parameters: [
-      {
-        name: "period",
-        in: "query",
-        required: false,
-        schema: {
-          type: "string",
-          enum: ["today", "week"],
-          default: "today",
-        },
-      },
-      {
-        name: "date",
-        in: "query",
-        required: false,
-        schema: {
-          type: "string",
-          format: "date",
-        },
-        description: "Date in YYYY-MM-DD format; defaults to current UTC date.",
-      },
-    ],
-    responses: {
-      "200": {
-        description: "Hourly or daily traffic data",
-        content: {
-          "application/json": {
-            schema: { $ref: "#/components/schemas/TrafficResponse" },
+        responses: {
+          "201": {
+            description: "Flight created",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/FlightMutationResponse" },
+              },
+            },
+          },
+          "400": { description: "Invalid flight input" },
+          "401": { description: "Authentication required" },
+          "403": {
+            description: "ADMIN or STAFF role required, or Origin rejected",
+          },
+          "409": {
+            description: "Flight number, gate, personnel or schedule conflict",
+          },
+          "422": {
+            description: "Invalid reference, personnel role or route",
           },
         },
       },
-      "400": { description: "Invalid period or date" },
-      "401": {
-        description: "Missing, expired or invalid session",
-      },
-      "403": {
+    },
+    "/flights/options": {
+      get: {
+        tags: ["Flights"],
+        summary: "Get flight form options",
         description:
-          "Authenticated user does not have ADMIN or STAFF role",
+          "Returns airlines, airports, pilots, cabin crew and configured route durations.",
+        security: [{ sessionCookie: [] }],
+        responses: {
+          "200": {
+            description: "Flight form selection options",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/FlightOptionsResponse" },
+              },
+            },
+          },
+          "401": { description: "Authentication required" },
+          "403": { description: "ADMIN or STAFF role required" },
+        },
       },
     },
-  },
-},
-    "/dashboard/flights": {
-  get: {
-    tags: ["Dashboard"],
-    summary: "Get paginated flights",
-    description:
-      "Available to authenticated ADMIN and STAFF users only.",
-    security: [{ sessionCookie: [] }],
-    parameters: [
-      {
-        name: "page",
-        in: "query",
-        schema: { type: "integer", minimum: 1, default: 1 },
+    "/flights/{id}": {
+      get: {
+        tags: ["Flights"],
+        summary: "Get flight details",
+        security: [{ sessionCookie: [] }],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            schema: { type: "string" },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Flight details including assigned personnel",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/FlightManagementDetails" },
+              },
+            },
+          },
+          "401": { description: "Authentication required" },
+          "403": { description: "ADMIN or STAFF role required" },
+          "404": { description: "Flight not found" },
+        },
       },
-      {
-        name: "pageSize",
-        in: "query",
-        schema: { type: "integer", minimum: 1, maximum: 50, default: 10 },
-      },
-      {
-        name: "includeArchived",
-        in: "query",
-        schema: { type: "boolean", default: false },
-      },
-    ],
-    responses: {
-      "200": {
-        description: "Paginated flight list",
-        content: {
-          "application/json": {
-            schema: { $ref: "#/components/schemas/FlightListResponse" },
+      put: {
+        tags: ["Flights"],
+        summary: "Update a scheduled flight",
+        description:
+          "Updates flight details and crew assignments. Completed, cancelled, departed or past flights cannot be edited. Requires a trusted Origin header.",
+        security: [{ sessionCookie: [] }],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            schema: { type: "string" },
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/FlightInput" },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "Flight updated",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/FlightMutationResponse" },
+              },
+            },
+          },
+          "400": { description: "Invalid flight input" },
+          "401": { description: "Authentication required" },
+          "403": {
+            description: "ADMIN or STAFF role required, or Origin rejected",
+          },
+          "404": { description: "Flight not found" },
+          "409": {
+            description: "Flight is locked or a scheduling conflict exists",
+          },
+          "422": {
+            description: "Invalid airline, airport, route or personnel reference",
           },
         },
       },
-      "400": { description: "Invalid pagination parameters" },
-      "401": {
-        description: "Missing, expired or invalid session",
-      },
-      "403": {
-        description:
-          "Authenticated user does not have ADMIN or STAFF role",
-      },
     },
-  },
-},
-    "/dashboard/flights/{flightId}/crew": {
-  get: {
-    tags: ["Dashboard"],
-    summary: "Get crew details for a flight",
-    description:
-      "Available to authenticated ADMIN and STAFF users only.",
-    security: [{ sessionCookie: [] }],
-    parameters: [
-      {
-        name: "flightId",
-        in: "path",
-        required: true,
-        schema: { type: "string" },
-      },
-    ],
-    responses: {
-      "200": {
-        description: "Flight and crew details",
-        content: {
-          "application/json": {
-            schema: { $ref: "#/components/schemas/CrewResponse" },
+    "/flights/{id}/status": {
+      patch: {
+        tags: ["Flights"],
+        summary: "Update flight status",
+        description:
+          "Changes the flight status using the allowed status transition rules. Requires a trusted Origin header.",
+        security: [{ sessionCookie: [] }],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            schema: { type: "string" },
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/UpdateFlightStatusRequest" },
+            },
           },
         },
+        responses: {
+          "200": {
+            description: "Flight status updated",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/FlightMutationResponse" },
+              },
+            },
+          },
+          "400": { description: "Invalid flight ID or status" },
+          "401": { description: "Authentication required" },
+          "403": {
+            description: "ADMIN or STAFF role required, or Origin rejected",
+          },
+          "404": { description: "Flight not found" },
+          "409": { description: "Invalid flight status transition" },
+        },
       },
-      "401": {
-        description: "Missing, expired or invalid session",
-      },
-      "403": {
-        description:
-          "Authenticated user does not have ADMIN or STAFF role",
-      },
-      "404": { description: "Flight not found" },
     },
-  },
-},
   },
 };
 
