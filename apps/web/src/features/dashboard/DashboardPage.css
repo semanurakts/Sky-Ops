@@ -436,7 +436,7 @@
 
 .dashboard-analytics-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.9fr);
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
   gap: 25px;
   margin-bottom: 25px;
 }
@@ -600,6 +600,46 @@
   color: #94a3b8;
   font-size: 20px;
   font-weight: 600;
+}
+
+/* AI OPERATIONAL ANALYSIS - LEGACY DESIGN */
+
+.dashboard-ai-analysis-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 8px 16px;
+  border: 1px solid #ffc107;
+  border-radius: 999px;
+  background: rgba(255, 193, 7, 0.25);
+  color: #ffc107;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dashboard-ai-alert {
+  margin: 16px 0 0;
+  padding: 0 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.dashboard-ai-alert.critical {
+  color: #dc3545;
+  font-weight: 700;
+}
+
+.dashboard-ai-alert.warning {
+  color: #664d03;
+  font-weight: 400;
+}
+
+.dashboard-ai-alert.normal {
+  color: #198754;
+  font-weight: 400;
 }
 
 .dashboard-density-status {
@@ -1150,7 +1190,7 @@
   }
 
   .dashboard-analytics-grid {
-    grid-template-columns: minmax(0, 1.4fr) minmax(250px, 1fr);
+    grid-template-columns: minmax(0, 2fr) minmax(250px, 1fr);
   }
 
   .dashboard-topbar {
@@ -1398,4 +1438,473 @@
 .dashboard-archive-toggle:hover {
   background: #dbeafe;
   border-color: #3b82f6;
+}
+
+/* LEGACY DASHBOARD FLIGHT TABLE PARITY */
+
+.dashboard-flight-table {
+  min-width: 900px;
+}
+
+.dashboard-flight-table thead th {
+  padding: 15px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dashboard-flight-table tbody td {
+  padding: 15px;
+  color: #334155;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.dashboard-flight-number {
+  color: #212529;
+  font-family: "Courier New", monospace;
+  font-weight: 700;
+}
+
+.dashboard-flight-datetime span {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.dashboard-flight-datetime strong {
+  color: #212529;
+  font-family: "Courier New", monospace;
+  font-size: 15px;
+}
+
+.dashboard-gate-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background: #f8f9fa;
+  color: #212529;
+  font-size: 13px;
+}
+
+.dashboard-crew-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.dashboard-table-pilot {
+  gap: 5px;
+}
+
+.dashboard-pilot-icon {
+  font-size: 18px;
+}
+
+.dashboard-pilot-icon.fa-user-nurse {
+  color: #dc3545;
+}
+
+.dashboard-pilot-icon.fa-user-tie {
+  color: #0d6efd;
+}
+
+.dashboard-pilot-icon.fa-question-circle {
+  color: #6c757d;
+}
+
+.dashboard-crew-count-button {
+  height: 22px;
+  padding: 0 8px;
+  border: 1px solid #0d6efd;
+  border-radius: 999px;
+  background: white;
+  color: #0d6efd;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.dashboard-crew-count-button:hover {
+  background: #0d6efd;
+  color: white;
+}
+
+.dashboard-inspect-button {
+  padding: 5px 9px;
+  border: 1px solid #f8f9fa;
+  border-radius: 4px;
+  background: #f8f9fa;
+  color: #212529;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dashboard-inspect-button:hover {
+  background: #e9ecef;
+}
+
+.dashboard-status.status-on-time {
+  background: #d1e7dd;
+  color: #198754;
+}
+
+.dashboard-status.status-delayed {
+  background: #fff3cd;
+  color: #664d03;
+}
+
+.dashboard-status.status-landed {
+  background: #0d6efd;
+  color: white;
+}
+
+.dashboard-status.status-cancelled {
+  background: #f8d7da;
+  color: #dc3545;
+}
+
+.dashboard-status.status-default {
+  background: #e2e3e5;
+  color: #41464b;
+}
+
+/* LEGACY NUMBERED PAGINATION */
+
+.dashboard-pagination {
+  justify-content: center;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.dashboard-pagination-controls {
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.dashboard-pagination-controls button {
+  min-width: 0;
+  height: auto;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: none;
+}
+
+.dashboard-pagination-controls button.active {
+  border: none;
+  background: #f1f5f9;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.dashboard-pagination-controls button:hover:not(:disabled) {
+  border: none;
+  background: #f8fafc;
+  color: #334155;
+}
+
+.dashboard-pagination-ellipsis {
+  padding: 6px 4px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .dashboard-crew-cell {
+    gap: 6px;
+  }
+
+  .dashboard-pagination {
+    justify-content: center;
+  }
+}
+
+/* LEGACY CREW DETAIL MODAL DESIGN */
+
+.dashboard-crew-modal {
+  width: min(800px, 100%);
+  max-height: min(85vh, 800px);
+  border-radius: 20px;
+  background: #f8f9fa;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-modal-header {
+  align-items: flex-start;
+  padding: 20px 25px;
+  border: none;
+  border-radius: 20px 20px 0 0;
+  background: #f8f9fa;
+}
+
+.dashboard-modal-header h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+  font-size: 20px;
+  color: #212529;
+}
+
+.dashboard-modal-header h2 i {
+  color: #0d6efd;
+}
+
+.dashboard-modal-flight-info {
+  margin: 0;
+  color: #6c757d;
+  font-size: 12px;
+}
+
+.dashboard-modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  border-radius: 0 0 20px 20px;
+  background: #f8f9fa;
+}
+
+/* Three-column crew card layout */
+
+.dashboard-crew-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.dashboard-crew-member {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.dashboard-crew-member:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.dashboard-crew-role-badge {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.dashboard-crew-role-badge.role-pilot {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.dashboard-crew-role-badge.role-cabin {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.dashboard-crew-avatar {
+  width: 60px;
+  height: 60px;
+  flex: 0 0 60px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  border-radius: 50%;
+  font-size: 24px;
+}
+
+.dashboard-crew-avatar.pilot {
+  border: 2px solid #bae6fd;
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.dashboard-crew-avatar.cabin {
+  border: 2px solid #e2e8f0;
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.dashboard-crew-member-name {
+  margin: 0 0 4px;
+  color: #212529;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.dashboard-crew-member-id {
+  margin: 0 0 8px;
+  color: #6c757d;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+}
+
+.dashboard-fatigue-info {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 12px;
+  text-align: left;
+}
+
+.dashboard-fatigue-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+  font-size: 11px;
+}
+
+.dashboard-fatigue-label span {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.dashboard-fatigue-label strong {
+  color: #212529;
+  font-size: 11px;
+}
+
+.dashboard-fatigue-track {
+  height: 6px;
+  margin-top: 10px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #f1f5f9;
+}
+
+/* Responsive card columns */
+
+@media (min-width: 576px) and (max-width: 767px) {
+  .dashboard-crew-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 575px) {
+  .dashboard-crew-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-modal-header {
+    padding: 18px;
+  }
+
+  .dashboard-modal-body {
+    padding: 18px;
+  }
+}
+
+/* LEGACY LOGOUT CONFIRMATION MODAL */
+
+.dashboard-logout-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+}
+
+.dashboard-logout-modal {
+  width: min(400px, 100%);
+  padding: 28px 24px;
+  border: 0;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: dashboard-logout-enter 0.18s ease-out;
+}
+
+.dashboard-logout-icon {
+  margin-bottom: 16px;
+  color: #dc3545;
+  font-size: 42px;
+  opacity: 0.8;
+}
+
+.dashboard-logout-modal h2 {
+  margin: 0 0 8px;
+  color: #212529;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.dashboard-logout-modal p {
+  margin: 0 0 24px;
+  color: #6c757d;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.dashboard-logout-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.dashboard-logout-actions button {
+  min-width: 105px;
+  padding: 9px 18px;
+  border: 0;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+
+.dashboard-logout-cancel {
+  background: #f1f3f5;
+  color: #343a40;
+}
+
+.dashboard-logout-cancel:hover {
+  background: #e2e6ea;
+}
+
+.dashboard-logout-confirm {
+  background: #dc3545;
+  color: #fff;
+}
+
+.dashboard-logout-confirm:hover {
+  background: #bb2d3b;
+}
+
+@keyframes dashboard-logout-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }

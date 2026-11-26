@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import type { DashboardLanguage } from "./DashboardSidebar";
 
@@ -21,8 +20,15 @@ export interface FlightCrewDetails {
   crew: CrewMember[];
 }
 
+interface FlightInfo {
+  flightNo: string;
+  route: string;
+  departureTime: string;
+}
+
 interface CrewDetailModalProps {
   flight: FlightCrewDetails | null;
+  flightInfo: FlightInfo | null;
   loading: boolean;
   error: string | null;
   language: DashboardLanguage;
@@ -31,6 +37,7 @@ interface CrewDetailModalProps {
 
 function CrewDetailModal({
   flight,
+  flightInfo,
   loading,
   error,
   language,
@@ -38,43 +45,41 @@ function CrewDetailModal({
 }: CrewDetailModalProps) {
   const translations = {
     tr: {
-      title: "Uçuş Ekibi Detayları",
-      pilot: "Kaptan Pilot",
+      title: "Ekip Detayları",
+      pilot: "Pilot",
       cabinCrew: "Kabin Ekibi",
       loading: "Ekip bilgileri yükleniyor...",
       error: "Ekip bilgileri alınamadı.",
       empty: "Bu uçuş için ekip bilgisi bulunamadı.",
-      fatigue: "Yorgunluk Puanı",
-      status: "Durum",
-      available: "Müsait",
-      onDuty: "Görevde",
-      unavailable: "Müsait Değil",
-      rest: "Dinlenmede",
+      fatigue: "Yorgunluk",
       unknown: "Bilinmiyor",
       close: "Kapat",
+      flight: "Uçuş",
+      route: "Rota",
+      time: "Saat",
+      pilotRole: "Pilot",
     },
     en: {
-      title: "Flight Crew Details",
-      pilot: "Captain Pilot",
+      title: "Crew Details",
+      pilot: "Pilot",
       cabinCrew: "Cabin Crew",
       loading: "Loading crew information...",
       error: "Unable to load crew information.",
       empty: "No crew information found for this flight.",
-      fatigue: "Fatigue Score",
-      status: "Status",
-      available: "Available",
-      onDuty: "On Duty",
-      unavailable: "Unavailable",
-      rest: "Resting",
+      fatigue: "Fatigue",
       unknown: "Unknown",
       close: "Close",
+      flight: "Flight",
+      route: "Route",
+      time: "Time",
+      pilotRole: "Pilot",
     },
   };
 
   const t = translations[language];
 
   useEffect(() => {
-    if (!flight && !loading) return;
+    if (!flight && !loading && !error) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -87,73 +92,80 @@ function CrewDetailModal({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [flight, loading, onClose]);
+  }, [flight, loading, error, onClose]);
 
   if (!loading && !flight && !error) {
     return null;
   }
 
-  const statusLabels: Record<string, string> = {
-    AVAILABLE: t.available,
-    ON_DUTY: t.onDuty,
-    UNAVAILABLE: t.unavailable,
-    RESTING: t.rest,
-  };
+  const members = [
+    ...(flight?.pilot ? [flight.pilot] : []),
+    ...(flight?.crew ?? []),
+  ];
 
-  const renderMember = (member: CrewMember, isPilot = false) => {
+  const renderMember = (member: CrewMember, isPilot: boolean) => {
     const fatigue = Math.min(
       100,
-      Math.max(0, member.fatiguePoint),
+      Math.max(0, member.fatiguePoint || 0),
     );
+
+    const fatigueClass =
+      fatigue >= 80
+        ? "high"
+        : fatigue >= 50
+          ? "medium"
+          : "low";
 
     return (
       <article
         className="dashboard-crew-member"
         key={member.id}
       >
-        <div className="dashboard-crew-member-heading">
-          <div className="dashboard-crew-avatar">
-            <i
-              className={`fa-solid ${
-                member.gender?.icon ?? "fa-user"
-              }`}
-              aria-hidden="true"
-            />
-          </div>
-
-          <div className="dashboard-crew-member-info">
-            <strong>{member.name}</strong>
-            <span>{isPilot ? t.pilot : member.role}</span>
-          </div>
-
-          <span
-            className={`dashboard-status status-${member.status.toLowerCase()}`}
-          >
-            {statusLabels[member.status] ?? t.unknown}
-          </span>
+        <div
+          className={`dashboard-crew-role-badge ${
+            isPilot ? "role-pilot" : "role-cabin"
+          }`}
+        >
+          {isPilot ? t.pilotRole : member.role}
         </div>
+
+        <div
+          className={`dashboard-crew-avatar ${
+            isPilot ? "pilot" : "cabin"
+          }`}
+        >
+          <i
+            className={`fa-solid ${
+              member.gender?.icon ?? "fa-user"
+            }`}
+            aria-hidden="true"
+          />
+        </div>
+
+        <h3 className="dashboard-crew-member-name">
+          {member.name}
+        </h3>
+
+        <p className="dashboard-crew-member-id">
+          ID: {member.id}
+        </p>
 
         <div className="dashboard-fatigue-info">
           <div className="dashboard-fatigue-label">
             <span>{t.fatigue}</span>
-            <strong>{member.fatiguePoint.toFixed(1)} / 100</strong>
+            <strong>%{Math.round(fatigue)}</strong>
           </div>
 
           <div
             className="dashboard-fatigue-track"
             role="meter"
+            aria-label={t.fatigue}
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={fatigue}
           >
             <div
-              className={`dashboard-fatigue-fill ${
-                fatigue > 80
-                  ? "high"
-                  : fatigue > 50
-                    ? "medium"
-                    : "low"
-              }`}
+              className={`dashboard-fatigue-fill ${fatigueClass}`}
               style={{ width: `${fatigue}%` }}
             />
           </div>
@@ -179,11 +191,19 @@ function CrewDetailModal({
       >
         <header className="dashboard-modal-header">
           <div>
-            <h2 id="dashboard-crew-modal-title">{t.title}</h2>
-            {flight && (
-              <span className="dashboard-modal-flight-number">
-                {flight.flightNo}
-              </span>
+            <h2 id="dashboard-crew-modal-title">
+              <i className="fa-solid fa-users" />
+              {t.title}
+            </h2>
+
+            {flightInfo && (
+              <p className="dashboard-modal-flight-info">
+                {t.flight}: {flightInfo.flightNo}
+                {" | "}
+                {t.route}: {flightInfo.route}
+                {" | "}
+                {t.time}: {flightInfo.departureTime}
+              </p>
             )}
           </div>
 
@@ -199,38 +219,23 @@ function CrewDetailModal({
 
         <div className="dashboard-modal-body">
           {loading ? (
-            <p className="dashboard-modal-message">{t.loading}</p>
+            <p className="dashboard-modal-message">
+              {t.loading}
+            </p>
           ) : error ? (
             <p className="dashboard-modal-error">
               {t.error} {error}
             </p>
-          ) : flight ? (
-            <>
-              {flight.pilot && (
-                <div className="dashboard-crew-section">
-                  <h3>{t.pilot}</h3>
-                  {renderMember(flight.pilot, true)}
-                </div>
+          ) : members.length > 0 ? (
+            <div className="dashboard-crew-grid">
+              {members.map((member) =>
+                renderMember(member, member.id === flight?.pilot?.id),
               )}
-
-              <div className="dashboard-crew-section">
-                <h3>{t.cabinCrew}</h3>
-
-                {flight.crew.length > 0 ? (
-                  <div className="dashboard-crew-list">
-                    {flight.crew.map((member) =>
-                      renderMember(member),
-                    )}
-                  </div>
-                ) : (
-                  <p className="dashboard-modal-message">
-                    {t.empty}
-                  </p>
-                )}
-              </div>
-            </>
+            </div>
           ) : (
-            <p className="dashboard-modal-message">{t.empty}</p>
+            <p className="dashboard-modal-message">
+              {t.empty}
+            </p>
           )}
         </div>
       </section>

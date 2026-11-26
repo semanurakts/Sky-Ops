@@ -1,4 +1,3 @@
-
 import type { DashboardFlight } from "../types/dashboard.types";
 import type { DashboardLanguage } from "./DashboardSidebar";
 
@@ -22,6 +21,11 @@ interface RecentFlightsTableProps {
   onArchivedToggle: () => void;
 }
 
+type PaginationItem =
+  | number
+  | "ellipsis-left"
+  | "ellipsis-right";
+
 function RecentFlightsTable({
   flights,
   pagination,
@@ -36,30 +40,25 @@ function RecentFlightsTable({
     tr: {
       title: "Canlı Uçuş Listesi",
       allFlightsTitle: "Tüm Uçuşlar",
-      flight: "Uçuş",
-      airline: "Havayolu",
+      flight: "Uçuş No",
       route: "Rota",
       date: "Tarih / Saat",
       gate: "Kapı",
-      pilot: "Kaptan Pilot",
-      crew: "Ekip",
       status: "Durum",
-      actions: "Detay",
-      viewCrew: "Ekibi Gör",
+      crew: "Ekip",
+      inspect: "İncele",
+      viewCrew: "Ekibi Görüntüle",
       previous: "Önceki",
       next: "Sonraki",
-      page: "Sayfa",
-      of: "/",
-      total: "toplam uçuş",
       noFlights: "Gösterilecek uçuş bulunamadı.",
       loading: "Uçuşlar yükleniyor...",
-      scheduled: "Planlandı",
+      scheduled: "Zamanında",
       boarding: "Yolcu Alımı",
       departed: "Havalandı",
       arrived: "İndi",
       delayed: "Gecikmeli",
       cancelled: "İptal",
-      unknown: "Bilinmiyor",
+      unknown: "Tanımsız",
       showArchived: "Arşiv kayıtlarını göster",
       hideArchived: "Arşiv görünümünü kapat",
       archiveHint: "Arşiv kayıtları dahil",
@@ -67,27 +66,22 @@ function RecentFlightsTable({
     en: {
       title: "Live Flight List",
       allFlightsTitle: "All Flights",
-      flight: "Flight",
-      airline: "Airline",
+      flight: "Flight No",
       route: "Route",
       date: "Date / Time",
       gate: "Gate",
-      pilot: "Captain Pilot",
-      crew: "Crew",
       status: "Status",
-      actions: "Details",
+      crew: "Crew",
+      inspect: "Inspect",
       viewCrew: "View Crew",
       previous: "Previous",
       next: "Next",
-      page: "Page",
-      of: "/",
-      total: "total flights",
       noFlights: "No flights to display.",
       loading: "Loading flights...",
-      scheduled: "Scheduled",
+      scheduled: "On Time",
       boarding: "Boarding",
       departed: "Departed",
-      arrived: "Arrived",
+      arrived: "Landed",
       delayed: "Delayed",
       cancelled: "Cancelled",
       unknown: "Unknown",
@@ -108,40 +102,56 @@ function RecentFlightsTable({
     CANCELLED: t.cancelled,
   };
 
-  const formatDate = (dateValue: string) => {
-    const date = new Date(`${dateValue}T12:00:00Z`);
-
-    return new Intl.DateTimeFormat(
-      language === "tr" ? "tr-TR" : "en-GB",
-      {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        timeZone: "UTC",
-      },
-    ).format(date);
+  const statusClasses: Record<string, string> = {
+    SCHEDULED: "status-on-time",
+    BOARDING: "status-default",
+    DEPARTED: "status-default",
+    ARRIVED: "status-landed",
+    DELAYED: "status-delayed",
+    CANCELLED: "status-cancelled",
   };
 
-  const getPaginationPages = () => {
+  const formatDate = (dateValue: string) => {
+    const [year, month, day] = dateValue.split("-");
+    return `${day}.${month}.${year}`;
+  };
+
+  const getPaginationItems = (): PaginationItem[] => {
     const totalPages = pagination.totalPages;
 
-    if (totalPages === 0) return [];
+    if (totalPages <= 1) return [];
 
-    const start = Math.max(
-      1,
-      Math.min(pagination.page - 7, totalPages - 14),
-    );
+    let startPage = Math.max(1, pagination.page - 7);
+    let endPage = Math.min(totalPages, startPage + 14);
 
-    const end = Math.min(start + 14, totalPages);
+    if (endPage - startPage < 14) {
+      startPage = Math.max(1, endPage - 14);
+    }
 
-    return Array.from(
-      { length: end - start + 1 },
-      (_, index) => start + index,
-    );
+    const items: PaginationItem[] = [];
+
+    if (startPage > 1) {
+      items.push(1);
+
+      if (startPage > 2) {
+        items.push("ellipsis-left");
+      }
+    }
+
+    for (let page = startPage; page <= endPage; page++) {
+      items.push(page);
+    }
+
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        items.push("ellipsis-right");
+      }
+
+      items.push(totalPages);
+    }
+
+    return items;
   };
-
-  const displayedPage =
-    pagination.totalPages > 0 ? pagination.page : 0;
 
   return (
     <section className="dashboard-content-box dashboard-flights-box">
@@ -150,11 +160,6 @@ function RecentFlightsTable({
           <h2 className="dashboard-box-title">
             {showArchived ? t.allFlightsTitle : t.title}
           </h2>
-
-          <p className="dashboard-table-count">
-            {pagination.total} {t.total}
-            {showArchived ? ` · ${t.archiveHint}` : ""}
-          </p>
         </div>
 
         <button
@@ -175,27 +180,25 @@ function RecentFlightsTable({
           <thead>
             <tr>
               <th>{t.flight}</th>
-              <th>{t.airline}</th>
               <th>{t.route}</th>
               <th>{t.date}</th>
               <th>{t.gate}</th>
-              <th>{t.pilot}</th>
-              <th>{t.crew}</th>
               <th>{t.status}</th>
-              <th>{t.actions}</th>
+              <th>{t.crew}</th>
+              <th>{t.inspect}</th>
             </tr>
           </thead>
 
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={9} className="dashboard-table-message">
+                <td colSpan={7} className="dashboard-table-message">
                   {t.loading}
                 </td>
               </tr>
             ) : flights.length === 0 ? (
               <tr>
-                <td colSpan={9} className="dashboard-table-message">
+                <td colSpan={7} className="dashboard-table-message">
                   {t.noFlights}
                 </td>
               </tr>
@@ -203,66 +206,76 @@ function RecentFlightsTable({
               flights.map((flight) => (
                 <tr key={flight.id}>
                   <td>
-                    <strong>{flight.flightNo}</strong>
+                    <strong className="dashboard-flight-number">
+                      {flight.flightNo}
+                    </strong>
                   </td>
-
-                  <td>{flight.airlineName ?? "—"}</td>
 
                   <td>
                     <span className="dashboard-route">
-                      {flight.route.replace(" > ", " → ")}
+                      {flight.route}
                     </span>
                   </td>
 
                   <td>
                     <div className="dashboard-flight-datetime">
-                      <span>
-                        {formatDate(flight.departureDate)}
-                      </span>
+                      <span>{formatDate(flight.departureDate)}</span>
                       <strong>{flight.departureTime}</strong>
                     </div>
                   </td>
 
-                  <td>{flight.gate ?? "—"}</td>
-
                   <td>
-                    <div className="dashboard-table-pilot">
-                      <span className="dashboard-pilot-avatar">
-                        <i
-                          className={`fa-solid ${
-                            flight.pilot?.genderIcon ?? "fa-user"
-                          }`}
-                        />
-                      </span>
-
-                      <span>{flight.pilot?.name ?? "—"}</span>
-                    </div>
-                  </td>
-
-                  <td>
-                    <span className="dashboard-crew-count">
-                      <i className="fa-solid fa-users" />
-                      {flight.crewCount}
+                    <span className="dashboard-gate-badge">
+                      {flight.gate ?? "—"}
                     </span>
                   </td>
 
                   <td>
                     <span
-                      className={`dashboard-status status-${flight.status.toLowerCase()}`}
+                      className={`dashboard-status ${
+                        statusClasses[flight.status] ?? "status-default"
+                      }`}
                     >
                       {statusLabels[flight.status] ?? t.unknown}
                     </span>
                   </td>
 
                   <td>
+                    <div className="dashboard-crew-cell">
+                      <div className="dashboard-table-pilot">
+                        <i
+                          className={`fa-solid ${
+                            flight.pilot?.genderIcon ?? "fa-question-circle"
+                          } dashboard-pilot-icon`}
+                          aria-hidden="true"
+                        />
+
+                        <span>
+                          {flight.pilot?.name ?? t.unknown}
+                        </span>
+                      </div>
+
+                      {flight.crewCount > 0 && (
+                        <button
+                          type="button"
+                          className="dashboard-crew-count-button"
+                          onClick={() => onCrewSelect(flight.id)}
+                        >
+                          +{flight.crewCount} {t.crew}
+                        </button>
+                      )}
+                    </div>
+                  </td>
+
+                  <td>
                     <button
                       type="button"
-                      className="dashboard-crew-button"
+                      className="dashboard-inspect-button"
                       onClick={() => onCrewSelect(flight.id)}
-                      disabled={!flight.pilot && flight.crewCount === 0}
+                      title={t.viewCrew}
+                      aria-label={`${t.viewCrew}: ${flight.flightNo}`}
                     >
-                      <i className="fa-solid fa-users" />
-                      <span>{t.viewCrew}</span>
+                      <i className="fa-solid fa-eye" />
                     </button>
                   </td>
                 </tr>
@@ -273,10 +286,6 @@ function RecentFlightsTable({
       </div>
 
       <div className="dashboard-pagination">
-        <span className="dashboard-pagination-info">
-          {t.page} {displayedPage} {t.of} {pagination.totalPages}
-        </span>
-
         <div className="dashboard-pagination-controls">
           <button
             type="button"
@@ -287,20 +296,29 @@ function RecentFlightsTable({
             <i className="fa-solid fa-chevron-left" />
           </button>
 
-          {getPaginationPages().map((page) => (
-            <button
-              type="button"
-              key={page}
-              className={page === pagination.page ? "active" : ""}
-              disabled={loading}
-              onClick={() => onPageChange(page)}
-              aria-current={
-                page === pagination.page ? "page" : undefined
-              }
-            >
-              {page}
-            </button>
-          ))}
+          {getPaginationItems().map((item) =>
+            typeof item === "number" ? (
+              <button
+                type="button"
+                key={item}
+                className={item === pagination.page ? "active" : ""}
+                disabled={loading}
+                onClick={() => onPageChange(item)}
+                aria-current={
+                  item === pagination.page ? "page" : undefined
+                }
+              >
+                {item}
+              </button>
+            ) : (
+              <span
+                key={item}
+                className="dashboard-pagination-ellipsis"
+              >
+                ...
+              </span>
+            ),
+          )}
 
           <button
             type="button"
