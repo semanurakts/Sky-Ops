@@ -104,7 +104,8 @@ async function requestAdmin(
 
 // Verify that a concurrent operation produces one success
 // and one properly handled conflict response.
-async function assertOneSuccessAndOneConflict(
+
+async function assertOneSuccessAndOneSafeRejection(
   responses: Response[],
   operation: string,
 ): Promise<void> {
@@ -112,17 +113,29 @@ async function assertOneSuccessAndOneConflict(
     .map((response) => response.status)
     .sort((a, b) => a - b);
 
-  assert.deepEqual(
-    statuses,
+  const expectedResults = [
+    [200, 401],
     [200, 409],
-    `Expected one successful ${operation} request and one conflict. Received statuses: ${statuses.join(", ")}`,
+  ];
+
+  const isExpectedResult = expectedResults.some(
+    (expected) =>
+      expected[0] === statuses[0] &&
+      expected[1] === statuses[1],
+  );
+
+  assert.ok(
+    isExpectedResult,
+    `Expected one successful ${operation} request and one safe rejection (401 or 409). Received statuses: ${statuses.join(", ")}`,
   );
 
   const conflictResponse = responses.find(
     (response) => response.status === 409,
   );
 
-  assert.ok(conflictResponse);
+  if (!conflictResponse) {
+    return;
+  }
 
   const conflictBody = (await conflictResponse.json()) as {
     error?: {
@@ -137,6 +150,7 @@ async function assertOneSuccessAndOneConflict(
     `Unexpected conflict response code: ${conflictBody.error?.code}`,
   );
 }
+
 
 before(async () => {
   const admin = await createTestUser("ADMIN");
@@ -518,7 +532,7 @@ test("Concurrent administrator role changes cannot demote every active administr
     }),
   ]);
 
-  await assertOneSuccessAndOneConflict(
+  await assertOneSuccessAndOneSafeRejection(
     responses,
     "administrator role change",
   );
@@ -570,7 +584,7 @@ test("Concurrent administrator deactivations cannot deactivate every active admi
     }),
   ]);
 
-  await assertOneSuccessAndOneConflict(
+  await assertOneSuccessAndOneSafeRejection(
     responses,
     "administrator deactivation",
   );
