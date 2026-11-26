@@ -1,0 +1,48 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "main": "dist/server.js",
+  "scripts": {
+    "test": "tsx --test src/services/password.service.test.ts",
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test:integration": "tsx --test src/routes/auth.routes.test.ts",
+    "test:authorization": "tsx --test src/middleware/require-role.middleware.test.ts",
+    "admin:create": "tsx src/scripts/create-admin.ts",
+    "admin:verify": "tsx src/scripts/verify-admin-login.ts",
+    "test:dashboard-auth": "tsx --test src/routes/dashboard.authorization.test.ts",
+    "test:admin-users": "tsx --test src/routes/admin-users.routes.test.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.10.1",
+    "@prisma/client": "^7.10.1",
+    "argon2": "^0.45.2",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^18.0.10",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.5",
+    "helmet": "^8.3.0",
+    "pg": "^8.23.1",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.10",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.6",
+    "@types/pg": "^8.23.1",
+    "@types/swagger-ui-express": "^4.1.8",
+    "prisma": "^7.10.1",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  },
+  "type": "module",
+  "overrides": {
+    "effect": "3.22.1"
+  }
+}

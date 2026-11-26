@@ -19,3 +19,10 @@ Thumbs.db
 
 # Yerel ve geçici dosyalar
 *.local
+
+apps/api/src/generated/
+apps/api/dist/
+apps/web/dist/
+coverage/
+*.dump
+apps/api/generated/

@@ -1,0 +1,117 @@
+
+name: SkyOps CI
+
+on:
+  push:
+    branches:
+      - main
+      - refactor/architecture-v2
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend Tests and Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      DATABASE_URL: postgresql://skyops:skyops_ci_password@127.0.0.1:5432/skyops_test?schema=public
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: skyops
+          POSTGRES_PASSWORD: skyops_ci_password
+          POSTGRES_DB: skyops_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U skyops -d skyops_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/api/package-lock.json
+
+      - name: Install API dependencies
+        working-directory: apps/api
+        run: npm ci
+
+      - name: Generate Prisma Client
+        working-directory: apps/api
+        run: npx prisma generate --config prisma7.config.ts
+
+      - name: Apply database migrations
+        working-directory: apps/api
+        run: npx prisma migrate deploy --config prisma7.config.ts
+
+      - name: Run password tests
+        working-directory: apps/api
+        run: npm test
+
+      - name: Run authentication integration tests
+        working-directory: apps/api
+        run: npm run test:integration
+
+      - name: Run authorization tests
+        working-directory: apps/api
+        run: npm run test:authorization
+
+      - name: Run dashboard authorization tests
+        working-directory: apps/api
+        run: npm run test:dashboard-auth
+
+      - name: Run admin user management tests
+        working-directory: apps/api
+        run: npm run test:admin-users
+
+      - name: Run backend typecheck
+        working-directory: apps/api
+        run: npm run typecheck
+
+      - name: Build backend
+        working-directory: apps/api
+        run: npm run build
+
+  frontend:
+    name: Frontend Lint and Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: apps/web
+        run: npm ci
+
+      - name: Run frontend lint
+        working-directory: apps/web
+        run: npm run lint
+
+      - name: Build frontend
+        working-directory: apps/web
+        run: npm run build
